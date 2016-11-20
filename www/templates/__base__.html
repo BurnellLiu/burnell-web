@@ -14,12 +14,13 @@
     {% block beforehead %}<!-- before head  -->{% endblock %}
 </head>
 <body>
-    <nav class="uk-navbar uk-navbar-attached uk-margin-bottom">
+    <nav class="uk-navbar uk-navbar-attached uk-margin-large-bottom">
         <div class="uk-container uk-container-center">
-            <a href="/" class="uk-navbar-brand">刘杰的个人网站</a>
+            <a href="/" class="uk-navbar-brand uk-visible-large">刘杰的个人网站</a>
             <ul class="uk-navbar-nav">
-                <li data-url="blogs"><a href="/"><i class="uk-icon-home"></i>博客</a></li>
-                <li><a target="_blank" href="https://github.com/BurnellLiu"><i class="uk-icon-code"></i>源码</a></li>
+                <li data-url="blogs"><a href="/">博客</a></li>
+                <li>
+                    <a target="_blank" href="https://github.com/BurnellLiu/burnell-web">源码</a></li>
             </ul>
             <div class="uk-navbar-flip">
                 <ul class="uk-navbar-nav">
@@ -37,7 +38,7 @@
                     </li>
 
                 {% if __user__['admin'] %}
-                    <li><a href="/manage/blogs"><i class="uk-icon-gears"></i>后台管理</a></li>
+                    <li><a href="/manage/blogs"><i class="uk-icon-cog"></i>后台管理</a></li>
                 {% endif %}
 
                 {% else %}
