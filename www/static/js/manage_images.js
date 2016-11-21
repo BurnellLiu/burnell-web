@@ -1,4 +1,3 @@
-
 /**
  * 管理博客页面逻辑处理
  * 作者: burnell liu
@@ -41,57 +40,13 @@ function showDataLoading(isLoading){
 
 }
 
-/**
- * 删除博客请求结束处理函数
- */
-function deleteBlogRequestDone(data){
-    // 如果有错则显示错误消息
-    if (data.error){
-        showErrorMessage(data.message);
-        return;
-    }
-    // 如果成功删除博客, 则刷新页面
-    var index = window.currentPageIndex;
-    getBlogsRequest(index.toString());
-}
-
-/**
- * 发送删除博客请求
- * @param {String} blogId 博客Id
- */
-function postDeleteBlogRequest(blogId){
-    var opt = {
-        type: 'POST',
-        url: '/api/blogs/' + blogId + '/delete',
-        dataType: 'json',
-        data: JSON.stringify({}),
-        contentType: 'application/json'
-    };
-    // 发送请求
-    var jqxhr = $.ajax(opt);
-    // 设置请求完成和请求失败的处理函数
-    jqxhr.done(deleteBlogRequestDone);
-    jqxhr.fail(requestFail);
-}
-
-/**
- * 删除博客处理函数
- * @param {Object} e 标签对象
- */
-function trashIConClicked(e){
-    var id = $(e).attr('blog-id');
-    var name = $(e).attr('blog-name');
-    if (confirm('确认要删除"' + name + '"?删除后不可恢复!')){
-        postDeleteBlogRequest(id);
-    }
-}
 
 /**
  * 前一页博客处理函数
  */
 function previousPageClicked(){
     var index = window.currentPageIndex - 1;
-    getBlogsRequest(index.toString());
+    getImagesRequest(index.toString());
 }
 
 /**
@@ -99,42 +54,25 @@ function previousPageClicked(){
  */
 function nextPageClicked(){
     var index = window.currentPageIndex + 1;
-    getBlogsRequest(index.toString());
+    getImagesRequest(index.toString());
 }
 
+
 /**
- * 显示博客数据
- * @param {Object} data 博客数据
+ * 显示图像数据
+ * @param {Object} data 图像数据
  */
-function showBlogsData(data){
-    // 创建博客表
-    var $table = $('#blogs-table tbody');
-    // 先清空子节点
-    $table.children('tr').remove();
-    var blogs = data.blogs;
-    for (var i in blogs){
-        $table.append(
-            '<tr >' +
-            '<td>' +
-            '<a target="_blank" href="/blog/' + blogs[i].id + '">' + blogs[i].name + '</a>' +
-            '</td>' +
-            '<td>' +
-            '<a target="_blank">' + blogs[i].user_name + '</a>'+
-            '</td>' +
-            '<td>' +
-            '<span>'+ blogs[i].created_at.toDateTime() + '</span>'+
-            '</td>' +
-            '<td>' +
-            '<a target="_blank" href="/manage/blogs/edit?id=' + blogs[i].id + '">' +
-            '<i class="uk-icon-edit">&nbsp;&nbsp;</i></a>' +
-            '<a onclick="trashIConClicked(this)" blog-id="' + blogs[i].id + '" blog-name="' + blogs[i].name + '">' +
-            '<i class="uk-icon-trash-o">&nbsp;&nbsp;</i></a>' +
-            '</td>' +
-            '</tr>');
+function showImagesData(data){
+    var images = data.images;
+    for (var i in images){
+        var $image = $('#image-' + i);
+        $image.find('img').attr('src', images[i].url);
+        $image.find('span').text(images[i].url);
     }
-    // 少于10行的填充空白
-    for (var i = 0; i < 10-blogs.length; i++){
-        $table.append('<tr><td>&nbsp</td><td></td><td></td><td></td></tr>');
+    for (var i = images.length; i < 6; i++){
+        var $image = $('#image-' + i);
+        $image.find('img').attr('src', null);
+        $image.find('span').text('');
     }
 
     // 创建分页列
@@ -174,14 +112,13 @@ function showBlogsData(data){
             '</li>';
     }
     $ul.append(nextLi);
-
 }
 
 /**
- * 获取博客请求结束处理函数
+ * 获取图片请求结束处理函数
  * @param {Object} data 返回的数据
  */
-function getBlogsRequestDone(data){
+function getImagesRequestDone(data){
     showDataLoading(false);
 
     // 如果有错则显示错误消息
@@ -191,7 +128,7 @@ function getBlogsRequestDone(data){
     }
 
     window.currentPageIndex = data.page.page_index;
-    showBlogsData(data);
+    showImagesData(data);
 }
 
 /**
@@ -204,33 +141,66 @@ function requestFail(xhr, status){
     showErrorMessage('网络出了问题 (HTTP '+ xhr.status+')');
 }
 
+
 /**
- * 发送获取博客信息请求
+ * 发送获取图片信息请求
  * @param {String} pageIndex 页面索引
  */
-function getBlogsRequest(pageIndex){
+function getImagesRequest(pageIndex){
 
     showErrorMessage(null);
     showDataLoading(true);
 
     var opt = {
         type: 'GET',
-        url: '/api/blogs?page=' + pageIndex,
+        url: '/api/images?page=' + pageIndex,
         dataType: 'json',
     };
     // 发送请求
     var jqxhr = $.ajax(opt);
     // 设置请求完成和请求失败的处理函数
-    jqxhr.done(getBlogsRequestDone);
+    jqxhr.done(getImagesRequestDone);
     jqxhr.fail(requestFail);
 }
+
+
+function selectedImage(imageInput){
+    var file = imageInput.files[0];
+    if (!file){
+        return;
+    }
+    var reader = new FileReader();
+    reader.onload = function(evt){
+        console.log(file);
+        var uuid = '123';
+        var filePath = '/static/img/blog/' + uuid + file.name;
+        var $list = $('#img-list');
+        $list.append(
+            '<li id="' + uuid + '">' +
+            '<div class="uk-thumbnail">' +
+            '<img src="' + evt.target.result +'">' +
+            '<div class="uk-text-large uk-text-success">' +
+            filePath + '&nbsp;' +
+            '<a><i class="uk-icon-trash-o uk-align-right uk-icon-small"></i></a>' +
+            '</div>' +
+            '</div>' +
+            '</li>');
+        image = evt.target.result;
+    }
+    reader.readAsDataURL(file);
+}
+
 
 /**
  * 初始化页面
  */
 function initPage(){
+    getImagesRequest('1');
 
-    getBlogsRequest('1');
+    $('#image-button').click(function () {
+        var imageInput = document.getElementById('image-input');//隐藏的file文本ID
+        imageInput.click();//加一个触发事件
+    });
 }
 
 $(document).ready(initPage)

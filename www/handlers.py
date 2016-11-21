@@ -16,7 +16,7 @@ import markdown2
 
 from config import configs
 from coreweb import get, post
-from models import User, Comment, Blog, generate_id
+from models import User, Comment, Blog, Image,generate_id
 from apis import Page, APIError, APIValueError, APIResourceNotFoundError, APIPermissionError
 
 __author__ = 'Burnell Liu'
@@ -142,6 +142,18 @@ def manage_blogs(*, page='1'):
     return {
         '__template__': 'manage_blogs.html',
         'page_index': get_page_index(page)
+    }
+
+
+@get('/manage/images')
+def manage_images(request):
+    """
+    管理图片页面路由函数
+    :param request:
+    :return:
+    """
+    return {
+        '__template__': 'manage-images.html'
     }
 
 
@@ -414,6 +426,22 @@ async def api_delete_blog(request, *, blog_id):
     blog = await Blog.find(blog_id)
     await blog.remove()
     return dict(id=blog_id)
+
+
+@get('/api/images')
+async def api_get_images(*, page='1'):
+    """
+    获取图像API函数
+    :param page: 页面索引
+    :return:
+    """
+    page_index = get_page_index(page)
+    num = await Image.find_number('count(id)')
+    p = Page(num, page_index, page_size=6)
+    if num == 0:
+        return dict(page=p, images=())
+    images = await Image.find_all(orderBy='created_at desc', limit=(p.offset, p.limit))
+    return dict(page=p, images=images)
 
 
 @get('/api/comments')

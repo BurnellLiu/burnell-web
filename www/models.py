@@ -98,6 +98,23 @@ class Comment(Model):
     created_at = FloatField(default=time.time)
 
 
+class Image(Model):
+    """
+    图片表
+    create table images (
+    `id` varchar(50) not null,
+    `url` varchar(500) not null,
+    `created_at` real not null,
+    key `idx_created_at` (`created_at`),
+    primary key (`id`)
+    ) engine=innodb default charset=utf8;
+    """
+    __table__ = 'images'
+    id = StringField(primary_key=True, default=generate_id, ddl='varchar(50)')
+    url = StringField(ddl='varchar(500)')
+    created_at = FloatField(default=time.time)
+
+
 async def unit_test_model(loop):
     from orm import create_pool
     await create_pool(
@@ -107,9 +124,38 @@ async def unit_test_model(loop):
         password='ttlovelj911',
         db='bdm240853593_db')
 
-    u = User(name='Test', email='test@example.com', password='1234567890', image='about:blank')
-
-    await u.save()
+    # u = User(name='Test', email='test@example.com', password='1234567890', image='about:blank')
+    # await u.save()
+    """
+    image = Images(url='/static/img/head_1.jpg')
+    await  image.save()
+    image = Images(url='/static/img/head_2.jpg')
+    await  image.save()
+    image = Images(url='/static/img/head_3.jpg')
+    await  image.save()
+    image = Images(url='/static/img/head_4.jpg')
+    await  image.save()
+    image = Images(url='/static/img/head_5.jpg')
+    await  image.save()
+    image = Images(url='/static/img/head_6.jpg')
+    await  image.save()
+    image = Images(url='/static/img/head_7.jpg')
+    await  image.save()
+    image = Images(url='/static/img/head_8.jpg')
+    await  image.save()
+    image = Images(url='/static/img/head_9.jpg')
+    await  image.save()
+    image = Images(url='/static/img/head_10.jpg')
+    await  image.save()
+    image = Images(url='/static/img/head_12.jpg')
+    await  image.save()
+    image = Images(url='/static/img/head_13.jpg')
+    await  image.save()
+    image = Images(url='/static/img/head_14.jpg')
+    await  image.save()
+    image = Images(url='/static/img/head_15.jpg')
+    await  image.save()
+    """
 
 if __name__ == '__main__':
     import asyncio

@@ -8,44 +8,6 @@
  * 显示错误消息
  * @param {String} msg 错误消息, 如果设置为null, 则隐藏错误消息标签
  */
-
-
-/**
- * 生成UUID
- * @param {Number} len UUID长度
- * @param {Number} radix 进制显示， 可以为2， 10， 16
- * @returns {string} UUID
- */
-function createUUID(len, radix) {
-    var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('');
-    var uuid = [], i;
-    radix = radix || chars.length;
-
-    if (len) {
-      // Compact form
-      for (i = 0; i < len; i++) uuid[i] = chars[0 | Math.random()*radix];
-    } else {
-      // rfc4122, version 4 form
-      var r;
-
-      // rfc4122 requires these characters
-      uuid[8] = uuid[13] = uuid[18] = uuid[23] = '-';
-      uuid[14] = '4';
-
-      // Fill in random data.  At i==19 set the high bits of clock sequence as
-      // per rfc4122, sec. 4.1.5
-      for (i = 0; i < 36; i++) {
-        if (!uuid[i]) {
-          r = 0 | Math.random()*16;
-          uuid[i] = chars[(i == 19) ? (r & 0x3) | 0x8 : r];
-        }
-      }
-    }
-
-    return uuid.join('');
-}
-
-
 function showErrorMessage(msg){
 
     // 找到显示错误消息的标签
@@ -224,32 +186,6 @@ function blogSubmit(event) {
     postBlog(blog);
 }
 
-function selectedImage(imageInput){
-    var file = imageInput.files[0];
-    if (!file){
-        return;
-    }
-    var reader = new FileReader();
-    reader.onload = function(evt){
-        console.log(file);
-        var uuid = createUUID(16, 16);
-        var filePath = '/static/img/blog/' + uuid + file.name;
-        var $list = $('#img-list');
-        $list.append(
-            '<li id="' + uuid + '">' +
-            '<div class="uk-thumbnail">' +
-            '<img src="' + evt.target.result +'">' +
-            '<div class="uk-text-large uk-text-success">' +
-            filePath + '&nbsp;' +
-            '<a><i class="uk-icon-trash-o uk-align-right uk-icon-small"></i></a>' +
-            '</div>' +
-            '</div>' +
-            '</li>');
-        image = evt.target.result;
-    }
-    reader.readAsDataURL(file);
-}
-
 /**
  * 初始化页面
  */
@@ -259,11 +195,6 @@ function initPage(){
 
     window.$blogForm = $('#blog-form');
     window.$blogForm.submit(blogSubmit);
-
-    $('#image-button').click(function () {
-        var imageInput = document.getElementById('image-input');//隐藏的file文本ID
-        imageInput.click();//加一个触发事件
-    });
 
     var path = location.pathname;
     if (path === '/manage/blogs/create'){

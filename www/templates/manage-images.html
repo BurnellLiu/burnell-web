@@ -1,0 +1,111 @@
+{% extends '__base__.html' %}
+
+{% block title %}图片{% endblock %}
+
+{% block beforehead %}
+
+<script src="/static/js/manage_images.js" xmlns="http://www.w3.org/1999/html"></script>
+
+{% endblock %}
+
+{% block content %}
+
+    <div class="uk-width-1-1 uk-margin-bottom">
+        <div class="uk-panel uk-panel-box">
+            <ul class="uk-breadcrumb">
+                <li><a href="/manage/blogs">日志</a></li>
+                <li><a href="/manage/comments">评论</a></li>
+                <li class="uk-active"><span>图片</span></li>
+                <li><a href="/manage/users">用户</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="loading" class="uk-width-1-1 uk-text-center">
+        <span><i class="uk-icon-spinner uk-icon-medium uk-icon-spin"></i>&nbsp;正在加载...</span>
+    </div>
+
+
+    <div class="uk-width-1-1">
+        <div id="error" class="uk-width-1-1 uk-text-center uk-alert uk-alert-danger"></div>
+
+        <label id="image-button" class="uk-button uk-button-primary"><i class="uk-icon-file-o"></i>&nbsp;新图片..</label>
+        <input id="image-input" type="file" accept="image/jpeg, image/png" onchange="selectedImage(this)" style="display:none;" />
+        <ul id="img-list" class="uk-list">
+            <!--
+            <li>
+                <div class="uk-thumbnail">
+                <img id="img-preview" src="">
+                <div class="uk-thumbnail-caption">adfsdfsdf&nbsp;
+                    <a><i class="uk-icon-trash-o"></i></a>
+                </div>
+                </div>
+            </li>
+            -->
+        </ul>
+
+        <div class="uk-grid">
+            <div class="uk-width-1-3">
+                <div id="image-0" class="uk-thumbnail">
+                    <div class="uk-text-small uk-text-success">
+                        <span>image1</span>
+                        <a><i class="uk-icon-trash-o uk-align-right uk-icon-small" num="0"></i></a>
+                    </div>
+                    <img width="600"  src="" alt="没有图片">
+                </div>
+            </div>
+            <div class="uk-width-1-3">
+                <div id="image-1" class="uk-thumbnail">
+                    <div class="uk-text-small uk-text-success">
+                        <span>image2</span>
+                        <a><i class="uk-icon-trash-o uk-align-right uk-icon-small" num="1"></i></a>
+                    </div>
+                    <img width="600"  src="" alt="没有图片">
+                </div>
+            </div>
+            <div class="uk-width-1-3">
+                <div id="image-2" class="uk-thumbnail">
+                    <div class="uk-text-small uk-text-success">
+                        <span>image3</span>
+                        <a><i class="uk-icon-trash-o uk-align-right uk-icon-small" num="2"></i></a>
+                    </div>
+                    <img width="600"  src="" alt="没有图片">
+                </div>
+            </div>
+
+        </div>
+
+        <div class="uk-grid">
+            <div class="uk-width-1-3">
+                <div id="image-3" class="uk-thumbnail">
+                    <div class="uk-text-small uk-text-success">
+                        <span>image4</span>
+                        <a><i class="uk-icon-trash-o uk-align-right uk-icon-small" num="3"></i></a>
+                    </div>
+                    <img width="600"  src="" alt="没有图片">
+                </div>
+            </div>
+            <div class="uk-width-1-3">
+                <div id="image-4" class="uk-thumbnail">
+                    <div class="uk-text-small uk-text-success">
+                        <span>image5</span>
+                        <a><i class="uk-icon-trash-o uk-align-right uk-icon-small" num="4"></i></a>
+                    </div>
+                    <img width="600"  src="" alt="没有图片">
+                </div>
+            </div>
+            <div class="uk-width-1-3">
+                <div id="image-5" class="uk-thumbnail">
+                    <div class="uk-text-small uk-text-success">
+                        <span>image6</span>
+                        <a><i class="uk-icon-trash-o uk-align-right uk-icon-small" num="5"></i></a>
+                    </div>
+                    <img width="600"  src="" alt="没有图片">
+                </div>
+            </div>
+
+        </div>
+        <ul class="uk-pagination">
+        </ul>
+    </div>
+{% endblock %}
