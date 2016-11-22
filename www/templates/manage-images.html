@@ -29,20 +29,20 @@
     <div class="uk-width-1-1">
         <div id="error" class="uk-width-1-1 uk-text-center uk-alert uk-alert-danger"></div>
 
-        <label id="image-button" class="uk-button uk-button-primary"><i class="uk-icon-file-o"></i>&nbsp;新图片..</label>
-        <input id="image-input" type="file" accept="image/jpeg, image/png" onchange="selectedImage(this)" style="display:none;" />
-        <ul id="img-list" class="uk-list">
-            <!--
-            <li>
-                <div class="uk-thumbnail">
-                <img id="img-preview" src="">
-                <div class="uk-thumbnail-caption">adfsdfsdf&nbsp;
-                    <a><i class="uk-icon-trash-o"></i></a>
+        <label id="new-image" class="uk-button uk-button-primary"><i class="uk-icon-file-o"></i>&nbsp;新图片..</label>
+        <div id="image-input-div"><input id="image-input" type="file" accept="image/jpeg, image/png" onchange="selectedImage(this)" style="display:none;" /></div>
+
+
+        <div class="uk-width-1-1">
+            <div id="image-preview" class="uk-thumbnail">
+                <div class="uk-text-small uk-text-success">
+                    <span></span>
+                    <a><i id="preview-trash" class="uk-icon-trash-o uk-align-right uk-icon-small"></i></a>
+                    <a><i id="preview-upload" class="uk-icon-upload uk-align-right uk-icon-small"></i></a>
                 </div>
-                </div>
-            </li>
-            -->
-        </ul>
+                <img src="">
+            </div>
+        </div>
 
         <div class="uk-grid">
             <div class="uk-width-1-3">

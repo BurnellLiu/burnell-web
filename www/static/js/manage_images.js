@@ -79,8 +79,10 @@ function showImagesData(data){
     var $ul = $('ul.uk-pagination');
     // 先清空子节点
     $ul.children('li').remove();
+
+    var previousLi = null;
     if (data.page.has_previous){
-        var previousLi =
+        previousLi =
             '<li>' +
             '<a onclick="previousPageClicked()">' +
             '<i class="uk-icon-angle-double-left"></i>' +
@@ -88,7 +90,7 @@ function showImagesData(data){
             '</li>'
     }
     else {
-        var previousLi =
+        previousLi =
             '<li class="uk-disabled">' +
             '<span><i class="uk-icon-angle-double-left"></i></span>' +
             '</li>';
@@ -97,8 +99,9 @@ function showImagesData(data){
 
     $ul.append('<li class="uk-active"><span>' + data.page.page_index + '</span></li>');
 
+    var nextLi = null;
     if (data.page.has_next){
-        var nextLi =
+        nextLi =
             '<li>' +
             '<a onclick="nextPageClicked()">' +
             '<i class="uk-icon-angle-double-right"></i>' +
@@ -106,7 +109,7 @@ function showImagesData(data){
             '</li>';
     }
     else {
-        var nextLi =
+        nextLi =
             '<li class="uk-disabled">' +
             '<span><i class="uk-icon-angle-double-right"></i></span>' +
             '</li>';
@@ -154,39 +157,100 @@ function getImagesRequest(pageIndex){
     var opt = {
         type: 'GET',
         url: '/api/images?page=' + pageIndex,
-        dataType: 'json',
+        dataType: 'json'
     };
     // 发送请求
-    var jqxhr = $.ajax(opt);
+    var ajax = $.ajax(opt);
     // 设置请求完成和请求失败的处理函数
-    jqxhr.done(getImagesRequestDone);
-    jqxhr.fail(requestFail);
+    ajax.done(getImagesRequestDone);
+    ajax.fail(requestFail);
 }
 
 
-function selectedImage(imageInput){
-    var file = imageInput.files[0];
+/**
+ * 上传图片请求结束处理函数
+ * @param {Object} data 返回的数据
+ */
+function postImageRequestDone(data){
+    showDataLoading(false);
+
+    // 如果有错则显示错误消息
+    if (data.error){
+        showErrorMessage(data.message);
+        return;
+    }
+
+    previewImgTrash()
+    getImagesRequest(window.currentPageIndex.toString())
+
+}
+
+
+/**
+ * 提交图片信息
+ * @param {Object} data 图片数据
+ */
+function postImage(data){
+    var opt = {
+        type: 'POST',
+        url: '/api/images',
+        dataType: 'json',
+        data: JSON.stringify(data || {}),
+        contentType: 'application/json'
+    };
+    // 发送请求
+    var ajax = $.ajax(opt);
+    // 设置请求完成和请求失败的处理函数
+    ajax.done(postImageRequestDone);
+    ajax.fail(requestFail);
+}
+
+
+/**
+ * 预览图片删除处理函数
+ */
+function previewImgTrash(){
+    // 隐藏图片预览
+    var $imagePreview = $('#image-preview');
+    $imagePreview.hide();
+
+    // 重新生成input节点才可以重置input元素的值
+    // 才可以重复选中同一张图片时多次触发selectedImage
+    var $imageInputDiv = $('#image-input-div');
+    $imageInputDiv.find('input').remove();
+    $imageInputDiv.append(
+        '<input id="image-input" type="file"' +
+        'accept="image/jpeg, image/png" onchange="selectedImage(this)"' +
+        'style="display:none;"/>');
+}
+
+/**
+ * 预览图片上传处理函数
+ */
+function previewImgUpload(){
+    var imageName = $('#image-preview span').text();
+    var image = $('#image-preview img').attr('src');
+    var imageData = {name: imageName, image: image};
+    postImage(imageData);
+}
+
+
+/**
+ * 选中图片处理函数
+ */
+function selectedImage(element){
+    var file = element.files[0];
     if (!file){
         return;
     }
     var reader = new FileReader();
     reader.onload = function(evt){
-        console.log(file);
-        var uuid = '123';
-        var filePath = '/static/img/blog/' + uuid + file.name;
-        var $list = $('#img-list');
-        $list.append(
-            '<li id="' + uuid + '">' +
-            '<div class="uk-thumbnail">' +
-            '<img src="' + evt.target.result +'">' +
-            '<div class="uk-text-large uk-text-success">' +
-            filePath + '&nbsp;' +
-            '<a><i class="uk-icon-trash-o uk-align-right uk-icon-small"></i></a>' +
-            '</div>' +
-            '</div>' +
-            '</li>');
-        image = evt.target.result;
-    }
+        var $imagePreview = $('#image-preview');
+        $imagePreview.find('span').text(file.name);
+        $imagePreview.find('img').attr('src', evt.target.result);
+        // 显示图片预览
+        $imagePreview.show();
+    };
     reader.readAsDataURL(file);
 }
 
@@ -197,10 +261,17 @@ function selectedImage(imageInput){
 function initPage(){
     getImagesRequest('1');
 
-    $('#image-button').click(function () {
-        var imageInput = document.getElementById('image-input');//隐藏的file文本ID
+    // 设置增加新图片单击处理函数
+    $('#new-image').click(function () {
+        var imageInput = document.getElementById('image-input');
         imageInput.click();//加一个触发事件
     });
+
+    $('#preview-trash').click(previewImgTrash);
+    $('#preview-upload').click(previewImgUpload);
+
+    // 隐藏图像预览
+    $('#image-preview').hide();
 }
 
-$(document).ready(initPage)
+$(document).ready(initPage);

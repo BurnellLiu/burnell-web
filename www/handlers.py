@@ -444,6 +444,32 @@ async def api_get_images(*, page='1'):
     return dict(page=p, images=images)
 
 
+@post('/api/images')
+async def api_upload_image(request):
+    params = await request.json()
+
+    image = Image(url='xx')
+    await image.save()
+
+    image_url = '/static/img/'
+    image_url += image.id
+    image_url += params['name']
+    image.url = image_url
+    await image.update()
+
+    image_str = params['image']
+    image_str = image_str.replace('data:image/png;base64,', '')
+    image_str = image_str.replace('data:image/jpeg;base64,', '')
+    image_data = base64.b64decode(image_str)
+
+    image_path = '.'
+    image_path += image_url
+    file = open(image_path,'wb')
+    file.write(image_data)
+    file.close()
+    return image
+
+
 @get('/api/comments')
 async def api_get_comments(*, page='1'):
     """
