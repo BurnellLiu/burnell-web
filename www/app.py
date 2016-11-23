@@ -13,9 +13,9 @@ from datetime import datetime
 from jinja2 import Environment, FileSystemLoader
 
 from config import configs
-from models import User
+from db_models import User
 
-import orm
+import db_orm
 import coreweb
 
 __author__ = 'Burnell Liu'
@@ -193,7 +193,7 @@ async def app_init(event_loop):
     :return: 服务器对象
     """
     # 创建数据库连接池
-    await orm.create_pool(
+    await db_orm.create_pool(
         loop=event_loop,
         host='bdm240853593.my3w.com',
         user='bdm240853593',

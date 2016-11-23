@@ -4,7 +4,7 @@
 
 import time
 import uuid
-from orm import Model, StringField, BooleanField, FloatField, TextField
+from db_orm import Model, StringField, BooleanField, FloatField, TextField
 
 __author__ = 'Burnell Liu'
 
@@ -116,7 +116,7 @@ class Image(Model):
 
 
 async def unit_test_model(loop):
-    from orm import create_pool
+    from db_orm import create_pool
     await create_pool(
         loop=loop,
         host='bdm240853593.my3w.com',

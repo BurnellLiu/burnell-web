@@ -42,6 +42,59 @@ function showDataLoading(isLoading){
 
 
 /**
+ * 删除图片请求结束处理函数
+ */
+function deleteImageRequestDone(data){
+    // 如果有错则显示错误消息
+    if (data.error){
+        showErrorMessage(data.message);
+        return;
+    }
+    // 如果成功删除博客, 则刷新页面
+    var index = window.currentPageIndex;
+    getImagesRequest(index.toString());
+}
+
+/**
+ * 发送删除图片请求
+ * @param {String} imageId 博客Id
+ */
+function postDeleteImageRequest(imageId){
+    showErrorMessage(null);
+    showDataLoading(true);
+
+    var opt = {
+        type: 'POST',
+        url: '/api/images/' + imageId + '/delete',
+        dataType: 'json',
+        data: JSON.stringify({}),
+        contentType: 'application/json'
+    };
+    // 发送请求
+    var jqxhr = $.ajax(opt);
+    // 设置请求完成和请求失败的处理函数
+    jqxhr.done(deleteImageRequestDone);
+    jqxhr.fail(requestFail);
+}
+
+
+/**
+ * 删除图片处理函数
+ * @param {Object} e 标签对象
+ */
+function trashIConClicked(e){
+    var num = $(e).attr('num');
+    var $image = $('#image-' + num);
+    var imageId = $image.attr('image-id');
+    var imageName = $image.find('span').text();
+
+    if (confirm('确认要删除"' + imageName + '"?删除后不可恢复!')){
+        postDeleteImageRequest(imageId);
+    }
+}
+
+
+/**
  * 前一页博客处理函数
  */
 function previousPageClicked(){
@@ -64,13 +117,16 @@ function nextPageClicked(){
  */
 function showImagesData(data){
     var images = data.images;
-    for (var i in images){
-        var $image = $('#image-' + i);
+    var $image;
+    var i;
+    for (i in images){
+        $image = $('#image-' + i);
+        $image.attr('image-id', images[i].id);
         $image.find('img').attr('src', images[i].url);
         $image.find('span').text(images[i].url);
     }
-    for (var i = images.length; i < 6; i++){
-        var $image = $('#image-' + i);
+    for (i = images.length; i < 6; i++){
+        $image = $('#image-' + i);
         $image.find('img').attr('src', null);
         $image.find('span').text('');
     }
@@ -198,6 +254,10 @@ function postImage(data){
         data: JSON.stringify(data || {}),
         contentType: 'application/json'
     };
+
+    showDataLoading(true);
+    showErrorMessage(null);
+
     // 发送请求
     var ajax = $.ajax(opt);
     // 设置请求完成和请求失败的处理函数

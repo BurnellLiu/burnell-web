@@ -9,6 +9,7 @@ import logging
 import base64
 import asyncio
 import random
+import os
 
 from aiohttp import web
 
@@ -16,7 +17,7 @@ import markdown2
 
 from config import configs
 from coreweb import get, post
-from models import User, Comment, Blog, Image,generate_id
+from db_models import User, Comment, Blog, Image,generate_id
 from apis import Page, APIError, APIValueError, APIResourceNotFoundError, APIPermissionError
 
 __author__ = 'Burnell Liu'
@@ -440,20 +441,27 @@ async def api_get_images(*, page='1'):
     p = Page(num, page_index, page_size=6)
     if num == 0:
         return dict(page=p, images=())
-    images = await Image.find_all(orderBy='created_at desc', limit=(p.offset, p.limit))
+    images = await Image.find_all(order_by='created_at desc', limit=(p.offset, p.limit))
     return dict(page=p, images=images)
 
 
 @post('/api/images')
 async def api_upload_image(request):
+    """
+    上传图片API函数
+    :param request: 请求对象
+    :return:
+    """
     params = await request.json()
 
     image = Image(url='xx')
     await image.save()
 
+    # 使用图片数据的创建时间做为URL
     image_url = '/static/img/'
-    image_url += image.id
+    image_url += str(int(image.created_at * 1000))
     image_url += params['name']
+
     image.url = image_url
     await image.update()
 
@@ -464,10 +472,31 @@ async def api_upload_image(request):
 
     image_path = '.'
     image_path += image_url
-    file = open(image_path,'wb')
+    file = open(image_path, 'wb')
     file.write(image_data)
     file.close()
     return image
+
+
+@post('/api/images/{image_id}/delete')
+async def api_delete_image(request, *, image_id):
+    """
+    删除博客API函数
+    :param request: 请求
+    :param image_id: 图像ID
+    :return:
+    """
+    check_admin(request)
+    image = await Image.find(image_id)
+    url = image.url
+    await image.remove()
+
+    filename = '.'
+    filename += url
+    # if os.path.exist(filename):
+    os.remove(filename)
+
+    return dict(id=image_id)
 
 
 @get('/api/comments')
