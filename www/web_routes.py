@@ -7,7 +7,6 @@ import hashlib
 import json
 import logging
 import base64
-import asyncio
 import random
 import os
 
@@ -18,8 +17,8 @@ import markdown2
 
 from config import configs
 from web_core import get, post
-from db_models import User, Comment, Blog, Image,generate_id
-from apis import Page, APIError, APIValueError, APIResourceNotFoundError, APIPermissionError
+from db_models import User, Comment, Blog, Image, generate_id
+from web_error import Page, permission_error, data_error
 
 __author__ = 'Burnell Liu'
 
@@ -58,15 +57,31 @@ def parse_query_string(qs):
     return kw
 
 
-def get_page_index(page_str):
-    p = 1
-    try:
-        p = int(page_str)
-    except ValueError as e:
-        pass
-    if p < 1:
-        p = 1
-    return p
+def generate_user_cookie(user, max_age):
+    """
+    根据用户信息生成COOKIE
+    :param user: 用户
+    :param max_age: COOKIE有效时间
+    :return: COOKIE字符串
+    """
+    # 过期时间
+    expires = str(int(time.time() + max_age))
+    cookie_key = configs.session.secret
+    mix_str = '%s-%s-%s-%s' % (user['id'], user['password'], expires, cookie_key)
+    items = [user['id'], expires, hashlib.sha1(mix_str.encode('utf-8')).hexdigest()]
+    return '-'.join(items)
+
+
+def generate_sha1_password(user_id, original_password):
+    """
+    根据用户id和原始密码, 生成一个进过sha1加密的密码
+    :param user_id: 用户id
+    :param original_password: 原始密码
+    :return: 加密密码
+    """
+    uid_password = '%s:%s' % (user_id, original_password)
+    sha1_password = hashlib.sha1(uid_password.encode('utf-8')).hexdigest()
+    return sha1_password
 
 
 @get('/')
@@ -110,10 +125,10 @@ async def blog_detail(request):
     # 根据博客ID找到博客详细内容
     blog = await Blog.find(blog_id)
     if not blog:
-        return {'error': '非法页面'}
+        return data_error(u'非法blog id')
 
     # 找到指定博客ID的博客的评论
-    comments = await Comment.find_all('blog_id=?', [blog_id], orderBy='created_at desc')
+    comments = await Comment.find_all('blog_id=?', [blog_id], order_by='created_at desc')
     for c in comments:
         c.html_content = text2html(c.content)
     blog.html_content = markdown2.markdown(blog.content)
@@ -164,15 +179,14 @@ def user_signout(request):
 
 
 @get('/manage/users')
-def manage_users(*, page='1'):
+def manage_users(request):
     """
     用户管理页面路由函数
-    :param page:
-    :return:
+    :param request: 请求对象
+    :return: 用户管理页面
     """
     return {
-        '__template__': 'manage_users.html',
-        'page_index': get_page_index(page)
+        '__template__': 'manage_users.html'
     }
 
 
@@ -192,8 +206,8 @@ def manage_blogs(request):
 def manage_images(request):
     """
     管理图片页面路由函数
-    :param request:
-    :return:
+    :param request: 请求对象
+    :return: 管理图片页面
     """
     return {
         '__template__': 'manage-images.html'
@@ -201,70 +215,39 @@ def manage_images(request):
 
 
 @get('/manage/blogs/create')
-def manage_create_blog():
+def manage_create_blog(request):
     """
     创建博客页面路由函数
-    :return:
+    :param request: 请求对象
+    :return: 创建博客页面
     """
     return {
-        '__template__': 'manage_blog_edit.html',
-        'id': '',
-        'action': '/api/blogs'
+        '__template__': 'manage_blog_edit.html'
     }
 
 
 @get('/manage/blogs/edit')
-def manage_edit_blog(*, id):
+def manage_edit_blog(request):
     """
     编辑博客页面路由函数
-    :param id: 博客ID
-    :return:
+    :param request: 请求对象
+    :return: 编辑博客页面
     """
     return {
-        '__template__': 'manage_blog_edit.html',
-        'id': id,
-        'action': '/api/blogs/%s' % id
+        '__template__': 'manage_blog_edit.html'
     }
 
 
 @get('/manage/comments')
-def manage_comments(*, page='1'):
+def manage_comments(request):
     """
     管理评论页面路由函数
-    :param page: 页面索引
-    :return:
+    :param request: 请求对象
+    :return: 评论管理页面
     """
     return {
-        '__template__': 'manage_comments.html',
-        'page_index': get_page_index(page)
+        '__template__': 'manage_comments.html'
     }
-
-
-def generate_user_cookie(user, max_age):
-    """
-    根据用户信息生成COOKIE
-    :param user: 用户
-    :param max_age: COOKIE有效时间
-    :return: COOKIE字符串
-    """
-    # 过期时间
-    expires = str(int(time.time() + max_age))
-    cookie_key = configs.session.secret
-    mix_str = '%s-%s-%s-%s' % (user['id'], user['password'], expires, cookie_key)
-    items = [user['id'], expires, hashlib.sha1(mix_str.encode('utf-8')).hexdigest()]
-    return '-'.join(items)
-
-
-def generate_sha1_password(user_id, original_password):
-    """
-    根据用户id和原始密码, 生成一个进过sha1加密的密码
-    :param user_id: 用户id
-    :param original_password: 原始密码
-    :return: 加密密码
-    """
-    uid_password = '%s:%s' % (user_id, original_password)
-    sha1_password = hashlib.sha1(uid_password.encode('utf-8')).hexdigest()
-    return sha1_password
 
 
 @post('/api/authenticate')
@@ -274,36 +257,30 @@ async def api_user_authenticate(request):
     :param request: 请求对象
     :return: 回响消息, 并且设置COOKIE
     """
-    error = {'error': '非法数据', 'message': ''}
-
     ct = request.content_type.lower()
     if ct.startswith('application/json'):
         params = await request.json()
         if not isinstance(params, dict):
-            return error
+            return data_error()
     else:
-        return error
+        return data_error()
 
     email = params['email']
     password = params['password']
 
     if not email:
-        error['message'] = u'非法邮箱账号'
-        return error
+        return data_error(u'非法邮箱账号')
     if not password:
-        error['message'] = u'非法密码'
-        return error
+        return data_error(u'非法密码')
 
     users = await User.find_all(where='email=?', args=[email])
     if len(users) == 0:
-        error['message'] = u'账号不存在'
-        return error
+        return data_error(u'账号不存在')
 
     user = users[0]
     sha1_password = generate_sha1_password(user['id'], password)
     if user['password'] != sha1_password:
-        error['message'] = u'密码错误'
-        return error
+        return data_error(u'密码有误')
 
     cookie_name = configs.session.cookie_name
     r = web.Response()
@@ -315,11 +292,15 @@ async def api_user_authenticate(request):
 
 
 @get('/api/users')
-async def api_get_users():
+async def api_user_get(request):
     """
     WEB API: 获取用户数据API函数
+    :param request: 请求对象
     :return: 用户数据字典
     """
+    if not check_admin(request):
+        return permission_error()
+
     users = await User.find_all(order_by='created_at desc')
     for u in users:
         u['password'] = '******'
@@ -327,7 +308,7 @@ async def api_get_users():
 
 
 @post('/api/users')
-async def api_register_user(request):
+async def api_user_register(request):
     """
     用户注册API函数
     :param request: 请求对象
@@ -340,9 +321,9 @@ async def api_register_user(request):
     if ct.startswith('application/json'):
         params = await request.json()
         if not isinstance(params, dict):
-            return {'error': u'非法数据'}
+            return data_error()
     else:
-        return {'error': u'非法数据'}
+        return data_error()
 
     name = params['name']
     email = params['email']
@@ -350,16 +331,16 @@ async def api_register_user(request):
 
     # 检查用户数据是否合法
     if not name or not name.strip():
-        return {'error': u'非法数据', 'message': u'非法用户名'}
+        return data_error(u'非法用户名')
     if not email or not _RE_EMAIL.match(email):
-        return {'error': u'非法数据', 'message': u'非法邮箱账号'}
+        return data_error(u'非法邮箱账号')
     if not password or not _RE_SHA1.match(password):
-        return {'error': u'非法数据', 'message': u'非法密码'}
+        return data_error(u'非法密码')
 
     # 检查用户邮箱是否已经被注册
     users = await User.find_all(where='email=?', args=[email])
     if len(users) > 0:
-        return {'error': u'非法数据', 'message': u'邮箱已经被使用'}
+        return data_error(u'邮箱已经被使用')
 
     # 生成用户ID, 并且混合用户ID和密码进行SHA1加密
     uid = generate_id()
@@ -386,7 +367,7 @@ async def api_register_user(request):
 
 
 @get('/api/blogs')
-async def api_get_blogs(request):
+async def api_blog_get(request):
     """
     获取指定页面的博客数据函数
     :param request: 请求对象
@@ -394,7 +375,7 @@ async def api_get_blogs(request):
     """
 
     if not check_admin(request):
-        return {'error': '权限错误', 'message': '你没有这个权限进行这个操作'}
+        return permission_error()
 
     page_index = 1
     str_dict = parse_query_string(request.query_string)
@@ -410,35 +391,53 @@ async def api_get_blogs(request):
 
 
 @get('/api/blogs/{blog_id}')
-async def api_get_blog(*, blog_id):
+async def api_blog_get_one(request):
     """
     获取指定ID的博客数据函数
-    :param blog_id: 指定的博客id
+    :param request: 请求对象
     :return: 博客数据
     """
+    if not check_admin(request):
+        return permission_error()
+
+    blog_id = request.match_info['blog_id']
     blog = await Blog.find(blog_id)
+    if not blog:
+        return data_error(u'非法blog id')
+
     return blog
 
 
 @post('/api/blogs')
-async def api_create_blog(request, *, name, summary, content):
+async def api_blog_create(request):
     """
     创建博客API函数
     :param request: 请求
-    :param name: 博客名称
-    :param summary: 博客摘要
-    :param content: 博客内容
     :return:
     """
-    check_admin(request)
+    if not check_admin(request):
+        return permission_error()
+
+    ct = request.content_type.lower()
+    if ct.startswith('application/json'):
+        params = await request.json()
+        if not isinstance(params, dict):
+            return data_error()
+    else:
+        return data_error()
+
+    name = params['name']
+    summary = params['summary']
+    content = params['content']
+
     if not name or not name.strip():
-        raise APIValueError('name', u'博客名不能为空')
+        return data_error(u'博客名称不能为空')
 
     if not summary or not summary.strip():
-        raise APIValueError('summary', u'摘要不能为空')
+        return data_error(u'博客摘要不能为空')
 
     if not content or not content.strip():
-        raise APIValueError('content', u'内容不能为空')
+        return data_error(u'博客内容不能为空')
 
     blog = Blog(user_id=request.__user__['id'],
                 user_name=request.__user__['name'],
@@ -451,24 +450,39 @@ async def api_create_blog(request, *, name, summary, content):
 
 
 @post('/api/blogs/{blog_id}')
-async def api_update_blog(blog_id, request, *, name, summary, content):
+async def api_blog_update(request):
     """
     更新博客API函数
-    :param blog_id: 博客ID
-    :param request: 请求
-    :param name: 博客名
-    :param summary: 博客摘要
-    :param content: 博客内容
+    :param request: 请求对象
     :return:
     """
-    check_admin(request)
-    blog = await Blog.find(blog_id)
+    if not check_admin(request):
+        return permission_error()
+
+    ct = request.content_type.lower()
+    if ct.startswith('application/json'):
+        params = await request.json()
+        if not isinstance(params, dict):
+            return data_error()
+    else:
+        return data_error()
+
+    blog_id = request.match_info['blog_id']
+
+    name = params['name']
+    summary = params['summary']
+    content = params['content']
+
     if not name or not name.strip():
-        raise APIValueError('name', u'博客名不能为空')
+        return data_error(u'博客名称不能为空')
     if not summary or not summary.strip():
-        raise APIValueError('summary', u'博客摘要不能为空')
+        return data_error(u'博客摘要不能为空')
     if not content or not content.strip():
-        raise APIValueError('content', u'博客内容不能为空')
+        return data_error(u'博客内容不能为空')
+
+    blog = await Blog.find(blog_id)
+    if not blog:
+        return data_error(u'非法blog id')
 
     blog.name = name.strip()
     blog.summary = summary.strip()
@@ -478,27 +492,42 @@ async def api_update_blog(blog_id, request, *, name, summary, content):
 
 
 @post('/api/blogs/{blog_id}/delete')
-async def api_delete_blog(request, *, blog_id):
+async def api_blog_delete(request):
     """
     删除博客API函数
-    :param request: 请求
-    :param blog_id: 博客ID
+    :param request: 请求对象
     :return:
     """
-    check_admin(request)
+    if not check_admin(request):
+        return permission_error()
+
+    blog_id = request.match_info['blog_id']
+
+    # 根据博客ID找到博客详细内容
     blog = await Blog.find(blog_id)
+    if not blog:
+        return data_error(u'非法blog id')
+
     await blog.remove()
+
     return dict(id=blog_id)
 
 
 @get('/api/images')
-async def api_get_images(*, page='1'):
+async def api_image_get(request):
     """
     获取图像API函数
-    :param page: 页面索引
-    :return:
+    :param request: 请求对象
+    :return: 图像数据
     """
-    page_index = get_page_index(page)
+    if not check_admin(request):
+        return permission_error()
+
+    page_index = 1
+    str_dict = parse_query_string(request.query_string)
+    if 'page' in str_dict:
+        page_index = int(str_dict['page'])
+
     num = await Image.find_number('count(id)')
     p = Page(num, page_index, page_size=6)
     if num == 0:
@@ -508,13 +537,22 @@ async def api_get_images(*, page='1'):
 
 
 @post('/api/images')
-async def api_upload_image(request):
+async def api_image_upload(request):
     """
     上传图片API函数
     :param request: 请求对象
     :return:
     """
-    params = await request.json()
+    if not check_admin(request):
+        return permission_error()
+
+    ct = request.content_type.lower()
+    if ct.startswith('application/json'):
+        params = await request.json()
+        if not isinstance(params, dict):
+            return data_error()
+    else:
+        return data_error()
 
     image = Image(url='xx')
     await image.save()
@@ -541,15 +579,20 @@ async def api_upload_image(request):
 
 
 @post('/api/images/{image_id}/delete')
-async def api_delete_image(request, *, image_id):
+async def api_image_delete(request):
     """
     删除博客API函数
     :param request: 请求
-    :param image_id: 图像ID
     :return:
     """
-    check_admin(request)
+    if not check_admin(request):
+        return permission_error()
+
+    image_id = request.match_info['image_id']
     image = await Image.find(image_id)
+    if not image:
+        return data_error(u'非法image id')
+
     url = image.url
     await image.remove()
 
@@ -562,54 +605,56 @@ async def api_delete_image(request, *, image_id):
 
 
 @get('/api/comments')
-async def api_get_comments(*, page='1'):
+async def api_comment_get(request):
     """
     获取评论API函数
-    :param page: 页面索引
-    :return:
+    :param request: 请求对象
+    :return: 评论数据
     """
-    page_index = get_page_index(page)
+    if not check_admin(request):
+        return permission_error()
+
+    page_index = 1
+    str_dict = parse_query_string(request.query_string)
+    if 'page' in str_dict:
+        page_index = int(str_dict['page'])
+
     num = await Comment.find_number('count(id)')
     p = Page(num, page_index)
     if num == 0:
         return dict(page=p, comments=())
-    comments = await Comment.find_all(orderBy='created_at desc', limit=(p.offset, p.limit))
+    comments = await Comment.find_all(order_by='created_at desc', limit=(p.offset, p.limit))
     return dict(page=p, comments=comments)
 
 
 @post('/api/blogs/{blog_id}/comments')
-async def api_create_comment(request):
+async def api_comment_create(request):
     """
     创建评论API函数
     :param request: 请求
     :return: 返回响应消息
     """
-    error = {'error': '非法数据', 'message': ''}
-
     user = request.__user__
     if user is None:
-        error['message'] = u'请登录'
-        return error
+        return data_error(u'请先登录')
 
     ct = request.content_type.lower()
     if ct.startswith('application/json'):
         params = await request.json()
         if not isinstance(params, dict):
-            return {'error': u'非法数据'}
+            return data_error()
     else:
-        return {'error': u'非法数据'}
+        return data_error()
 
     content = params['content']
 
     if not content or not content.strip():
-        error['message'] = u'评论内容不能为空'
-        return error
+        return data_error(u'评论内容不能为空')
 
     blog_id = request.match_info['blog_id']
     blog = await Blog.find(blog_id)
     if blog is None:
-        error['message'] = u'评论的博客不存在'
-        return error
+        return data_error(u'评论的博客不存在')
 
     comment = Comment(blog_id=blog.id,
                       user_id=user.id,
@@ -621,18 +666,22 @@ async def api_create_comment(request):
 
 
 @post('/api/comments/{id}/delete')
-async def api_delete_comment(id, request):
+async def api_comment_delete(request):
     """
     删除评论API函数
-    :param id: 评论ID
-    :param request: 请求
+    :param request: 请求对象
     :return:
     """
-    check_admin(request)
-    c = await Comment.find(id)
+    if not check_admin(request):
+        return permission_error()
+
+    comment_id = request.match_info['id']
+
+    c = await Comment.find(comment_id)
     if c is None:
-        raise APIResourceNotFoundError('Comment', u'该评论不存在')
+        return data_error(u'非法comment id')
+
     await c.remove()
-    return dict(id=id)
+    return dict(id=comment_id)
 
 

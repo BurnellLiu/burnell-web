@@ -69,36 +69,9 @@ class Page(object):
     __repr__ = __str__
 
 
-class APIError(Exception):
-    """
-    API异常类
-    """
-    def __init__(self, error, data='', message=''):
-        super(APIError, self).__init__(message)
-        self.error = error
-        self.data = data
-        self.message = message
+def data_error(message=''):
+    return {'error': u'数据有误', 'message': message}
 
 
-class APIValueError(APIError):
-    """
-    API值异常类
-    """
-    def __init__(self, field, message=''):
-        super(APIValueError, self).__init__('value:invalid', field, message)
-
-
-class APIResourceNotFoundError(APIError):
-    """
-    API资源丢失异常类
-    """
-    def __init__(self, field, message=''):
-        super(APIResourceNotFoundError, self).__init__('value:notfound', field, message)
-
-
-class APIPermissionError(APIError):
-    """
-    API权限异常
-    """
-    def __init__(self, message=''):
-        super(APIPermissionError, self).__init__('permission:forbidden', 'permission', message)
+def permission_error():
+    return {'error': u'权限错误', 'message': u'你没有权限执行这个操作'}
