@@ -229,7 +229,8 @@ def add_route(app, fn):
     logging.info('add route function: %s(%s), method(%s), path(%s)' %
                  (fn.__name__, ', '.join(inspect.signature(fn).parameters.keys()), method, path, ))
 
-    app.router.add_route(method, path, RequestHandler(fn))
+    # app.router.add_route(method, path, RequestHandler(fn))
+    app.router.add_route(method, path, fn)
 
 
 def add_routes(app, module_name):

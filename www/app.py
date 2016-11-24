@@ -16,7 +16,7 @@ from config import configs
 from db_models import User
 
 import db_orm
-import coreweb
+import web_core
 
 __author__ = 'Burnell Liu'
 
@@ -69,7 +69,7 @@ async def logger_factory(app, handler):
 async def auth_factory(app, handler):
     """
     验证登录的中间件, 请求被处理前进行登录验证
-    :param app: WEB英语对象
+    :param app: WEB应用对象
     :param handler: 处理请求对象
     :return: 中间件处理对象
     """
@@ -195,10 +195,10 @@ async def app_init(event_loop):
     # 创建数据库连接池
     await db_orm.create_pool(
         loop=event_loop,
-        host='bdm240853593.my3w.com',
-        user='bdm240853593',
-        password='ttlovelj911',
-        db='bdm240853593_db')
+        host=configs.db.host,
+        user=configs.db.user,
+        password=configs.db.password,
+        db=configs.db.database)
 
     # 创建网站应用对象
     # middlewares 接收一个列表，列表的元素就是拦截器函数
@@ -210,10 +210,10 @@ async def app_init(event_loop):
     init_jinja2(web_app, filters=dict(datetime=datetime_filter))
 
     # 添加路由函数
-    coreweb.add_routes(web_app, 'handlers.py')
+    web_core.add_routes(web_app, 'web_routes.py')
 
     # 添加静态文件
-    coreweb.add_static(web_app)
+    web_core.add_static(web_app)
 
     # 创建服务器
     server = await event_loop.create_server(web_app.make_handler(), '127.0.0.1', 9000)

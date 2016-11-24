@@ -12,11 +12,12 @@ import random
 import os
 
 from aiohttp import web
+from urllib import parse
 
 import markdown2
 
 from config import configs
-from coreweb import get, post
+from web_core import get, post
 from db_models import User, Comment, Blog, Image,generate_id
 from apis import Page, APIError, APIValueError, APIResourceNotFoundError, APIPermissionError
 
@@ -27,6 +28,34 @@ def text2html(text):
     lines = map(lambda s: '<p>%s</p>' % s.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;'),
                 filter(lambda s: s.strip() != '', text.split('\n')))
     return ''.join(lines)
+
+
+def check_admin(request):
+    """
+    检查是否是管理员用户
+    :param request: 请求对象
+    :return: 如果当前用户不是管理员则返回False, 否则返回true
+    """
+    if request.__user__ is None or not request.__user__['admin']:
+        return False
+    else:
+        return True
+
+
+def parse_query_string(qs):
+    """
+    解析查询字符串
+    :param qs: 需要解析的查询字符串
+    :return: 查询字段字典
+    """
+    kw = dict()
+    if not qs:
+        return kw
+
+    for k, v in parse.parse_qs(qs, True).items():
+        kw[k] = v[0]
+
+    return kw
 
 
 def get_page_index(page_str):
@@ -41,20 +70,26 @@ def get_page_index(page_str):
 
 
 @get('/')
-async def index(*, page='1'):
+async def index(request):
     """
     WEB APP首页路由函数
-    :param page: 博客页索引
-    :return:
+    :param request: 请求对象
+    :return: 首页面
     """
-    page_index = get_page_index(page)
+    page_index = 1
+    str_dict = parse_query_string(request.query_string)
+    if 'page' in str_dict:
+        page_index = int(str_dict['page'])
+
     num = await Blog.find_number('count(id)')
     page = Page(num, page_index)
+
     if num == 0:
         blogs = []
     else:
         # 以创建时间降序的方式查找指定的博客
         blogs = await Blog.find_all(order_by='created_at desc', limit=(page.offset, page.limit))
+
     return {
         '__template__': 'index.html',
         'page': page,
@@ -63,14 +98,19 @@ async def index(*, page='1'):
 
 
 @get('/blog/{blog_id}')
-async def blog(blog_id):
+async def blog_detail(request):
     """
     博客详细页面路由函数
-    :param blog_id: 博客ID
-    :return:
+    :param request: 请求对象
+    :return: 博客详细页面
     """
+
+    blog_id = request.match_info['blog_id']
+
     # 根据博客ID找到博客详细内容
     blog = await Blog.find(blog_id)
+    if not blog:
+        return {'error': '非法页面'}
 
     # 找到指定博客ID的博客的评论
     comments = await Comment.find_all('blog_id=?', [blog_id], orderBy='created_at desc')
@@ -85,28 +125,31 @@ async def blog(blog_id):
 
 
 @get('/register')
-def register():
+def user_register(request):
     """
     用户注册页面路由函数
-    :return:
+    :param request: 请求对象
+    :return: 用户注册页面
     """
     return {
-        '__template__': 'register.html'
+        '__template__': 'user_register.html'
     }
 
 
 @get('/signin')
-def signin():
+def user_signin(request):
     """
     用户登录页面路由函数
+    :param request: 请求对象
+    :return: 用户登录
     """
     return {
-        '__template__': 'signin.html'
+        '__template__': 'user_signin.html'
     }
 
 
 @get('/signout')
-def signout(request):
+def user_signout(request):
     """
     用户登出路由函数
     :param request: 请求对象
@@ -134,15 +177,14 @@ def manage_users(*, page='1'):
 
 
 @get('/manage/blogs')
-def manage_blogs(*, page='1'):
+def manage_blogs(request):
     """
     管理博客页面路由函数
-    :param page:
-    :return:
+    :param request: 请求对象
+    :return: 管理博客页面
     """
     return {
         '__template__': 'manage_blogs.html',
-        'page_index': get_page_index(page)
     }
 
 
@@ -198,16 +240,6 @@ def manage_comments(*, page='1'):
     }
 
 
-def check_admin(request):
-    """
-    检查是否是管理员用户
-    :param request: 请求对象
-    :return: 如果当前用户不是管理员则抛出异常
-    """
-    if request.__user__ is None or not request.__user__['admin']:
-        raise APIPermissionError()
-
-
 def generate_user_cookie(user, max_age):
     """
     根据用户信息生成COOKIE
@@ -236,30 +268,42 @@ def generate_sha1_password(user_id, original_password):
 
 
 @post('/api/authenticate')
-async def api_user_authenticate(*, email, password):
+async def api_user_authenticate(request):
     """
     用户登录验证API函数
-    :param email: 用户邮箱
-    :param password: 用户密码
+    :param request: 请求对象
     :return: 回响消息, 并且设置COOKIE
     """
+    error = {'error': '非法数据', 'message': ''}
+
+    ct = request.content_type.lower()
+    if ct.startswith('application/json'):
+        params = await request.json()
+        if not isinstance(params, dict):
+            return error
+    else:
+        return error
+
+    email = params['email']
+    password = params['password']
+
     if not email:
-        raise APIValueError(email, u'非法邮箱账号')
+        error['message'] = u'非法邮箱账号'
+        return error
     if not password:
-        raise APIValueError(password, u'非法密码')
+        error['message'] = u'非法密码'
+        return error
 
     users = await User.find_all(where='email=?', args=[email])
     if len(users) == 0:
-        # TODO: APIError第二个参数设置为'invalid email'会导致登录按钮处于旋转状态
-        # TODO: 原因不明
-        raise APIError('authenticate:fail', 'email', u'邮箱账号不存在')
+        error['message'] = u'账号不存在'
+        return error
 
     user = users[0]
     sha1_password = generate_sha1_password(user['id'], password)
     if user['password'] != sha1_password:
-        # TODO: APIError第二个参数设置为'invalid password'会导致登录按钮处于旋转状态
-        # TODO: 原因不明
-        raise APIError('authenticate:fail', 'password', u'密码错误')
+        error['message'] = u'密码错误'
+        return error
 
     cookie_name = configs.session.cookie_name
     r = web.Response()
@@ -283,29 +327,39 @@ async def api_get_users():
 
 
 @post('/api/users')
-async def api_register_user(*, email, name, password):
+async def api_register_user(request):
     """
     用户注册API函数
-    :param email: 用户邮箱
-    :param name: 用户名
-    :param password: 密码, 传送过来的密码值为: 用户邮箱混合原始密码进行SHA1加密
-    :return:
+    :param request: 请求对象
+    :return: 注册成功则设置COOKIE，返回响应消息
     """
     _RE_EMAIL = re.compile(r'^[a-z0-9\.\-\_]+\@[a-z0-9\-\_]+(\.[a-z0-9\-\_]+){1,4}$')
     _RE_SHA1 = re.compile(r'^[0-9a-f]{40}$')
 
+    ct = request.content_type.lower()
+    if ct.startswith('application/json'):
+        params = await request.json()
+        if not isinstance(params, dict):
+            return {'error': u'非法数据'}
+    else:
+        return {'error': u'非法数据'}
+
+    name = params['name']
+    email = params['email']
+    password = params['password']
+
     # 检查用户数据是否合法
     if not name or not name.strip():
-        raise APIValueError(name, u'用户名非法')
+        return {'error': u'非法数据', 'message': u'非法用户名'}
     if not email or not _RE_EMAIL.match(email):
-        raise APIValueError(email, u'邮箱账号非法')
+        return {'error': u'非法数据', 'message': u'非法邮箱账号'}
     if not password or not _RE_SHA1.match(password):
-        raise APIValueError(password, '密码非法')
+        return {'error': u'非法数据', 'message': u'非法密码'}
 
     # 检查用户邮箱是否已经被注册
     users = await User.find_all(where='email=?', args=[email])
     if len(users) > 0:
-        raise APIError('register:fail', email, u'邮箱已经被使用')
+        return {'error': u'非法数据', 'message': u'邮箱已经被使用'}
 
     # 生成用户ID, 并且混合用户ID和密码进行SHA1加密
     uid = generate_id()
@@ -332,18 +386,26 @@ async def api_register_user(*, email, name, password):
 
 
 @get('/api/blogs')
-async def api_get_blogs(*, page='1'):
+async def api_get_blogs(request):
     """
     获取指定页面的博客数据函数
-    :param page: 页面索引
-    :return:
+    :param request: 请求对象
+    :return: 博客数据
     """
-    page_index = get_page_index(page)
+
+    if not check_admin(request):
+        return {'error': '权限错误', 'message': '你没有这个权限进行这个操作'}
+
+    page_index = 1
+    str_dict = parse_query_string(request.query_string)
+    if 'page' in str_dict:
+        page_index = int(str_dict['page'])
+
     num = await Blog.find_number('count(id)')
     p = Page(num, page_index)
     if num == 0:
         return dict(page=p, blogs=())
-    blogs = await Blog.find_all(orderBy='created_at desc', limit=(p.offset, p.limit))
+    blogs = await Blog.find_all(order_by='created_at desc', limit=(p.offset, p.limit))
     return dict(page=p, blogs=blogs)
 
 
@@ -493,8 +555,8 @@ async def api_delete_image(request, *, image_id):
 
     filename = '.'
     filename += url
-    # if os.path.exist(filename):
-    os.remove(filename)
+    if os.path.exists(filename):
+        os.remove(filename)
 
     return dict(id=image_id)
 
@@ -516,24 +578,38 @@ async def api_get_comments(*, page='1'):
 
 
 @post('/api/blogs/{blog_id}/comments')
-async def api_create_comment(blog_id, request, *, content):
+async def api_create_comment(request):
     """
     创建评论API函数
-    :param blog_id: 博客ID
     :param request: 请求
-    :param content: 评论内容
-    :return:
+    :return: 返回响应消息
     """
+    error = {'error': '非法数据', 'message': ''}
+
     user = request.__user__
     if user is None:
-        raise APIPermissionError(u'请先登录')
+        error['message'] = u'请登录'
+        return error
+
+    ct = request.content_type.lower()
+    if ct.startswith('application/json'):
+        params = await request.json()
+        if not isinstance(params, dict):
+            return {'error': u'非法数据'}
+    else:
+        return {'error': u'非法数据'}
+
+    content = params['content']
 
     if not content or not content.strip():
-        raise APIValueError('content', u'评论内容不能为空')
+        error['message'] = u'评论内容不能为空'
+        return error
 
+    blog_id = request.match_info['blog_id']
     blog = await Blog.find(blog_id)
     if blog is None:
-        raise APIResourceNotFoundError('Blog', u'评论的博客不存在')
+        error['message'] = u'评论的博客不存在'
+        return error
 
     comment = Comment(blog_id=blog.id,
                       user_id=user.id,

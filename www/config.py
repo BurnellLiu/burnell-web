@@ -6,6 +6,7 @@
 """
 
 import config_default
+import config_override
 
 __author__ = 'Burnell Liu'
 
@@ -59,12 +60,6 @@ def to_attribute_dict(d):
         attribute_dict[k] = to_attribute_dict(v) if isinstance(v, dict) else v
     return attribute_dict
 
-configs = config_default.configs
 
-try:
-    import config_override
-    configs = dict_merge(config_default.configs, config_override.configs)
-except ImportError:
-    pass
-
+configs = dict_merge(config_default.configs, config_override.configs)
 configs = to_attribute_dict(configs)
