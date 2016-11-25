@@ -134,7 +134,35 @@ async def index(request):
         blogs = await Blog.find_all(order_by='created_at desc', limit=(page.offset, page.limit))
 
     return {
-        '__template__': 'index.html',
+        '__template__': 'blog_list.html',
+        'page': page,
+        'blogs': blogs
+    }
+
+
+@get('/blogs')
+async def blog_list(request):
+    """
+    博客列表路由函数
+    :param request: 请求对象
+    :return: 博客列表页面
+    """
+    page_index = 1
+    str_dict = parse_query_string(request.query_string)
+    if 'page' in str_dict:
+        page_index = int(str_dict['page'])
+
+    num = await Blog.find_number('count(id)')
+    page = Pagination(num, page_index)
+
+    if num == 0:
+        blogs = []
+    else:
+        # 以创建时间降序的方式查找指定的博客
+        blogs = await Blog.find_all(order_by='created_at desc', limit=(page.offset, page.limit))
+
+    return {
+        '__template__': 'blog_list.html',
         'page': page,
         'blogs': blogs
     }
@@ -154,6 +182,10 @@ async def blog_detail(request):
     blog = await Blog.find(blog_id)
     if not blog:
         return data_error(u'非法blog id')
+
+    # 阅读次数增加
+    blog.read_times += 1
+    await blog.update()
 
     # 找到指定博客ID的博客的评论
     comments = await Comment.find_all('blog_id=?', [blog_id], order_by='created_at desc')
@@ -293,8 +325,12 @@ async def api_user_authenticate(request):
     else:
         return data_error()
 
-    email = params['email']
-    password = params['password']
+    email = None
+    if 'email' in params:
+        email = params['email']
+    password = None
+    if 'password' in params:
+        password = params['password']
 
     if not email:
         return data_error(u'非法邮箱账号')
@@ -355,9 +391,15 @@ async def api_user_register(request):
     else:
         return data_error()
 
-    name = params['name']
-    email = params['email']
-    password = params['password']
+    name = None
+    if 'name' in params:
+        name = params['name']
+    email = None
+    if 'email' in params:
+        email = params['email']
+    password = None
+    if 'password' in params:
+        password = params['password']
 
     # 检查用户数据是否合法
     if not name or not name.strip():
@@ -456,9 +498,18 @@ async def api_blog_create(request):
     else:
         return data_error()
 
-    name = params['name']
-    summary = params['summary']
-    content = params['content']
+    name = None
+    if 'name' in params:
+        name = params['name']
+    summary = None
+    if 'summary' in params:
+        summary = params['summary']
+    content = None
+    if 'content' in params:
+        content = params['content']
+    cover_image = None
+    if 'cover_image' in params:
+        cover_image = params['cover_image']
 
     if not name or not name.strip():
         return data_error(u'博客名称不能为空')
@@ -469,12 +520,17 @@ async def api_blog_create(request):
     if not content or not content.strip():
         return data_error(u'博客内容不能为空')
 
+    if not cover_image or not cover_image.strip():
+        return data_error(u'封面图片不能为空')
+
     blog = Blog(user_id=request.__user__['id'],
                 user_name=request.__user__['name'],
                 user_image=request.__user__['image'],
                 name=name.strip(),
                 summary=summary.strip(),
-                content=content.strip())
+                content=content.strip(),
+                cover_image=cover_image.strip(),
+                read_times=0)
     await blog.save()
     return blog
 
@@ -502,6 +558,7 @@ async def api_blog_update(request):
     name = params['name']
     summary = params['summary']
     content = params['content']
+    cover_image = params['cover_image']
 
     if not name or not name.strip():
         return data_error(u'博客名称不能为空')
@@ -509,6 +566,8 @@ async def api_blog_update(request):
         return data_error(u'博客摘要不能为空')
     if not content or not content.strip():
         return data_error(u'博客内容不能为空')
+    if not cover_image or not cover_image.strip():
+        return data_error(u'封面图片不能为空')
 
     blog = await Blog.find(blog_id)
     if not blog:
@@ -517,6 +576,7 @@ async def api_blog_update(request):
     blog.name = name.strip()
     blog.summary = summary.strip()
     blog.content = content.strip()
+    blog.cover_image = cover_image.strip()
     await blog.update()
     return blog
 
@@ -584,18 +644,28 @@ async def api_image_upload(request):
     else:
         return data_error()
 
+    image_name = None
+    if 'name' in params:
+        image_name = params['name']
+    image_str = None
+    if 'image' in params:
+        image_str = params['image']
+    if not image_name or not image_name.strip():
+        return data_error(u'图片名不能为空')
+    if not image_str or not image_str.strip():
+        return data_error(u'图片内容不能为空')
+
     image = Image(url='xx')
     await image.save()
 
     # 使用图片数据的创建时间做为URL
     image_url = '/static/img/'
     image_url += str(int(image.created_at * 1000))
-    image_url += params['name']
+    image_url += image_name
 
     image.url = image_url
     await image.update()
 
-    image_str = params['image']
     image_str = image_str.replace('data:image/png;base64,', '')
     image_str = image_str.replace('data:image/jpeg;base64,', '')
     image_data = base64.b64decode(image_str)
@@ -676,7 +746,9 @@ async def api_comment_create(request):
     else:
         return data_error()
 
-    content = params['content']
+    content = None
+    if 'content' in params:
+        content = params['content']
 
     if not content or not content.strip():
         return data_error(u'评论内容不能为空')

@@ -13,9 +13,10 @@
 
     <div class="uk-width-medium-3-4">
         <article class="uk-article">
-            <h1>{{ blog.name }}</h1>
-            <p class="uk-article-meta">发表于{{ blog.created_at|datetime }}</p>
-            <p>{{ blog.html_content|safe }}</p>
+            <h1 class="uk-article-title">{{ blog.name }}</h1>
+            <p class="uk-article-meta">发表于{{ blog.created_at|datetime }}&nbsp;&nbsp;阅读: {{ blog.read_times }}</p>
+            <p><img src="{{ blog.cover_image }}"></p>
+            <p>{{ blog.html_content|safe}}</p>
         </article>
 
         <hr class="uk-article-divider">

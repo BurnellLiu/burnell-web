@@ -4,7 +4,7 @@
 
 import time
 import uuid
-from db_orm import Model, StringField, BooleanField, FloatField, TextField
+from db_orm import Model, StringField, BooleanField, FloatField, TextField, IntegerField
 
 __author__ = 'Burnell Liu'
 
@@ -53,8 +53,10 @@ class Blog(Model):
     `user_name` varchar(50) not null,
     `user_image` varchar(500) not null,
     `name` varchar(50) not null,
+    `cover_image` varchar(500) NOT NULL DEFAULT '',
     `summary` varchar(200) not null,
     `content` mediumtext not null,
+    `read_times` bigint(20) unsigned zerofill NOT NULL DEFAULT '00000000000000000000',
     `created_at` real not null,
     key `idx_created_at` (`created_at`),
     primary key (`id`)
@@ -67,8 +69,10 @@ class Blog(Model):
     user_name = StringField(ddl='varchar(50)')
     user_image = StringField(ddl='varchar(500)')
     name = StringField(ddl='varchar(50)')
+    cover_image = StringField(ddl='varchar(500)')
     summary = StringField(ddl='varchar(200)')
     content = TextField()
+    read_times = IntegerField()
     created_at = FloatField(default=time.time)
 
 

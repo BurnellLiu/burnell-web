@@ -72,12 +72,14 @@ function postBlogRequestDone(data){
 
     confirm('上传博客成功');
 
-    // 清空原有内容
-    $blogForm.find("#title").val(null);
-    $blogForm.find("#summary").val(null);
-    $blogForm.find("#content").val(null);
-
-
+    var path = location.pathname;
+    if (path === '/manage/blogs/create'){
+        // 清空原有内容
+        $blogForm.find('#title').val(null);
+        $blogForm.find('#cover-image').val(null);
+        $blogForm.find('#summary').val(null);
+        $blogForm.find('#content').val(null);
+    }
 }
 
 /**
@@ -94,6 +96,7 @@ function getBlogRequestDone(data){
     }
 
     $blogForm.find("#title").val(data.name);
+    $blogForm.find('#cover-image').val(data.cover_image);
     $blogForm.find("#summary").val(data.summary);
     $blogForm.find("#content").val(data.content);
 
@@ -142,7 +145,7 @@ function getBlogRequest(){
     var opt = {
         type: 'GET',
         url: window.blogAction,
-        dataType: 'json',
+        dataType: 'json'
     };
     // 发送请求
     var jqxhr = $.ajax(opt);
@@ -159,15 +162,22 @@ function blogSubmit(event) {
     // 通知浏览器提交已被处理， 阻止默认行为的发生
     event.preventDefault();
 
-    var title = $blogForm.find("#title").val();
-    var summary = $blogForm.find("#summary").val();
-    var content = $blogForm.find("#content").val();
+    var title = $blogForm.find('#title').val();
+    var summary = $blogForm.find('#summary').val();
+    var content = $blogForm.find('#content').val();
+    var coverImage = $blogForm.find('#cover-image').val();
 
     // 博客信息是否合法
     if (!title.trim()) {
         showErrorMessage('请输入标题');
         return;
     }
+
+    if (!coverImage.trim()){
+        showErrorMessage('请输入封面图片');
+        return;
+    }
+
     if (!summary.trim()) {
         showErrorMessage('请输入摘要');
         return;
@@ -179,6 +189,7 @@ function blogSubmit(event) {
 
     var blog = {
         name: title.trim(),
+        cover_image: coverImage.trim(),
         summary: summary.trim(),
         content: content.trim()
     };
@@ -206,8 +217,8 @@ function initPage(){
         var id = window.location.search.replace('?id=', '');
         window.blogAction = '/api/blogs/' + id;
         getBlogRequest();
-        return;
     }
+
 }
 
 $(document).ready(initPage);

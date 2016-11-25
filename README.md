@@ -54,4 +54,16 @@ sudo apt-get install nginx<br>
 sudo apt-get install supervisor<br>
 启动 Supervisor: sudo supervisord<br>
 
+10. 设置mysql可以远程链接<br>
+vim /etc/MySQL/my.cnf找到bind-address = 127.0.0.1<br>
+注释掉这行，如：#bind-address = 127.0.0.1<br>
+重启 MySQL：sudo /etc/init.d/mysql restart<br>
+root登录mysql: mysql -u root -p<br>
+授权远程链接: grant all privileges on *.* to root@"%" identified by "password" with grant option;<br>
+刷新权限信息: flush privileges;<br>
+
+
+
+
+
 
