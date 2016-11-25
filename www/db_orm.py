@@ -12,6 +12,7 @@ async def create_pool(loop, **kw):
     """
     创建连接池
     :param loop: 事件循环对象
+    :param kw: 关键字参数
     """
     logging.info('create database connection pool...')
     # 创建一个全局的连接池，每个HTTP请求都可以从连接池中直接获取数据库连接。
@@ -40,7 +41,7 @@ async def select(sql, args, size=None):
     :param size: 获取指定数量的记录
     :return: 条目
     """
-    logging.info('Sql: %s Args: %s Size:%s' % (sql, args, size))
+    # logging.info('Sql: %s Args: %s Size:%s' % (sql, args, size))
     global __pool
     async with __pool.get() as conn:
         async with conn.cursor(aiomysql.DictCursor) as cur:
@@ -61,7 +62,7 @@ async def execute(sql, args, autocommit=True):
     :param autocommit: 是否自动提交
     :return: 受影响的行数
     """
-    logging.info('Sql: %s Args: %s Autocommit:%s' % (sql, args, autocommit))
+    # logging.info('Sql: %s Args: %s Autocommit:%s' % (sql, args, autocommit))
     async with __pool.get() as conn:
         if not autocommit:
             await conn.begin()

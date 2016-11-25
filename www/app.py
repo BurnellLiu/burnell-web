@@ -6,51 +6,18 @@ import asyncio
 import os
 import json
 import time
-import hashlib
 
 from aiohttp import web
 from datetime import datetime
 from jinja2 import Environment, FileSystemLoader
 
 from config import configs
-from db_models import User
+from session_cookie import cookie_parse
 
 import db_orm
 import web_core
 
 __author__ = 'Burnell Liu'
-
-
-async def parse_cookie(cookie_str):
-    """
-    解析COOKIE字符串
-    :param cookie_str: COOKIE字符串
-    :return: 成功返回user对象, 失败返回None
-    """
-    if not cookie_str:
-        return None
-    try:
-        str_list = cookie_str.split('-')
-        if len(str_list) != 3:
-            return None
-        uid, expires, sha1 = str_list
-        if int(expires) < time.time():
-            return None
-        user = await User.find(uid)
-        if user is None:
-            return None
-
-        cookie_key = configs.session.secret
-        s = '%s-%s-%s-%s' % (uid, user['password'], expires, cookie_key)
-        if sha1 != hashlib.sha1(s.encode('utf-8')).hexdigest():
-            logging.info('parse cookie fail: invalid sha1')
-            return None
-        user['password'] = '******'
-        return user
-
-    except Exception as e:
-        logging.exception(e)
-        return None
 
 
 async def logger_factory(app, handler):
@@ -61,7 +28,7 @@ async def logger_factory(app, handler):
     :return: 中间件处理对象
     """
     async def logger(request):
-        logging.info('request arrived, method: %s, path: %s' % (request.method, request.path))
+        # logging.info('request arrived, method: %s, path: %s' % (request.method, request.path))
         return await handler(request)
     return logger
 
@@ -74,14 +41,13 @@ async def auth_factory(app, handler):
     :return: 中间件处理对象
     """
     async def auth(request):
-        logging.info('check user: %s %s' % (request.method, request.path))
         request.__user__ = None
 
         # 从COOKIE中解析出用户对象, 并且保存在请求对象中
-        cookie_name = configs.session.cookie_name
+        cookie_name = configs.cookie.name
         cookie_str = request.cookies.get(cookie_name)
         if cookie_str:
-            user = await parse_cookie(cookie_str)
+            user = await cookie_parse(cookie_str, configs.cookie.secret)
             if user:
                 logging.info('set current user: %s' % user['email'])
                 request.__user__ = user
@@ -103,8 +69,6 @@ async def response_factory(app, handler):
     async def response(request):
 
         r = await handler(request)
-
-        logging.info('response handler: %s' % r)
 
         # 如果处理后结果已经是web.Response对象, 则直接返回
         if isinstance(r, web.StreamResponse):
@@ -131,6 +95,25 @@ async def response_factory(app, handler):
                 return resp
 
     return response
+
+
+def datetime_filter(t):
+    """
+    时间过滤器, 格式化日期
+    :param t: 日期值, 该值为浮点数
+    :return: 格式化后的日期字符串
+    """
+    delta = int(time.time() - t)
+    if delta < 60:
+        return u'1分钟前'
+    if delta < 3600:
+        return u'%s分钟前' % (delta // 60)
+    if delta < 86400:
+        return u'%s小时前' % (delta // 3600)
+    if delta < 604800:
+        return u'%s天前' % (delta // 86400)
+    dt = datetime.fromtimestamp(t)
+    return u'%s年%s月%s日' % (dt.year, dt.month, dt.day)
 
 
 def init_jinja2(app, **kw):
@@ -165,25 +148,6 @@ def init_jinja2(app, **kw):
 
     # 保存jinja2环境实例
     app['__templating__'] = env
-
-
-def datetime_filter(t):
-    """
-    时间过滤器, 格式化日期
-    :param t: 日期值, 该值为浮点数
-    :return: 格式化后的日期字符串
-    """
-    delta = int(time.time() - t)
-    if delta < 60:
-        return u'1分钟前'
-    if delta < 3600:
-        return u'%s分钟前' % (delta // 60)
-    if delta < 86400:
-        return u'%s小时前' % (delta // 3600)
-    if delta < 604800:
-        return u'%s天前' % (delta // 86400)
-    dt = datetime.fromtimestamp(t)
-    return u'%s年%s月%s日' % (dt.year, dt.month, dt.day)
 
 
 async def app_init(event_loop):

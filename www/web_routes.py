@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import time
 import re
 import hashlib
 import json
@@ -18,9 +17,53 @@ import markdown2
 from config import configs
 from web_core import get, post
 from db_models import User, Comment, Blog, Image, generate_id
-from web_error import Page, permission_error, data_error
+from web_error import permission_error, data_error
+from session_cookie import cookie_generate
 
 __author__ = 'Burnell Liu'
+
+
+class Pagination(object):
+    """
+    分页类
+    """
+
+    def __init__(self, item_count, page_index=1, page_size=10):
+        """
+        页面类构造函数
+        :param item_count: 项目总数
+        :param page_index: 页索引
+        :param page_size: 页面大小
+        """
+        self.item_count = item_count
+        self.page_size = page_size
+
+        # 页面数量
+        self.page_count = item_count // page_size + (1 if item_count % page_size > 0 else 0)
+
+        if item_count == 0:
+            self.offset = 0
+            self.limit = 0
+            self.page_index = 1
+        elif page_index > self.page_count:
+            self.page_index = self.page_count
+            self.offset = self.page_size * (self.page_index - 1)
+            self.limit = self.page_size
+        else:
+            self.page_index = page_index
+            self.offset = self.page_size * (page_index - 1)
+            self.limit = self.page_size
+
+        # 标志是否存在下一页
+        self.has_next = self.page_index < self.page_count
+
+        # 标志是否存在前一页
+        self.has_previous = self.page_index > 1
+
+    def __str__(self):
+        return 'item_count: %s, page_count: %s, page_index: %s, page_size: %s, offset: %s, limit: %s' % (self.item_count, self.page_count, self.page_index, self.page_size, self.offset, self.limit)
+
+    __repr__ = __str__
 
 
 def text2html(text):
@@ -29,7 +72,7 @@ def text2html(text):
     return ''.join(lines)
 
 
-def check_admin(request):
+def is_admin(request):
     """
     检查是否是管理员用户
     :param request: 请求对象
@@ -57,24 +100,9 @@ def parse_query_string(qs):
     return kw
 
 
-def generate_user_cookie(user, max_age):
-    """
-    根据用户信息生成COOKIE
-    :param user: 用户
-    :param max_age: COOKIE有效时间
-    :return: COOKIE字符串
-    """
-    # 过期时间
-    expires = str(int(time.time() + max_age))
-    cookie_key = configs.session.secret
-    mix_str = '%s-%s-%s-%s' % (user['id'], user['password'], expires, cookie_key)
-    items = [user['id'], expires, hashlib.sha1(mix_str.encode('utf-8')).hexdigest()]
-    return '-'.join(items)
-
-
 def generate_sha1_password(user_id, original_password):
     """
-    根据用户id和原始密码, 生成一个进过sha1加密的密码
+    根据用户id和原始密码, 生成一个经过sha1加密的密码
     :param user_id: 用户id
     :param original_password: 原始密码
     :return: 加密密码
@@ -97,7 +125,7 @@ async def index(request):
         page_index = int(str_dict['page'])
 
     num = await Blog.find_number('count(id)')
-    page = Page(num, page_index)
+    page = Pagination(num, page_index)
 
     if num == 0:
         blogs = []
@@ -172,7 +200,7 @@ def user_signout(request):
     """
     referer = request.headers.get('Referer')
     r = web.HTTPFound(referer or '/')
-    cookie_name = configs.session.cookie_name
+    cookie_name = configs.cookie.name
     r.set_cookie(cookie_name, '-deleted-', max_age=0, httponly=True)
     logging.info('user signed out.')
     return r
@@ -282,9 +310,11 @@ async def api_user_authenticate(request):
     if user['password'] != sha1_password:
         return data_error(u'密码有误')
 
-    cookie_name = configs.session.cookie_name
+    cookie_name = configs.cookie.name
+    cookie_secret = configs.cookie.secret
+    cookie_str = cookie_generate(user, 86400, cookie_secret)
     r = web.Response()
-    r.set_cookie(cookie_name, generate_user_cookie(user, 86400), max_age=86400, httponly=True)
+    r.set_cookie(cookie_name, cookie_str, max_age=86400, httponly=True)
     user['password'] = '******'
     r.content_type = 'application/json'
     r.body = json.dumps(user, ensure_ascii=False).encode('utf-8')
@@ -298,7 +328,7 @@ async def api_user_get(request):
     :param request: 请求对象
     :return: 用户数据字典
     """
-    if not check_admin(request):
+    if not is_admin(request):
         return permission_error()
 
     users = await User.find_all(order_by='created_at desc')
@@ -354,12 +384,12 @@ async def api_user_register(request):
     await user.save()
 
     # 生成COOKIE
-    cookie = generate_user_cookie(user, 86400)
-    cookie_name = configs.session.cookie_name
+    cookie_str = cookie_generate(user, 86400, configs.cookie.secret)
+    cookie_name = configs.cookie.name
 
     # 生成响应消息
     r = web.Response()
-    r.set_cookie(cookie_name, cookie, max_age=86400, httponly=True)
+    r.set_cookie(cookie_name, cookie_str, max_age=86400, httponly=True)
     user['password'] = '******'
     r.content_type = 'application/json'
     r.body = json.dumps(user, ensure_ascii=False).encode('utf-8')
@@ -374,7 +404,7 @@ async def api_blog_get(request):
     :return: 博客数据
     """
 
-    if not check_admin(request):
+    if not is_admin(request):
         return permission_error()
 
     page_index = 1
@@ -383,7 +413,7 @@ async def api_blog_get(request):
         page_index = int(str_dict['page'])
 
     num = await Blog.find_number('count(id)')
-    p = Page(num, page_index)
+    p = Pagination(num, page_index)
     if num == 0:
         return dict(page=p, blogs=())
     blogs = await Blog.find_all(order_by='created_at desc', limit=(p.offset, p.limit))
@@ -397,7 +427,7 @@ async def api_blog_get_one(request):
     :param request: 请求对象
     :return: 博客数据
     """
-    if not check_admin(request):
+    if not is_admin(request):
         return permission_error()
 
     blog_id = request.match_info['blog_id']
@@ -415,7 +445,7 @@ async def api_blog_create(request):
     :param request: 请求
     :return:
     """
-    if not check_admin(request):
+    if not is_admin(request):
         return permission_error()
 
     ct = request.content_type.lower()
@@ -456,7 +486,7 @@ async def api_blog_update(request):
     :param request: 请求对象
     :return:
     """
-    if not check_admin(request):
+    if not is_admin(request):
         return permission_error()
 
     ct = request.content_type.lower()
@@ -498,7 +528,7 @@ async def api_blog_delete(request):
     :param request: 请求对象
     :return:
     """
-    if not check_admin(request):
+    if not is_admin(request):
         return permission_error()
 
     blog_id = request.match_info['blog_id']
@@ -520,7 +550,7 @@ async def api_image_get(request):
     :param request: 请求对象
     :return: 图像数据
     """
-    if not check_admin(request):
+    if not is_admin(request):
         return permission_error()
 
     page_index = 1
@@ -529,7 +559,7 @@ async def api_image_get(request):
         page_index = int(str_dict['page'])
 
     num = await Image.find_number('count(id)')
-    p = Page(num, page_index, page_size=6)
+    p = Pagination(num, page_index, page_size=6)
     if num == 0:
         return dict(page=p, images=())
     images = await Image.find_all(order_by='created_at desc', limit=(p.offset, p.limit))
@@ -543,7 +573,7 @@ async def api_image_upload(request):
     :param request: 请求对象
     :return:
     """
-    if not check_admin(request):
+    if not is_admin(request):
         return permission_error()
 
     ct = request.content_type.lower()
@@ -585,7 +615,7 @@ async def api_image_delete(request):
     :param request: 请求
     :return:
     """
-    if not check_admin(request):
+    if not is_admin(request):
         return permission_error()
 
     image_id = request.match_info['image_id']
@@ -611,7 +641,7 @@ async def api_comment_get(request):
     :param request: 请求对象
     :return: 评论数据
     """
-    if not check_admin(request):
+    if not is_admin(request):
         return permission_error()
 
     page_index = 1
@@ -620,7 +650,7 @@ async def api_comment_get(request):
         page_index = int(str_dict['page'])
 
     num = await Comment.find_number('count(id)')
-    p = Page(num, page_index)
+    p = Pagination(num, page_index)
     if num == 0:
         return dict(page=p, comments=())
     comments = await Comment.find_all(order_by='created_at desc', limit=(p.offset, p.limit))
@@ -672,7 +702,7 @@ async def api_comment_delete(request):
     :param request: 请求对象
     :return:
     """
-    if not check_admin(request):
+    if not is_admin(request):
         return permission_error()
 
     comment_id = request.match_info['id']
