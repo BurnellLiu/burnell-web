@@ -1,9 +1,9 @@
 server {
     listen      80;
 
-    root       /srv/burnellliu_webapp/www;
-    access_log /srv/burnellliu_webapp/log/access_log;
-    error_log  /srv/burnellliu_webapp/log/error_log;
+    root       /srv/burnell_web/www;
+    access_log /srv/burnell_web/log/access_log;
+    error_log  /srv/burnell_web/log/error_log;
 
     # server_name burnelltek.com;
 
@@ -17,11 +17,11 @@ server {
     sendfile on;
 
     location /favicon.ico {
-        root /srv/burnellliu_webapp/www;
+        root /srv/burnell_web/www/static/img;
     }
 
     location ~ ^\/static\/.*$ {
-        root /srv/burnellliu_webapp/www;
+        root /srv/burnell_web/www;
     }
 
     location / {
