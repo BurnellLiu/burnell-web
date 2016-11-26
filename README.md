@@ -75,12 +75,10 @@ stdout_logfile_maxbytes = 50MB
 stdout_logfile_backups  = 10
 stdout_logfile          = /srv/burnell_web/log/app.log
 ```
-
 然后重启Supervisor后，就可以随时启动和停止Supervisor管理的服务了：<br>
 重启：sudo supervisorctl reload <br>
 启动我们的服务：sudo supervisorctl start burnellweb <br>
 查看状态：sudo supervisorctl status<br>
-
 
 12. 配置Nginx <br>
 Supervisor只负责运行app.py，我们还需要配置Nginx，把配置文件burnellweb放到/etc/nginx/sites-available/目录下：<br>
