@@ -1,6 +1,6 @@
 burnell-web
 ===========
-burnell-web [www.burnelltek.com](www.burnelltek.com) 是一个个人博客网站系统，后端使用Python编写。
+burnell-web [www.burnelltek.com](www.burnelltek.com) 是一个个人博客网站系统，后端使用Python编写
 
 # 开发环境
 Python3.5.2 <br>
@@ -63,7 +63,11 @@ root登录mysql: mysql -u root -p <br>
 刷新权限信息: flush privileges; <br>
 
 11. 配置Supervisor <br>
-编写一个Supervisor的配置文件burnellweb.conf，存放到/etc/supervisor/conf.d/目录下: <br>
+编写一个Supervisor的配置文件burnellweb.conf，存放到/etc/supervisor/conf.d/目录下<br>
+然后重启Supervisor后，就可以随时启动和停止Supervisor管理的服务了<br>
+重启：sudo supervisorctl reload <br>
+启动我们的服务：sudo supervisorctl start burnellweb <br>
+查看状态：sudo supervisorctl status<br>
 ```
 [program:burnellweb]
 command     = python3.5 /srv/burnell_web/www/app.py
@@ -75,13 +79,11 @@ stdout_logfile_maxbytes = 50MB
 stdout_logfile_backups  = 10
 stdout_logfile          = /srv/burnell_web/log/app.log
 ```
-然后重启Supervisor后，就可以随时启动和停止Supervisor管理的服务了：<br>
-重启：sudo supervisorctl reload <br>
-启动我们的服务：sudo supervisorctl start burnellweb <br>
-查看状态：sudo supervisorctl status<br>
+
 
 12. 配置Nginx <br>
-Supervisor只负责运行app.py，我们还需要配置Nginx，把配置文件burnellweb放到/etc/nginx/sites-available/目录下：<br>
+Supervisor只负责运行app.py，我们还需要配置Nginx，把配置文件burnellweb放到/etc/nginx/sites-available/目录下<br>
+让Nginx重新加载配置文件：sudo /etc/init.d/nginx reload <br>
 ```
 server {
     listen      80;
@@ -109,7 +111,7 @@ server {
     }
 }
 ```
-让Nginx重新加载配置文件：sudo /etc/init.d/nginx reload <br>
+
 
 
 
