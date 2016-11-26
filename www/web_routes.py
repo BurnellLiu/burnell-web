@@ -19,7 +19,8 @@ from config import configs
 from web_core import get, post
 from db_models import User, Comment, Blog, Image, generate_id
 from web_error import permission_error, data_error
-from session_cookie import cookie_generate
+from session_cookie import user_cookie_generate, verify_image_cookie_generate
+from verify_image import generate_verify_image
 
 __author__ = 'Burnell Liu'
 
@@ -233,7 +234,7 @@ def user_signout(request):
     """
     referer = request.headers.get('Referer')
     r = web.HTTPFound(referer or '/')
-    cookie_name = configs.cookie.name
+    cookie_name = configs.user_cookie.name
     r.set_cookie(cookie_name, '-deleted-', max_age=0, httponly=True)
     logging.info('user signed out.')
     return r
@@ -347,9 +348,9 @@ async def api_user_authenticate(request):
     if user['password'] != sha1_password:
         return data_error(u'密码有误')
 
-    cookie_name = configs.cookie.name
-    cookie_secret = configs.cookie.secret
-    cookie_str = cookie_generate(user, 86400, cookie_secret)
+    cookie_name = configs.user_cookie.name
+    cookie_secret = configs.user_cookie.secret
+    cookie_str = user_cookie_generate(user, 86400, cookie_secret)
     r = web.Response()
     r.set_cookie(cookie_name, cookie_str, max_age=86400, httponly=True)
     user['password'] = '******'
@@ -401,6 +402,19 @@ async def api_user_register(request):
     password = None
     if 'password' in params:
         password = params['password']
+    verify = None
+    if 'verify' in params:
+        verify = params['verify']
+
+    # 检查验证码是否输入正确
+    if not verify or not verify.strip():
+        return data_error(u'非法验证码')
+    verify_cookie_name = configs.verify_image_cookie.name
+    cookie_secret = configs.verify_image_cookie.secret
+    cookie_str = request.cookies.get(verify_cookie_name)
+    cookie_str_input = verify_image_cookie_generate(verify.upper(), cookie_secret)
+    if not cookie_str == cookie_str_input:
+        return data_error(u'验证码错误')
 
     # 检查用户数据是否合法
     if not name or not name.strip():
@@ -427,15 +441,39 @@ async def api_user_register(request):
     await user.save()
 
     # 生成COOKIE
-    cookie_str = cookie_generate(user, 86400, configs.cookie.secret)
-    cookie_name = configs.cookie.name
+    cookie_str = user_cookie_generate(user, 86400, configs.user_cookie.secret)
+    cookie_name = configs.user_cookie.name
 
     # 生成响应消息
     r = web.Response()
+    # 删除用于验证验证码的COOKIE
+    r.set_cookie(verify_cookie_name, '-deleted-', max_age=0, httponly=True)
     r.set_cookie(cookie_name, cookie_str, max_age=86400, httponly=True)
     user['password'] = '******'
     r.content_type = 'application/json'
     r.body = json.dumps(user, ensure_ascii=False).encode('utf-8')
+    return r
+
+
+@get('/api/verifyimage')
+async def api_verify_image_get(request):
+    """
+    WEB API: 获取验证码图片API函数
+    :param request: 请求对象
+    :return: 验证码图片
+    """
+    num_str, image = generate_verify_image()
+
+    # 生成验证码图像COOKIE值
+    cookie_name = configs.verify_image_cookie.name
+    cookie_secret = configs.verify_image_cookie.secret
+    cookie_str = verify_image_cookie_generate(num_str, cookie_secret)
+
+    json_data = json.dumps(dict(image=image), ensure_ascii=False, default=lambda o: o.__dict__)
+
+    r = web.Response(body=json_data.encode('utf-8'))
+    r.set_cookie(cookie_name, cookie_str, max_age=86400, httponly=True)
+    r.content_type = 'application/json;charset=utf-8'
     return r
 
 

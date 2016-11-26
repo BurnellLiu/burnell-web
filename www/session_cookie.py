@@ -10,9 +10,9 @@ from db_models import User
 __author__ = 'Burnell Liu'
 
 
-async def cookie_parse(cookie_str, cookie_secret=''):
+async def user_cookie_parse(cookie_str, cookie_secret=''):
     """
-    解析COOKIE字符串
+    解析用户COOKIE字符串
     :param cookie_str: COOKIE字符串
     :param cookie_secret: 加密COOKIE的字符串
     :return: 成功返回user对象, 失败返回None
@@ -42,9 +42,9 @@ async def cookie_parse(cookie_str, cookie_secret=''):
         return None
 
 
-def cookie_generate(user, max_age, cookie_secret=''):
+def user_cookie_generate(user, max_age, cookie_secret=''):
     """
-    根据用户信息生成COOKIE
+    根据用户信息生成用户COOKIE
     :param user: 用户
     :param max_age: COOKIE有效时间
     :param cookie_secret: 加密COOKIE的字符串
@@ -55,3 +55,14 @@ def cookie_generate(user, max_age, cookie_secret=''):
     mix_str = '%s-%s-%s-%s' % (user['id'], user['password'], expires, cookie_secret)
     items = [user['id'], expires, hashlib.sha1(mix_str.encode('utf-8')).hexdigest()]
     return '-'.join(items)
+
+
+def verify_image_cookie_generate(num_str, cookie_secret=''):
+    """
+    根据验证码生成验证码COOKIE
+    :param num_str: 验证码
+    :param cookie_secret: 加密COOKIE的字符串
+    :return: COOKIE字符串
+    """
+    mix_str = '%s-%s' % (num_str, cookie_secret)
+    return hashlib.sha1(mix_str.encode('utf-8')).hexdigest()

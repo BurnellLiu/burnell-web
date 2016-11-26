@@ -107,10 +107,11 @@ function accountSubmit(event){
     // 通知浏览器提交已被处理， 阻止默认行为的发生
     event.preventDefault();
 
-    var name = $accountForm.find("#name").val();
-    var email = $accountForm.find("#email").val();
-    var password1 = $accountForm.find("#password1").val();
-    var password2 = $accountForm.find("#password2").val();
+    var name = $accountForm.find('#name').val();
+    var email = $accountForm.find('#email').val();
+    var password1 = $accountForm.find('#password1').val();
+    var password2 = $accountForm.find('#password2').val();
+    var verify = $accountForm.find('#verify-input').val();
 
     // 检查账号信息是否合法
     if (!name.trim()){
@@ -129,6 +130,10 @@ function accountSubmit(event){
         showErrorMessage('两次输入的密码不一致');
         return;
     }
+    if (!verify.trim()){
+        showErrorMessage('请输入验证码');
+        return
+    }
 
     showFormLoading(true);
 
@@ -136,21 +141,56 @@ function accountSubmit(event){
     var account = {
         name: name.trim(),
         email: email,
-        password: CryptoJS.SHA1(email + ':' + password1).toString()
+        password: CryptoJS.SHA1(email + ':' + password1).toString(),
+        verify: verify.trim()
     };
 
     // 将账号信息POST出去
     postAccount(account);
 }
 
+/**
+ * 获取验证码图片结束处理函数
+ * @param {Object} data 返回的数据
+ */
+function getVerifyImageRequestDone(data){
+    // 如果有错则显示错误消息
+    if (data.error){
+        showErrorMessage(data.message);
+        return;
+    }
+
+    $('#verify-image').attr('src', data.image)
+}
+
+/**
+ * 发送获取验证码图片请求
+ */
+function getVerifyImageRequest(){
+    var opt = {
+        type: 'GET',
+        url: '/api/verifyimage',
+        dataType: 'json',
+    };
+    // 发送请求
+    var jqxhr = $.ajax(opt);
+    // 设置请求完成和请求失败的处理函数
+    jqxhr.done(getVerifyImageRequestDone);
+    jqxhr.fail(requestFail);
+}
 
 /**
  * 初始化页面
  */
 function initPage(){
-    window.$accountForm = $("#account-form");
+    window.$accountForm = $('#account-form');
     window.$accountForm.submit(accountSubmit);
 
+    $accountForm.find('#new-image').click(function(){
+        getVerifyImageRequest();
+    });
+
+    getVerifyImageRequest();
 }
 
 

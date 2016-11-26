@@ -15,8 +15,12 @@ configs = {
         'password': 'ttlovelj911',
         'database': 'bdm240853593_db'
     },
-    'cookie': {
+    'user_cookie': {
         'secret': 'TEST',
-        'name': 'BL_TEK_SESSION'
+        'name': 'USER_SESSION'
+    },
+    'verify_image_cookie':{
+        'secret': 'happy',
+        'name': 'VERIFY_IMAGE_SESSION'
     }
 }

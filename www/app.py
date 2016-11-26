@@ -12,7 +12,7 @@ from datetime import datetime
 from jinja2 import Environment, FileSystemLoader
 
 from config import configs
-from session_cookie import cookie_parse
+from session_cookie import user_cookie_parse
 
 import db_orm
 import web_core
@@ -44,10 +44,10 @@ async def auth_factory(app, handler):
         request.__user__ = None
 
         # 从COOKIE中解析出用户对象, 并且保存在请求对象中
-        cookie_name = configs.cookie.name
+        cookie_name = configs.user_cookie.name
         cookie_str = request.cookies.get(cookie_name)
         if cookie_str:
-            user = await cookie_parse(cookie_str, configs.cookie.secret)
+            user = await user_cookie_parse(cookie_str, configs.user_cookie.secret)
             if user:
                 logging.info('set current user: %s' % user['email'])
                 request.__user__ = user
