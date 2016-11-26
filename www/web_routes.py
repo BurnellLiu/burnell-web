@@ -8,6 +8,7 @@ import logging
 import base64
 import random
 import os
+import time
 
 from aiohttp import web
 from urllib import parse
@@ -734,10 +735,19 @@ async def api_comment_create(request):
     :param request: 请求
     :return: 返回响应消息
     """
+    # 只有登录用户才能发表评论
     user = request.__user__
     if user is None:
         return data_error(u'请先登录')
 
+    # 限制每10秒只能发送一条评论
+    comments = await Comment.find_all(
+        'user_id=? and created_at > ?',
+        [user.id, time.time()-10.0])
+    if len(comments) > 0:
+        return data_error(u'评论过于频繁（10秒后再试）')
+
+    # 获取评论内容
     ct = request.content_type.lower()
     if ct.startswith('application/json'):
         params = await request.json()
@@ -746,10 +756,10 @@ async def api_comment_create(request):
     else:
         return data_error()
 
+    # 检查评论内容
     content = None
     if 'content' in params:
         content = params['content']
-
     if not content or not content.strip():
         return data_error(u'评论内容不能为空')
 
