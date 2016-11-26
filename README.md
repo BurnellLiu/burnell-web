@@ -66,51 +66,43 @@ root登录mysql: mysql -u root -p <br>
 编写一个Supervisor的配置文件burnellweb.conf，存放到/etc/supervisor/conf.d/目录下: <br>
 ```
 [program:burnellweb]
-
 command     = python3.5 /srv/burnell_web/www/app.py
 directory   = /srv/burnell_web/www
 user        = www-data
 startsecs   = 3
-
 redirect_stderr         = true
 stdout_logfile_maxbytes = 50MB
 stdout_logfile_backups  = 10
 stdout_logfile          = /srv/burnell_web/log/app.log
 ```
+
 然后重启Supervisor后，就可以随时启动和停止Supervisor管理的服务了：<br>
 重启：sudo supervisorctl reload <br>
-启动我们的服务：sudo supervisorctl start burnell <br>
-查看状态：sudo supervisorctl status <br>
+启动我们的服务：sudo supervisorctl start burnellweb <br>
+查看状态：sudo supervisorctl status<br>
+
 
 12. 配置Nginx <br>
-Supervisor只负责运行app.py，我们还需要配置Nginx。把配置文件burnellweb放到/etc/nginx/sites-available/目录下：<br>
+Supervisor只负责运行app.py，我们还需要配置Nginx，把配置文件burnellweb放到/etc/nginx/sites-available/目录下：<br>
 ```
 server {
     listen      80;
-
     root       /srv/burnell_web/www;
     access_log /srv/burnell_web/log/access_log;
     error_log  /srv/burnell_web/log/error_log;
-
     # server_name burnelltek.com;
-
     client_max_body_size 1m;
-
     gzip            on;
     gzip_min_length 1024;
     gzip_buffers    4 8k;
     gzip_types      text/css application/x-javascript application/json;
-
     sendfile on;
-
     location /favicon.ico {
         root /srv/burnell_web/www/static/img;
     }
-
     location ~ ^\/static\/.*$ {
         root /srv/burnell_web/www;
     }
-
     location / {
         proxy_pass       http://127.0.0.1:9000;
         proxy_set_header X-Real-IP $remote_addr;
