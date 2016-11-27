@@ -462,7 +462,7 @@ async def api_verify_image_get(request):
     :param request: 请求对象
     :return: 验证码图片
     """
-    num_str, image = generate_verify_image()
+    num_str, image = generate_verify_image(configs.font_path)
 
     # 生成验证码图像COOKIE值
     cookie_name = configs.verify_image_cookie.name

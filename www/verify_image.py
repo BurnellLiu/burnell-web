@@ -43,16 +43,17 @@ def rand_text_color():
     return r, g, b
 
 
-def generate_verify_image():
+def generate_verify_image(font_path):
     """
     生成验证码图片
+    :param font_path: 生成验证码所用字体路径
     :return: （图片字符，图片base64编码数据）
     """
     width = 60 * 4
     height = 60
     image = Image.new('RGB', (width, height), (255, 255, 255))
     # 创建Font对象:
-    font = ImageFont.truetype('./static/fonts/Arial.ttf', 36)
+    font = ImageFont.truetype(font_path, 36)
     # 创建Draw对象:
     draw = ImageDraw.Draw(image)
     # 填充每个像素:
@@ -71,7 +72,7 @@ def generate_verify_image():
     # 模糊:
     image = image.filter(ImageFilter.BLUR)
 
-    file_name = str(time.time())
+    file_name = './static/img/' + str(time.time())
     file_name += '.jpg'
     image.save(file_name, 'jpeg')
 

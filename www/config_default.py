@@ -22,5 +22,6 @@ configs = {
     'verify_image_cookie':{
         'secret': 'happy',
         'name': 'VERIFY_IMAGE_SESSION'
-    }
+    },
+    'font_path': 'C:/Windows/Fonts/Arial.ttf'
 }
