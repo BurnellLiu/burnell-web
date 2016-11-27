@@ -1,8 +1,8 @@
-burnell-web
+burnell-web <br>
 ===========
-burnell-web [www.burnelltek.com](www.burnelltek.com) 是一个个人博客网站系统，后端使用Python编写
+burnell-web [www.burnelltek.com](www.burnelltek.com) 是一个个人博客网站系统，后端使用Python编写 <br>
 
-# 开发环境
+# 开发环境 <br>
 Python3.5.2 <br>
 Python依赖库：<br>
 1. aiohttp，异步web框架库 <br>
@@ -10,7 +10,7 @@ Python依赖库：<br>
 3. aiomysql，mysql异步驱动库 <br>
 4. piplow，图片库用于生成验证码 <br>
 
-# 项目结构
+# 项目结构 <br>
 >backup                备份目录 <br>
 >conf                  配置文件目录 <br>
 >dist                  打包目录 <br>
@@ -18,7 +18,7 @@ Python依赖库：<br>
 >>static               存放静态文件 <br>
 >>templates            存放模板文件 <br>
 
-# 部署示例(阿里云ECS Ubuntu14.04)
+# 部署示例(阿里云ECS Ubuntu14.04) <br>
 1. 安装SSH服务 <br>
 sudo apt-get install openssh-server <br>
 
