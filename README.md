@@ -116,10 +116,13 @@ Supervisor只负责运行app.py，我们还需要配置Nginx，把配置文件bu
         }
     }
     ```
+    
+
 # Release Note:
 ## 2016/11/27 V1.1.1 Release
 1. 限制每10秒只能发送一条评论 <br>
 2. 注册账号页面需要输入验证码 <br>
+
 
 
 
