@@ -8,6 +8,7 @@ Python依赖库：<br>
 1. aiohttp，异步web框架库 <br>
 2. jinja2， 前端模板引擎库 <br>
 3. aiomysql，mysql异步驱动库 <br>
+4. piplow，图片库用于生成验证码 <br>
 
 # 项目结构
 >backup                备份目录 <br>
@@ -39,6 +40,10 @@ sudo apt-get install python3-pip <br>
 5. 安装需要的Python库 <br>
 sudo pip3 install jinja2 aiomysql aiohttp <br>
 如果没有切换Python3链接的动作, 则pip3会把Python库安装在Python3.4上 <br>
+安装pillow: <br>
+sudo apt-get install python3.5-dev <br>
+sudo apt-get install libjpeg8-dev zlib1g-dev libfreetype6-dev <br>
+sudo pip3 install pillow <br>
 
 6. 切换回来链接文件：<br>
 sudo rm /usr/bin/python3 <br>
@@ -111,6 +116,11 @@ Supervisor只负责运行app.py，我们还需要配置Nginx，把配置文件bu
         }
     }
     ```
+# Release Note:
+## 2016/11/27 V1.1.1 Release
+1. 限制每10秒只能发送一条评论 <br>
+2. 注册账号页面需要输入验证码 <br>
+
 
 
 
