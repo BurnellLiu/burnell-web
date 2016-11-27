@@ -7,12 +7,11 @@ server {
 
     # server_name burnelltek.com;
 
-    # client_max_body_size 1m;
+    client_max_body_size 10m;
 
-    # gzip            on;
-    # gzip_min_length 1024;
-    # gzip_buffers    4 8k;
-    # gzip_types      text/css application/x-javascript application/json;
+    gzip            on;
+    gzip_min_length 1024;
+    gzip_types      text/css application/x-javascript application/json;
 
     sendfile on;
 
