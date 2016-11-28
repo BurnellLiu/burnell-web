@@ -57,8 +57,9 @@ function requestDone(data){
         return;
     }
 
-    // 如果成功登录, 则定位到首页
-    location.assign('/');
+
+    // 如果成功登录, 则定位登录之前的页面
+    location.assign(document.referrer || '/');
 }
 
 /**
