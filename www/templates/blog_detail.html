@@ -26,7 +26,7 @@
 
         <article id="new-comment" class="uk-comment">
             <header class="uk-comment-header">
-                <img class="uk-comment-avatar uk-border-circle" width="50" height="50" src="{{ __user__.image }}">
+                <img class="uk-comment-avatar uk-border-rounded" width="50" height="50" src="{{ __user__.image }}">
                 <h4 class="uk-comment-title">{{ __user__.name }}</h4>
             </header>
             <div class="uk-comment-body">
@@ -52,7 +52,7 @@
             <li>
                 <article class="uk-comment">
                     <header class="uk-comment-header">
-                        <img class="uk-comment-avatar" width="50" height="50" src="{{ comment.user_image }}">
+                        <img class="uk-comment-avatar uk-border-rounded" width="50" height="50" src="{{ comment.user_image }}">
                         <h4 class="uk-comment-title">{{ comment.user_name }} {% if comment.user_id==blog.user_id %}(作者){% endif %}</h4>
                         <p class="uk-comment-meta">发表于:&nbsp;{{ comment.created_at|datetime }}&nbsp;&nbsp;
                             {% if __user__ %}
@@ -73,10 +73,19 @@
     </div>
 
     <div class="uk-width-medium-1-4">
-        <div class="uk-panel uk-panel-box">
-            <div class="uk-text-center">
-                <img class="uk-border-circle" width="120" height="120" src="{{ blog.user_image }}">
-                <h3>{{ blog.user_name }}</h3>
+        <div class="uk-panel">
+            <div class="uk-text-left">
+                <h1>&nbsp;</h1>
+                <p>&nbsp;</p>
+                <img class="uk-border-rounded" width="120" height="120" src="{{ blog.user_image }}">
+                <p class="uk-text-bold uk-text-large">{{ blog.user_name }}</p>
+                <p class="uk-comment-meta">刘杰,&nbsp;27岁,&nbsp;现居苏州</p>
+                <p class="uk-text-bold">邮箱:</p>
+                <p class="uk-text-primary">burnell_liu@outlook.com</p>
+                <p class="uk-text-bold">Github:</p>
+                <a class="uk-text-primary" target="_blank" href="https://github.com/BurnellLiu">https://github.com/BurnellLiu</a>
+                <p class="uk-text-bold">简介:</p>
+                <p class="uk-comment-meta uk-text-large">努力做一个快乐的程序员, Good good study, day day up!</p>
             </div>
         </div>
     </div>
