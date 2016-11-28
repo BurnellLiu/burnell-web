@@ -126,6 +126,21 @@ function commentSubmit(event){
 
 }
 
+/**
+ * 回复评论处理函数
+ * @param e 评论元素对象
+ */
+function commentReply(e){
+    // 滚动页面到发表评论区域, 滚动时间200ms
+    $('html, body').animate({scrollTop: $("#new-comment").offset().top}, 200);
+    var author = $(e).attr('author');
+
+    // 设置@, 设置焦点
+    var $commentText = $('#new-comment-text');
+    $commentText.val('回复@' + author + ':\n');
+    $commentText.focus();
+}
+
 
 /**
  * 初始化页面

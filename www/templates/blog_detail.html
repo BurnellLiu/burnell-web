@@ -14,7 +14,7 @@
     <div class="uk-width-medium-3-4">
         <article class="uk-article">
             <h1 class="uk-article-title">{{ blog.name }}</h1>
-            <p class="uk-article-meta">发表于{{ blog.created_at|datetime }}&nbsp;&nbsp;阅读: {{ blog.read_times }}</p>
+            <p class="uk-article-meta">发表于:&nbsp;{{ blog.created_at|datetime }}&nbsp;&nbsp;阅读:&nbsp;{{ blog.read_times }}</p>
             <p><img src="{{ blog.cover_image }}"></p>
             <p>{{ blog.html_content|safe}}</p>
         </article>
@@ -24,7 +24,7 @@
     {% if __user__ %}
         <h3>发表评论</h3>
 
-        <article class="uk-comment">
+        <article id="new-comment" class="uk-comment">
             <header class="uk-comment-header">
                 <img class="uk-comment-avatar uk-border-circle" width="50" height="50" src="{{ __user__.image }}">
                 <h4 class="uk-comment-title">{{ __user__.name }}</h4>
@@ -33,7 +33,7 @@
                 <form id="form-comment" class="uk-form">
                     <div class="uk-alert uk-alert-danger uk-hidden"></div>
                     <div class="uk-form-row">
-                        <textarea rows="6" placeholder="说点什么吧" style="width:100%;resize:none;"></textarea>
+                        <textarea id="new-comment-text" rows="6" placeholder="说点什么吧" style="width:100%;resize:none;"></textarea>
                     </div>
                     <div class="uk-form-row">
                         <button type="submit" class="uk-button uk-button-primary"><i class="uk-icon-comment"></i> 发表评论</button>
@@ -52,9 +52,15 @@
             <li>
                 <article class="uk-comment">
                     <header class="uk-comment-header">
-                        <img class="uk-comment-avatar uk-border-circle" width="50" height="50" src="{{ comment.user_image }}">
+                        <img class="uk-comment-avatar" width="50" height="50" src="{{ comment.user_image }}">
                         <h4 class="uk-comment-title">{{ comment.user_name }} {% if comment.user_id==blog.user_id %}(作者){% endif %}</h4>
-                        <p class="uk-comment-meta">{{ comment.created_at|datetime }}</p>
+                        <p class="uk-comment-meta">发表于:&nbsp;{{ comment.created_at|datetime }}&nbsp;&nbsp;
+                            {% if __user__ %}
+                            <a class="uk-comment-meta">赞&nbsp;<i class="uk-icon-thumbs-o-up"></i></a>
+                            &nbsp;&nbsp;
+                            <a class="uk-comment-meta" onclick="commentReply(this)" author="{{ comment.user_name }}">回复<i class="uk-icon-reply"></i></a>
+                            {% endif %}
+                        </p>
                     </header>
                     <div class="uk-comment-body">
                         {{ comment.html_content|safe }}
