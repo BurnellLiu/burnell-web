@@ -57,6 +57,7 @@ class Blog(Model):
     `summary` varchar(200) not null,
     `content` mediumtext not null,
     `read_times` bigint(20) unsigned zerofill NOT NULL DEFAULT '00000000000000000000',
+    `type` varchar(50) not null,
     `created_at` real not null,
     key `idx_created_at` (`created_at`),
     primary key (`id`)
@@ -73,6 +74,7 @@ class Blog(Model):
     summary = StringField(ddl='varchar(200)')
     content = TextField()
     read_times = IntegerField()
+    type = StringField(ddl='varchar(50)')
     created_at = FloatField(default=time.time)
 
 

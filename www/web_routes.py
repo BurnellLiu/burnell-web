@@ -138,12 +138,13 @@ async def index(request):
     return {
         '__template__': 'blog_list.html',
         'page': page,
-        'blogs': blogs
+        'blogs': blogs,
+        'type': 'blogs'
     }
 
 
 @get('/blogs')
-async def blog_list(request):
+async def blog_all(request):
     """
     博客列表路由函数
     :param request: 请求对象
@@ -166,7 +167,95 @@ async def blog_list(request):
     return {
         '__template__': 'blog_list.html',
         'page': page,
-        'blogs': blogs
+        'blogs': blogs,
+        'type': 'blogs'
+    }
+
+
+@get('/essay')
+async def blog_essay(request):
+    """
+    随笔博客列表路由函数
+    :param request: 请求对象
+    :return: 博客列表页面
+    """
+    page_index = 1
+    str_dict = parse_query_string(request.query_string)
+    if 'page' in str_dict:
+        page_index = int(str_dict['page'])
+
+    num = await Blog.find_number('count(id)', 'type=?', [u'随笔'])
+    page = Pagination(num, page_index)
+
+    if num == 0:
+        blogs = []
+    else:
+        # 以创建时间降序的方式查找指定的博客
+        blogs = await Blog.find_all('type=?', [u'随笔'], order_by='created_at desc', limit=(page.offset, page.limit))
+
+    return {
+        '__template__': 'blog_list.html',
+        'page': page,
+        'blogs': blogs,
+        'type': 'essay'
+    }
+
+
+@get('/windows')
+async def blog_windows(request):
+    """
+    Windows博客列表路由函数
+    :param request: 请求对象
+    :return: 博客列表页面
+    """
+    page_index = 1
+    str_dict = parse_query_string(request.query_string)
+    if 'page' in str_dict:
+        page_index = int(str_dict['page'])
+
+    num = await Blog.find_number('count(id)', 'type=?', [u'Windows开发'])
+    page = Pagination(num, page_index)
+
+    if num == 0:
+        blogs = []
+    else:
+        # 以创建时间降序的方式查找指定的博客
+        blogs = await Blog.find_all('type=?', [u'Windows开发'], order_by='created_at desc', limit=(page.offset, page.limit))
+
+    return {
+        '__template__': 'blog_list.html',
+        'page': page,
+        'blogs': blogs,
+        'type': 'windows'
+    }
+
+
+@get('/ml')
+async def blog_ml(request):
+    """
+    机器学习博客列表路由函数
+    :param request: 请求对象
+    :return: 博客列表页面
+    """
+    page_index = 1
+    str_dict = parse_query_string(request.query_string)
+    if 'page' in str_dict:
+        page_index = int(str_dict['page'])
+
+    num = await Blog.find_number('count(id)', 'type=?', [u'机器学习'])
+    page = Pagination(num, page_index)
+
+    if num == 0:
+        blogs = []
+    else:
+        # 以创建时间降序的方式查找指定的博客
+        blogs = await Blog.find_all('type=?', [u'机器学习'], order_by='created_at desc', limit=(page.offset, page.limit))
+
+    return {
+        '__template__': 'blog_list.html',
+        'page': page,
+        'blogs': blogs,
+        'type': 'ml'
     }
 
 

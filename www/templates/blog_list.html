@@ -22,13 +22,13 @@
     {% endfor %}
         <ul class="uk-pagination">
         {% if page.has_previous %}
-            <li><a href="/blogs?page={{ page.page_index - 1 }}"><i class="uk-icon-angle-double-left"></i></a></li>
+            <li><a href="/{{ type }}?page={{ page.page_index - 1 }}"><i class="uk-icon-angle-double-left"></i></a></li>
         {% else %}
             <li class="uk-disabled"><span><i class="uk-icon-angle-double-left"></i></span></li>
         {% endif %}
             <li class="uk-active"><span>{{ page.page_index }}</span></li>
         {% if page.has_next %}
-            <li><a href="/blogs?page={{ page.page_index + 1 }}"><i class="uk-icon-angle-double-right"></i></a></li>
+            <li><a href="/{{ type }}?page={{ page.page_index + 1 }}"><i class="uk-icon-angle-double-right"></i></a></li>
         {% else %}
             <li class="uk-disabled"><span><i class="uk-icon-angle-double-right"></i></span></li>
         {% endif %}
