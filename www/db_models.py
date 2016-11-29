@@ -13,7 +13,7 @@ def generate_id():
     """
     生成随机id
     """
-    return '%015d%s000' % (int(time.time() * 1000), uuid.uuid4().hex)
+    return uuid.uuid1().hex
 
 
 class User(Model):
