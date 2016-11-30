@@ -121,25 +121,16 @@ async def index(request):
     :param request: 请求对象
     :return: 首页面
     """
-    page_index = 1
-    str_dict = parse_query_string(request.query_string)
-    if 'page' in str_dict:
-        page_index = int(str_dict['page'])
 
-    num = await Blog.find_number('count(id)')
-    page = Pagination(num, page_index)
-
-    if num == 0:
-        blogs = []
-    else:
-        # 以创建时间降序的方式查找指定的博客
-        blogs = await Blog.find_all(order_by='created_at desc', limit=(page.offset, page.limit))
-
+    # 以创建时间降序的方式查找指定的博客
+    blogs = await Blog.find_all(order_by='created_at desc', limit=(0, 4))
+    new_blog = None
+    if len(blogs) > 0:
+        new_blog = blogs[0]
     return {
-        '__template__': 'blog_list.html',
-        'page': page,
-        'blogs': blogs,
-        'type': 'blogs'
+        '__template__': 'index.html',
+        'new_blog': new_blog,
+        'blogs': blogs[1:]
     }
 
 

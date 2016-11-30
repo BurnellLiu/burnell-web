@@ -1,0 +1,59 @@
+{% extends '__base__.html' %}
+
+{% block title %}主页{% endblock %}
+
+{% block beforehead %}{% endblock %}
+
+{% block content %}
+    <div class="uk-width-2-3 uk-row-first">
+        <p>最新博客</p>
+        <hr class="uk-article-divider">
+            <div class="uk-grid">
+                <div class="uk-width-1-2">
+                    {% if new_blog %}
+                    <a href="/blog/{{ new_blog.id }}"><img width="100%" src="{{ new_blog.cover_image }}"></a>
+                    <article class="uk-article">
+                        <h1 class="uk-article-title"><a href="/blog/{{ new_blog.id }}">{{ new_blog.name }}</a></h1>
+                        <p class="uk-article-meta">发表于:&nbsp;{{ new_blog.created_at|datetime }}&nbsp;&nbsp;阅读:&nbsp;{{ new_blog.read_times }}</p>
+                        <!--都是英文或数字会造成浏览器认为这是一个单词，在<p>标签中不会被换行，所以需要加上属性style="word-wrap: break-word;"-->
+                        <p style="word-wrap: break-word;">{{ new_blog.summary}}</p>
+                        <p><a class="uk-button uk-button-primary" href="/blog/{{ new_blog.id }}">继续阅读&nbsp;<i class="uk-icon-angle-double-right"></i></a></p>
+                    </article>
+                    {% endif %}
+                </div>
+                <div class="uk-width-1-2">
+                    {% for blog in blogs%}
+                    <div class="uk-grid">
+                        <div class="uk-width-1-3">
+                        <a href="/blog/{{ blog.id }}"><img width="100%" src="{{ blog.cover_image }}"></a>
+                        </div>
+                        <div class="uk-width-2-3">
+                            <article class="uk-article">
+                                <h2 class="uk-text-bold">{{ blog.name }}</h2>
+                                <p class="uk-article-meta">发表于:&nbsp;{{ blog.created_at|datetime }}&nbsp;&nbsp;阅读:&nbsp;{{ blog.read_times }}</p>
+                                <p><a href="/blog/{{ blog.id }}">继续阅读&nbsp;<i class="uk-icon-angle-double-right"></i></a></p>
+                            </article>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                </div>
+            </div>
+    </div>
+    <div class="uk-width-1-3">
+    <div class="uk-panel">
+            <div class="uk-text-left">
+                <img class="uk-border-rounded" width="120" height="120" src="/static/img/burnell_liu.jpg">
+                <p class="uk-text-bold uk-text-large">作者:&nbsp;Burnell&nbsp;Liu</p>
+                <p class="uk-comment-meta">刘杰,&nbsp;27岁,&nbsp;现居苏州</p>
+                <p class="uk-text-bold">邮箱:</p>
+                <p class="uk-text-primary">burnell_liu@outlook.com</p>
+                <p class="uk-text-bold">Github:</p>
+                <a class="uk-text-primary" target="_blank" href="https://github.com/BurnellLiu">https://github.com/BurnellLiu</a>
+                <p class="uk-text-bold">简介:</p>
+                <p class="uk-comment-meta uk-text-large">努力做一个快乐的程序员, Good good study, day day up!</p>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
