@@ -99,6 +99,14 @@ function getBlogRequestDone(data){
     $blogForm.find('#cover-image').val(data.cover_image);
     $blogForm.find("#summary").val(data.summary);
     $blogForm.find("#content").val(data.content);
+    var optionList = $blogForm.find('#type option');
+    for (var i = 0; i < optionList.length; i++){
+        var name = $(optionList[i]).val();
+        if (name === data.type){
+            $(optionList[i]).attr("selected", true);
+        }
+    }
+
 
 }
 
@@ -166,6 +174,7 @@ function blogSubmit(event) {
     var summary = $blogForm.find('#summary').val();
     var content = $blogForm.find('#content').val();
     var coverImage = $blogForm.find('#cover-image').val();
+    var blog_type = $blogForm.find('#type option:selected').val();
 
     // 博客信息是否合法
     if (!title.trim()) {
@@ -186,12 +195,17 @@ function blogSubmit(event) {
         showErrorMessage('请输入内容');
         return;
     }
+    if (!blog_type.trim()) {
+        showErrorMessage('请选择博客类型');
+        return;
+    }
 
     var blog = {
         name: title.trim(),
         cover_image: coverImage.trim(),
         summary: summary.trim(),
-        content: content.trim()
+        content: content.trim(),
+        type: blog_type.trim()
     };
 
     postBlog(blog);

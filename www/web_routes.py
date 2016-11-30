@@ -638,18 +638,19 @@ async def api_blog_create(request):
     cover_image = None
     if 'cover_image' in params:
         cover_image = params['cover_image']
-
+    blog_type = None
+    if 'type' in params:
+        blog_type = params['type']
     if not name or not name.strip():
         return data_error(u'博客名称不能为空')
-
     if not summary or not summary.strip():
         return data_error(u'博客摘要不能为空')
-
     if not content or not content.strip():
         return data_error(u'博客内容不能为空')
-
     if not cover_image or not cover_image.strip():
         return data_error(u'封面图片不能为空')
+    if not blog_type or not blog_type.strip():
+        return data_error(u'博客类型不能为空')
 
     blog = Blog(user_id=request.__user__['id'],
                 user_name=request.__user__['name'],
@@ -658,7 +659,8 @@ async def api_blog_create(request):
                 summary=summary.strip(),
                 content=content.strip(),
                 cover_image=cover_image.strip(),
-                read_times=0)
+                read_times=0,
+                type=blog_type)
     await blog.save()
     return blog
 
@@ -683,10 +685,21 @@ async def api_blog_update(request):
 
     blog_id = request.match_info['blog_id']
 
-    name = params['name']
-    summary = params['summary']
-    content = params['content']
-    cover_image = params['cover_image']
+    name = None
+    if 'name' in params:
+        name = params['name']
+    summary = None
+    if 'summary' in params:
+        summary = params['summary']
+    content = None
+    if 'content' in params:
+        content = params['content']
+    cover_image = None
+    if 'cover_image' in params:
+        cover_image = params['cover_image']
+    blog_type = None
+    if 'type' in params:
+        blog_type = params['type']
 
     if not name or not name.strip():
         return data_error(u'博客名称不能为空')
@@ -696,6 +709,8 @@ async def api_blog_update(request):
         return data_error(u'博客内容不能为空')
     if not cover_image or not cover_image.strip():
         return data_error(u'封面图片不能为空')
+    if not blog_type or not blog_type.strip():
+        return data_error(u'博客类型不能为空')
 
     blog = await Blog.find(blog_id)
     if not blog:
@@ -705,6 +720,7 @@ async def api_blog_update(request):
     blog.summary = summary.strip()
     blog.content = content.strip()
     blog.cover_image = cover_image.strip()
+    blog.type = blog_type.strip()
     await blog.update()
     return blog
 
