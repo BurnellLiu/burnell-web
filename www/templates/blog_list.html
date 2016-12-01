@@ -15,7 +15,7 @@
                 </div>
                 <div class="uk-width-2-3">
                     <article class="uk-article">
-                        <h1 class="uk-article-title"><a href="/blog/{{ blog.id }}">{{ blog.name }}</a></h1>
+                        <h1 class="uk-article-title uk-text-truncate"><a href="/blog/{{ blog.id }}">{{ blog.name }}</a></h1>
                         <p class="uk-article-meta">发表于:&nbsp;{{ blog.created_at|datetime }}&nbsp;&nbsp;阅读:&nbsp;{{ blog.read_times }}</p>
                         <p class="uk-text-break">{{ blog.summary}}</p>
                         <p><a class="uk-button uk-button-primary" href="/blog/{{ blog.id }}">继续阅读&nbsp;<i class="uk-icon-angle-double-right"></i></a></p>
@@ -31,7 +31,33 @@
         {% else %}
             <li class="uk-disabled"><span><i class="uk-icon-angle-double-left"></i></span></li>
         {% endif %}
+        {% if (page.page_index) - 4 > 0 %}
+            <li><a href="/{{ type }}?page=1"><span>{{ 1 }}</span></a></li>
+            <li><span>...</span></li>
+        {% endif %}
+        {% if (page.page_index) - 4 == 0 %}
+            <li><a href="/{{ type }}?page=1"><span>{{ 1 }}</span></a></li>
+        {% endif %}
+        {% if (page.page_index) - 2 > 0 %}
+            <li><a href="/{{ type }}?page={{ page.page_index - 2 }}"><span>{{ page.page_index - 2 }}</span></a></li>
+        {% endif %}
+        {% if (page.page_index) - 1 > 0 %}
+            <li><a href="/{{ type }}?page={{ page.page_index - 1 }}"><span>{{ page.page_index - 1 }}</span></a></li>
+        {% endif %}
             <li class="uk-active"><span>{{ page.page_index }}</span></li>
+        {% if (page.page_index) + 1 <= page.page_count %}
+            <li><a href="/{{ type }}?page={{ page.page_index + 1 }}"><span>{{ page.page_index + 1 }}</span></a></li>
+        {% endif %}
+        {% if (page.page_index) + 2 <= page.page_count %}
+            <li><a href="/{{ type }}?page={{ page.page_index + 2 }}"><span>{{ page.page_index + 2 }}</span></a></li>
+        {% endif %}
+        {% if (page.page_index) + 3 == page.page_count %}
+            <li><a href="/{{ type }}?page={{ page.page_count }}"><span>{{ page.page_count }}</span></a></li>
+        {% endif %}
+        {% if (page.page_index) + 3 < page.page_count %}
+            <li><span>...</span></li>
+            <li><a href="/{{ type }}?page={{ page.page_count }}"><span>{{ page.page_count }}</span></a></li>
+        {% endif %}
         {% if page.has_next %}
             <li><a href="/{{ type }}?page={{ page.page_index + 1 }}"><i class="uk-icon-angle-double-right"></i></a></li>
         {% else %}

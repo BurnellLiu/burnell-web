@@ -176,7 +176,7 @@ async def blog_essay(request):
         page_index = int(str_dict['page'])
 
     num = await Blog.find_number('count(id)', 'type=?', [u'随笔'])
-    page = Pagination(num, page_index)
+    page = Pagination(num, page_index, 5)
 
     if num == 0:
         blogs = []
@@ -205,7 +205,7 @@ async def blog_windows(request):
         page_index = int(str_dict['page'])
 
     num = await Blog.find_number('count(id)', 'type=?', [u'Windows开发'])
-    page = Pagination(num, page_index)
+    page = Pagination(num, page_index, 5)
 
     if num == 0:
         blogs = []
@@ -234,7 +234,7 @@ async def blog_ml(request):
         page_index = int(str_dict['page'])
 
     num = await Blog.find_number('count(id)', 'type=?', [u'机器学习'])
-    page = Pagination(num, page_index)
+    page = Pagination(num, page_index, 5)
 
     if num == 0:
         blogs = []
