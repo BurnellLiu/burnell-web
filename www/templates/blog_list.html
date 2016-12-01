@@ -15,7 +15,9 @@
                 </div>
                 <div class="uk-width-2-3">
                     <article class="uk-article">
-                        <h1 class="uk-article-title uk-text-truncate"><a href="/blog/{{ blog.id }}">{{ blog.name }}</a></h1>
+                        <h2 class="uk-text-truncate uk-text-bold">
+                            <a class="uk-link-reset" href="/blog/{{ blog.id }}">{{ blog.name }}</a>
+                        </h2>
                         <p class="uk-article-meta">发表于:&nbsp;{{ blog.created_at|datetime }}&nbsp;&nbsp;阅读:&nbsp;{{ blog.read_times }}</p>
                         <p class="uk-text-break">{{ blog.summary}}</p>
                         <p><a class="uk-button uk-button-primary" href="/blog/{{ blog.id }}">继续阅读&nbsp;<i class="uk-icon-angle-double-right"></i></a></p>
@@ -65,6 +67,21 @@
         {% endif %}
         </ul>
 
+    </div>
+    <div class="uk-width-1-4">
+    <div class="uk-panel">
+        <h3 class="uk-panel-title uk-text-primary">热门博客</h3>
+        <ul class="uk-list uk-list-line">
+        {% for blog in hot_blogs %}
+            <li>
+                <p class="uk-text-truncate">
+                    <span class="uk-text-large uk-text-primary uk-text-bold">{{ loop.index }}&nbsp;&nbsp;</span>
+                    <a class="uk-link-reset" target="_blank" href="/blog/{{ blog.id }}">{{ blog.name }}</a>
+                </p>
+            </li>
+        {% endfor %}
+        </ul>
+    </div>
     </div>
 
 {% endblock %}

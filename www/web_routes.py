@@ -180,14 +180,17 @@ async def blog_essay(request):
 
     if num == 0:
         blogs = []
+        hot_blogs = []
     else:
         # 以创建时间降序的方式查找指定的博客
         blogs = await Blog.find_all('type=?', [u'随笔'], order_by='created_at desc', limit=(page.offset, page.limit))
+        hot_blogs = await Blog.find_all('type=?', [u'随笔'], order_by='read_times desc', limit=(0, 10))
 
     return {
         '__template__': 'blog_list.html',
         'page': page,
         'blogs': blogs,
+        'hot_blogs': hot_blogs,
         'type': 'essay'
     }
 
@@ -209,14 +212,17 @@ async def blog_windows(request):
 
     if num == 0:
         blogs = []
+        hot_blogs= []
     else:
         # 以创建时间降序的方式查找指定的博客
         blogs = await Blog.find_all('type=?', [u'Windows开发'], order_by='created_at desc', limit=(page.offset, page.limit))
+        hot_blogs = await Blog.find_all('type=?', [u'Windows开发'], order_by='read_times desc', limit=(0, 10))
 
     return {
         '__template__': 'blog_list.html',
         'page': page,
         'blogs': blogs,
+        'hot_blogs': hot_blogs,
         'type': 'windows'
     }
 
@@ -238,14 +244,18 @@ async def blog_ml(request):
 
     if num == 0:
         blogs = []
+        hot_blogs = []
     else:
         # 以创建时间降序的方式查找指定的博客
         blogs = await Blog.find_all('type=?', [u'机器学习'], order_by='created_at desc', limit=(page.offset, page.limit))
+        hot_blogs = await Blog.find_all('type=?', [u'机器学习'], order_by='read_times desc', limit=(0, 10))
+
 
     return {
         '__template__': 'blog_list.html',
         'page': page,
         'blogs': blogs,
+        'hot_blogs': hot_blogs,
         'type': 'ml'
     }
 
