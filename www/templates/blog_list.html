@@ -17,8 +17,7 @@
                     <article class="uk-article">
                         <h1 class="uk-article-title"><a href="/blog/{{ blog.id }}">{{ blog.name }}</a></h1>
                         <p class="uk-article-meta">发表于:&nbsp;{{ blog.created_at|datetime }}&nbsp;&nbsp;阅读:&nbsp;{{ blog.read_times }}</p>
-                        <!--都是英文或数字会造成浏览器认为这是一个单词，在<p>标签中不会被换行，所以需要加上属性style="word-wrap: break-word;"-->
-                        <p style="word-wrap: break-word;">{{ blog.summary}}</p>
+                        <p class="uk-text-break">{{ blog.summary}}</p>
                         <p><a class="uk-button uk-button-primary" href="/blog/{{ blog.id }}">继续阅读&nbsp;<i class="uk-icon-angle-double-right"></i></a></p>
                     </article>
                 </div>
