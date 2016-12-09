@@ -9,17 +9,17 @@ __author__ = 'Burnell Liu'
 
 configs = {
     'db': {
-        'host': 'bdm240853593.my3w.com',
+        'host': '1.1.1.1',
         'port': 3306,
-        'user': 'bdm240853593',
-        'password': 'ttlovelj911',
-        'database': 'bdm240853593_db'
+        'user': 'user',
+        'password': 'pwd',
+        'database': 'db'
     },
     'user_cookie': {
         'secret': 'TEST',
         'name': 'USER_SESSION'
     },
-    'verify_image_cookie':{
+    'verify_image_cookie': {
         'secret': 'happy',
         'name': 'VERIFY_IMAGE_SESSION'
     },
