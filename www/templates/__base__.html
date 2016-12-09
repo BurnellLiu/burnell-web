@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:wb="http://open.weibo.com/wb">
 <head>
     <meta charset="utf-8" />
     {% block meta %}<!-- block meta  -->{% endblock %}
@@ -11,6 +11,8 @@
     <script src="/static/js/lib/uikit.min.js"></script>
     <script src="/static/js/lib/sticky.min.js"></script>
     <script src="/static/js/common.js"></script>
+    <script src="/static/js/weibo_component.js"></script>
+    <script src="http://tjs.sjs.sinajs.cn/open/api/js/wb.js?appkey=4212499711&debug=true" type="text/javascript" charset="utf-8"></script>
     {% block beforehead %}<!-- before head  -->{% endblock %}
 </head>
 <body>
@@ -27,6 +29,7 @@
             </ul>
             <div class="uk-navbar-flip">
                 <ul class="uk-navbar-nav">
+                <li><a onclick="weiboLogin()">微博登录</a></li>
                 {% if __user__ %}
                     <li class="uk-parent" data-uk-dropdown>
                         <a>
