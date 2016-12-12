@@ -437,6 +437,7 @@ async def api_weibo_login(request):
     async with ClientSession() as session:
         async with session.get(url) as response:
             user_data = await response.json()
+            logging.info(user_data)
             if not isinstance(user_data, dict):
                 return data_error()
 

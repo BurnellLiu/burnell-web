@@ -47,16 +47,16 @@ function postWeiboAccount(data){
     jqxhr.fail(requestFail);
 }
 
+/**
+ * 微博登录处理函数
+ */
 function weiboLogin() {
-
     var status = WB2.checkLogin();
     if (status){
-
         var account = {
             uid: WB2.oauthData.uid,
             access_token: WB2.oauthData.access_token
         };
-        console.log(account)
         postWeiboAccount(account);
     }
     else {
@@ -72,8 +72,3 @@ function weiboLogin() {
 
 }
 
-function weiboLogout() {
-    console.log('logout');
-    WB2.logout(function(){
-    });
-}
