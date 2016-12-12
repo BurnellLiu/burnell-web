@@ -16,28 +16,42 @@ def generate_id():
     return uuid.uuid1().hex
 
 
-class User(Model):
+class UserAuth(Model):
     """
-    用户表类
-    create table users (
+    用户验证表类
+    create table user_auth (
     `id` varchar(50) not null,
     `email` varchar(50) not null,
     `password` varchar(50) not null,
+    unique key `idx_email` (`email`),
+    primary key (`id`)
+    ) engine=innodb default charset=utf8;
+    """
+    # 定义表名称
+    __table__ = 'user_auth'
+
+    id = StringField(primary_key=True, default=generate_id, ddl='varchar(50)')
+    email = StringField(primary_key=False, default=None, ddl='varchar(50)')
+    password = StringField(primary_key=False, default=None, ddl='varchar(50)')
+
+
+class UserInfo(Model):
+    """
+    用户信息表类
+    create table user_info (
+    `id` varchar(50) not null,
     `admin` bool not null,
     `name` varchar(50) not null,
     `image` varchar(500) not null,
     `created_at` real not null,
-    unique key `idx_email` (`email`),
     key `idx_created_at` (`created_at`),
     primary key (`id`)
     ) engine=innodb default charset=utf8;
     """
     # 定义表名称
-    __table__ = 'users'
+    __table__ = 'user_info'
 
     id = StringField(primary_key=True, default=generate_id, ddl='varchar(50)')
-    email = StringField(primary_key=False, default=None, ddl='varchar(50)')
-    password = StringField(primary_key=False, default=None, ddl='varchar(50)')
     admin = BooleanField(default=False)
     name = StringField(primary_key=False, default=None, ddl='varchar(50)')
     image = StringField(primary_key=False, default=None, ddl='varchar(500)')

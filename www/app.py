@@ -49,7 +49,6 @@ async def auth_factory(app, handler):
         if cookie_str:
             user = await user_cookie_parse(cookie_str, configs.user_cookie.secret)
             if user:
-                logging.info('set current user: %s' % user['email'])
                 request.__user__ = user
 
         # 针对管理页面, 需要验证是否是管理员

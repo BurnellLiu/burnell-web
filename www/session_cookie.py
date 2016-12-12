@@ -5,7 +5,7 @@ import logging
 import time
 import hashlib
 
-from db_models import User
+from db_models import UserAuth, UserInfo
 
 __author__ = 'Burnell Liu'
 
@@ -26,7 +26,7 @@ async def user_cookie_parse(cookie_str, cookie_secret=''):
         uid, expires, sha1 = str_list
         if int(expires) < time.time():
             return None
-        user = await User.find(uid)
+        user = await UserAuth.find(uid)
         if user is None:
             return None
 
@@ -34,8 +34,9 @@ async def user_cookie_parse(cookie_str, cookie_secret=''):
         if sha1 != hashlib.sha1(s.encode('utf-8')).hexdigest():
             logging.info('parse cookie fail: invalid sha1')
             return None
-        user['password'] = '******'
-        return user
+
+        user_info = await UserInfo.find(uid)
+        return user_info
 
     except Exception as e:
         logging.exception(e)

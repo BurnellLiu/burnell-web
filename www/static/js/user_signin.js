@@ -69,7 +69,7 @@ function requestDone(data){
  */
 function requestFail(xhr, status){
     showFormLoading(false);
-    showErrorMessage('网络出了问题 (HTTP '+ xhr.status+')');
+    showErrorMessage('网络出了问题 (HTTP ' + xhr.status + ')' + '(' + status + ')');
 }
 
 
@@ -88,7 +88,9 @@ function postAccount(data){
     // 发送请求
     var jqxhr = $.ajax(opt);
     // 设置请求完成和请求失败的处理函数
+    //noinspection JSUnresolvedFunction
     jqxhr.done(requestDone);
+    //noinspection JSUnresolvedFunction
     jqxhr.fail(requestFail);
 }
 

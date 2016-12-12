@@ -5,6 +5,8 @@
  */
 
 function weiboLogin() {
+
+    //noinspection JSUnresolvedVariable
     var status = WB2.checkLogin();
     if (status){
         console.log(WB2.oauthData)

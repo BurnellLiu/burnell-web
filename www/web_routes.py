@@ -17,7 +17,7 @@ import markdown2
 
 from config import configs
 from web_core import get, post
-from db_models import User, Comment, Blog, Image, generate_id
+from db_models import UserAuth, UserInfo, Comment, Blog, Image, generate_id
 from web_error import permission_error, data_error
 from session_cookie import user_cookie_generate, verify_image_cookie_generate
 from verify_image import generate_verify_image
@@ -429,7 +429,7 @@ async def api_user_authenticate(request):
     if not password:
         return data_error(u'非法密码')
 
-    users = await User.find_all(where='email=?', args=[email])
+    users = await UserAuth.find_all(where='email=?', args=[email])
     if len(users) == 0:
         return data_error(u'账号不存在')
 
@@ -459,9 +459,7 @@ async def api_user_get(request):
     if not is_admin(request):
         return permission_error()
 
-    users = await User.find_all(order_by='created_at desc')
-    for u in users:
-        u['password'] = '******'
+    users = await UserInfo.find_all(order_by='created_at desc')
     return dict(users=users)
 
 
@@ -515,7 +513,7 @@ async def api_user_register(request):
         return data_error(u'非法密码')
 
     # 检查用户邮箱是否已经被注册
-    users = await User.find_all(where='email=?', args=[email])
+    users = await UserAuth.find_all(where='email=?', args=[email])
     if len(users) > 0:
         return data_error(u'邮箱已经被使用')
 
@@ -523,12 +521,14 @@ async def api_user_register(request):
     uid = generate_id()
     sha1_password = generate_sha1_password(uid, password)
 
+    # 将新用户数据保存到数据库中
+    user = UserAuth(id=uid, email=email, password=sha1_password)
+    await user.save()
+
     # 生成头像图片URL
     head_img_url = '/static/img/head_%s.jpg' % random.randint(1, 15)
-
-    # 将新用户数据保存到数据库中
-    user = User(id=uid, name=name.strip(), email=email, password=sha1_password, image=head_img_url)
-    await user.save()
+    user_info = UserInfo(id=uid, name=name.strip(), image=head_img_url)
+    await user_info.save()
 
     # 生成COOKIE
     cookie_str = user_cookie_generate(user, 86400, configs.user_cookie.secret)
