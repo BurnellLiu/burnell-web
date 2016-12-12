@@ -11,8 +11,8 @@
     <script src="/static/js/lib/uikit.min.js"></script>
     <script src="/static/js/lib/sticky.min.js"></script>
     <script src="/static/js/common.js"></script>
+    <script src="http://tjs.sjs.sinajs.cn/open/api/js/wb.js?appkey=4212499711" type="text/javascript" charset="utf-8"></script>
     <script src="/static/js/weibo_component.js"></script>
-    <script src="http://tjs.sjs.sinajs.cn/open/api/js/wb.js?appkey=4212499711&debug=true" type="text/javascript" charset="utf-8"></script>
     {% block beforehead %}<!-- before head  -->{% endblock %}
 </head>
 <body>
@@ -29,7 +29,7 @@
             </ul>
             <div class="uk-navbar-flip">
                 <ul class="uk-navbar-nav">
-                <li><a onclick="weiboLogin()">微博登录</a></li>
+
                 {% if __user__ %}
                     <li class="uk-parent" data-uk-dropdown>
                         <a>
@@ -38,7 +38,7 @@
                         </a>
                         <div class="uk-dropdown uk-dropdown-navbar">
                             <ul class="uk-nav uk-nav-navbar">
-                                <li><a href="/signout"><i class="uk-icon-sign-out"></i> 登出</a></li>
+                                <li><a href="/signout" onclick="weiboLogout()"><i class="uk-icon-sign-out"></i> 登出</a></li>
                             </ul>
                         </div>
                     </li>
@@ -48,8 +48,11 @@
                 {% endif %}
 
                 {% else %}
+                    <li><a onclick="weiboLogin()"><i class="uk-icon-weibo uk-icon-medium"></i>&nbsp;微博登录</a></li>
+                    <!--
                     <li><a href="/signin"><i class="uk-icon-sign-in"></i> 登陆</a></li>
                     <li><a href="/register"><i class="uk-icon-edit"></i> 注册</a></li>
+                    -->
                 {% endif %}
                 </ul>
             </div>

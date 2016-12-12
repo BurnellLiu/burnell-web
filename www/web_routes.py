@@ -10,7 +10,7 @@ import random
 import os
 import time
 
-from aiohttp import web
+from aiohttp import web, ClientSession
 from urllib import parse
 
 import markdown2
@@ -402,6 +402,77 @@ def manage_comments(request):
     }
 
 
+@post('/api/weibo/login')
+async def api_weibo_login(request):
+    """
+    微博登录API函数
+    :param request:
+    :return:
+    """
+    ct = request.content_type.lower()
+    if ct.startswith('application/json'):
+        params = await request.json()
+        if not isinstance(params, dict):
+            return data_error()
+    else:
+        return data_error()
+
+    # 取出用户id和访问令牌
+    uid = None
+    if 'uid' in params:
+        uid = params['uid']
+    if not uid:
+        return data_error()
+    access_token = None
+    if 'access_token' in params:
+        access_token = params['access_token']
+    if not access_token or not access_token.strip():
+        return data_error()
+
+    # 获取用户数据
+    url = 'https://api.weibo.com/2/users/show.json?access_token='
+    url += access_token
+    url += '&uid='
+    url += str(uid)
+    async with ClientSession() as session:
+        async with session.get(url) as response:
+            user_data = await response.json()
+            if not isinstance(user_data, dict):
+                return data_error()
+
+    user_name = None
+    if 'screen_name' in user_data:
+        user_name = user_data['screen_name']
+    if not user_name:
+        return data_error()
+    user_image = None
+    if 'profile_image_url' in user_data:
+        user_image = user_data['profile_image_url']
+    if not user_image:
+        return data_error()
+
+    # 更新或者保存用户信息
+    user = await UserInfo.find(str(uid))
+    logging.info(user)
+    if not user:
+        user = UserInfo(id=uid, name=user_name, image=user_image)
+        await user.save()
+    else:
+        user.name = user_name
+        user.image = user_image
+        await user.update()
+
+    # 生成用户COOKIE
+    cookie_name = configs.user_cookie.name
+    cookie_secret = configs.user_cookie.secret
+    cookie_str = user_cookie_generate(str(uid), 86400, cookie_secret)
+    r = web.Response()
+    r.set_cookie(cookie_name, cookie_str, max_age=86400, httponly=True)
+    r.content_type = 'application/json'
+    r.body = json.dumps(user, ensure_ascii=False).encode('utf-8')
+    return r
+
+
 @post('/api/authenticate')
 async def api_user_authenticate(request):
     """
@@ -440,7 +511,7 @@ async def api_user_authenticate(request):
 
     cookie_name = configs.user_cookie.name
     cookie_secret = configs.user_cookie.secret
-    cookie_str = user_cookie_generate(user, 86400, cookie_secret)
+    cookie_str = user_cookie_generate(user['id'], 86400, cookie_secret)
     r = web.Response()
     r.set_cookie(cookie_name, cookie_str, max_age=86400, httponly=True)
     user['password'] = '******'
@@ -531,7 +602,7 @@ async def api_user_register(request):
     await user_info.save()
 
     # 生成COOKIE
-    cookie_str = user_cookie_generate(user, 86400, configs.user_cookie.secret)
+    cookie_str = user_cookie_generate(user['id'], 86400, configs.user_cookie.secret)
     cookie_name = configs.user_cookie.name
 
     # 生成响应消息

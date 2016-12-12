@@ -26,35 +26,34 @@ async def user_cookie_parse(cookie_str, cookie_secret=''):
         uid, expires, sha1 = str_list
         if int(expires) < time.time():
             return None
-        user = await UserAuth.find(uid)
+        user = await UserInfo.find(uid)
         if user is None:
             return None
 
-        s = '%s-%s-%s-%s' % (uid, user['password'], expires, cookie_secret)
+        s = '%s-%s-%s' % (uid, expires, cookie_secret)
         if sha1 != hashlib.sha1(s.encode('utf-8')).hexdigest():
             logging.info('parse cookie fail: invalid sha1')
             return None
 
-        user_info = await UserInfo.find(uid)
-        return user_info
+        return user
 
     except Exception as e:
         logging.exception(e)
         return None
 
 
-def user_cookie_generate(user, max_age, cookie_secret=''):
+def user_cookie_generate(user_id, max_age, cookie_secret=''):
     """
-    根据用户信息生成用户COOKIE
-    :param user: 用户
+    根据用户id生成用户COOKIE
+    :param user_id: 用户id
     :param max_age: COOKIE有效时间
     :param cookie_secret: 加密COOKIE的字符串
     :return: COOKIE字符串
     """
     # 过期时间
     expires = str(int(time.time() + max_age))
-    mix_str = '%s-%s-%s-%s' % (user['id'], user['password'], expires, cookie_secret)
-    items = [user['id'], expires, hashlib.sha1(mix_str.encode('utf-8')).hexdigest()]
+    mix_str = '%s-%s-%s' % (user_id, expires, cookie_secret)
+    items = [user_id, expires, hashlib.sha1(mix_str.encode('utf-8')).hexdigest()]
     return '-'.join(items)
 
 
