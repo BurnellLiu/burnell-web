@@ -95,21 +95,12 @@ function trashIConClicked(e){
 
 
 /**
- * 前一页博客处理函数
+ * 跳页处理函数
  */
-function previousPageClicked(){
-    var index = window.currentPageIndex - 1;
-    getImagesRequest(index.toString());
+function jumpPageClicked(e){
+    var num = $(e).attr('page');
+    getImagesRequest(num);
 }
-
-/**
- * 后一页博客处理函数
- */
-function nextPageClicked(){
-    var index = window.currentPageIndex + 1;
-    getImagesRequest(index.toString());
-}
-
 
 /**
  * 显示图像数据
@@ -136,39 +127,75 @@ function showImagesData(data){
     // 先清空子节点
     $ul.children('li').remove();
 
+    var currentIndex = data.page.page_index;
+    var pageCount = data.page.page_count;
+
     var previousLi = null;
     if (data.page.has_previous){
-        previousLi =
-            '<li>' +
-            '<a onclick="previousPageClicked()">' +
-            '<i class="uk-icon-angle-double-left"></i>' +
-            '</a>' +
-            '</li>'
+        var pageIndex = currentIndex-1;
+        previousLi = '<li><a page="' + pageIndex +'" onclick="jumpPageClicked(this)">' +
+            '<i class="uk-icon-angle-double-left"></i></a></li>'
     }
     else {
-        previousLi =
-            '<li class="uk-disabled">' +
-            '<span><i class="uk-icon-angle-double-left"></i></span>' +
-            '</li>';
+        previousLi = '<li class="uk-disabled"><span><i class="uk-icon-angle-double-left"></i></span></li>';
     }
     $ul.append(previousLi);
 
-    $ul.append('<li class="uk-active"><span>' + data.page.page_index + '</span></li>');
+    if ((currentIndex - 4) > 0){
+        var li = '<li><a page="1" onclick="jumpPageClicked(this)"><span>1</span></a></li><li><span>...</span></li>';
+        $ul.append(li);
+    }
+
+    if ((currentIndex - 4) == 0){
+        var li = '<li><a page="1" onclick="jumpPageClicked(this)"><span>1</span></a></li>';
+        $ul.append(li);
+    }
+
+    if ((currentIndex - 2) > 0){
+        var pageIndex = currentIndex-2;
+        var li = '<li><a page="' + pageIndex +'" onclick="jumpPageClicked(this)"><span>' + pageIndex +'</span></a></li>';
+        $ul.append(li);
+    }
+
+    if ((currentIndex - 1) > 0){
+        var pageIndex = currentIndex-1;
+        var li = '<li><a page="' + pageIndex +'" onclick="jumpPageClicked(this)"><span>' + pageIndex +'</span></a></li>';
+        $ul.append(li);
+    }
+
+    $ul.append('<li class="uk-active"><span>' + currentIndex + '</span></li>');
+
+    if ((currentIndex + 1) <= pageCount){
+        var pageIndex = currentIndex+1;
+        var li = '<li><a page="' + pageIndex +'" onclick="jumpPageClicked(this)"><span>' + pageIndex +'</span></a></li>';
+        $ul.append(li);
+    }
+
+    if ((currentIndex + 2) <= pageCount){
+        var pageIndex = currentIndex+2;
+        var li = '<li><a page="' + pageIndex +'" onclick="jumpPageClicked(this)"><span>' + pageIndex +'</span></a></li>';
+        $ul.append(li);
+    }
+
+    if ((currentIndex + 3) == pageCount){
+        var pageIndex = currentIndex+3;
+        var li = '<li><a page="' + pageIndex +'" onclick="jumpPageClicked(this)"><span>' + pageIndex +'</span></a></li>';
+        $ul.append(li);
+    }
+
+    if ((currentIndex + 3) < pageCount){
+        var li = '<li><span>...</span></li><li><a page="' + pageCount +'" onclick="jumpPageClicked(this)"><span>' + pageCount +'</span></a></li>';
+        $ul.append(li);
+    }
 
     var nextLi = null;
     if (data.page.has_next){
-        nextLi =
-            '<li>' +
-            '<a onclick="nextPageClicked()">' +
-            '<i class="uk-icon-angle-double-right"></i>' +
-            '</a>' +
-            '</li>';
+        var pageIndex = currentIndex + 1;
+        nextLi = '<li><a page="' + pageIndex +'" onclick="jumpPageClicked(this)">' +
+            '<i class="uk-icon-angle-double-right"></i></a></li>';
     }
     else {
-        nextLi =
-            '<li class="uk-disabled">' +
-            '<span><i class="uk-icon-angle-double-right"></i></span>' +
-            '</li>';
+        nextLi = '<li class="uk-disabled"><span><i class="uk-icon-angle-double-right"></i></span></li>';
     }
     $ul.append(nextLi);
 }

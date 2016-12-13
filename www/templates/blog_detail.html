@@ -43,6 +43,10 @@
         </article>
 
         <hr class="uk-article-divider">
+    {% else %}
+        <p class="uk-h4 uk-text-bold">您还未登录，登录微博账号发表精彩评论</p>
+        <p><a class="uk-button uk-button-primary" onclick="weiboLogin()"><i class="uk-icon-weibo uk-icon-small"></i>&nbsp;微博登录</a></p>
+        <hr class="uk-article-divider">
     {% endif %}
 
         <h3>最新评论</h3>

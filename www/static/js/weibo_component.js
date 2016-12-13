@@ -69,6 +69,14 @@ function weiboLogin() {
         });
     }
 
+}
 
+/**
+ * 微博登出处理函数
+ */
+function weiboLogout() {
+    WB2.logout(function(){
+        location.assign('/signout');
+    });
 }
 

@@ -38,7 +38,7 @@
                         </a>
                         <div class="uk-dropdown uk-dropdown-navbar">
                             <ul class="uk-nav uk-nav-navbar">
-                                <li><a href="/signout"><i class="uk-icon-sign-out"></i>登出</a></li>
+                                <li><a onclick="weiboLogout()"><i class="uk-icon-sign-out"></i>登出</a></li>
                             </ul>
                         </div>
                     </li>
@@ -48,7 +48,7 @@
                 {% endif %}
 
                 {% else %}
-                    <li><a onclick="weiboLogin()"><i class="uk-icon-weibo uk-icon-medium"></i>&nbsp;微博登录</a></li>
+                    <li><a onclick="weiboLogin()"><i class="uk-icon-weibo uk-icon-small"></i>&nbsp;微博登录</a></li>
                     <!--
                     <li><a href="/signin"><i class="uk-icon-sign-in"></i> 登陆</a></li>
                     <li><a href="/register"><i class="uk-icon-edit"></i> 注册</a></li>
