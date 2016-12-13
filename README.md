@@ -120,6 +120,9 @@ Supervisor只负责运行app.py，我们还需要配置Nginx，把配置文件bu
 
 # Release Note: <br>
 
+## 2016/12/13 V1.1.3 Release <br>
+1. 增加微博登录功能 <br>
+
 ## 2016/12/01 V1.1.2 Release <br>
 1. 增加博客分类 <br>
 2. 增加作者简介 <br>
