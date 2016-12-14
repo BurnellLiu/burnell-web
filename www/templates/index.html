@@ -6,7 +6,6 @@
 
 {% block content %}
     <div class="uk-width-1-1">
-
         <p class="uk-text-success uk-text-large uk-text-bold">最新博客</p>
     </div>
     <div class="uk-width-3-4">
@@ -17,9 +16,9 @@
                     {% if new_blog %}
                     <a target="_blank" href="/blog/{{ new_blog.id }}"><img width="100%" src="{{ new_blog.cover_image }}"></a>
                     <article class="uk-article">
-                        <h1 class="uk-article-title uk-text-bold uk-text-truncate">
+                        <h2 class="uk-text-bold uk-text-truncate">
                             <a target="_blank" class="uk-link-reset" href="/blog/{{ new_blog.id }}">{{ new_blog.name }}</a>
-                        </h1>
+                        </h2>
                         <p class="uk-article-meta">发表于:&nbsp;{{ new_blog.created_at|datetime }}&nbsp;&nbsp;阅读:&nbsp;{{ new_blog.read_times }}</p>
                         <p class="uk-text-truncate">{{ new_blog.summary}}</p>
                         <p><a target="_blank" class="uk-button uk-button-primary" href="/blog/{{ new_blog.id }}">继续阅读&nbsp;<i class="uk-icon-angle-double-right"></i></a></p>

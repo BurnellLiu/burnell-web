@@ -34,8 +34,9 @@ function showErrorMessage(msg){
  * @param {Boolean} isLoading true(加载状态), false(非加载状态)
  */
 function showFormLoading(isLoading){
-    var $button = $('#form-comment').find('button');
-    var $i = $('#form-comment').find('button[type=submit]').find('i');
+    var $formComment = $('#form-comment');
+    var $button = $formComment.find('button');
+    var $i = $formComment.find('button[type=submit]').find('i');
 
     if (isLoading) {
         $button.attr('disabled', 'disabled');
@@ -71,7 +72,7 @@ function requestDone(data){
  */
 function requestFail(xhr, status){
     showFormLoading(false);
-    showErrorMessage('网络出了问题 (HTTP '+ xhr.status+')');
+    showErrorMessage('网络出了问题 (HTTP ' + xhr.status + ')(' + status + ')');
 }
 
 

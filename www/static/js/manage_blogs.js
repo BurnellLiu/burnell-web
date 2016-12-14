@@ -108,7 +108,7 @@ function nextPageClicked(){
  */
 function showBlogsData(data){
     // 创建博客表
-    var $table = $('#blogs-table tbody');
+    var $table = $('#blogs-table').find('tbody');
     // 先清空子节点
     $table.children('tr').remove();
     var blogs = data.blogs;
@@ -133,7 +133,7 @@ function showBlogsData(data){
             '</tr>');
     }
     // 少于10行的填充空白
-    for (var i = 0; i < 10-blogs.length; i++){
+    for (i = 0; i < 10-blogs.length; i++){
         $table.append('<tr><td>&nbsp</td><td></td><td></td><td></td></tr>');
     }
 
@@ -150,7 +150,7 @@ function showBlogsData(data){
             '</li>'
     }
     else {
-        var previousLi =
+        previousLi =
             '<li class="uk-disabled">' +
             '<span><i class="uk-icon-angle-double-left"></i></span>' +
             '</li>';
@@ -168,7 +168,7 @@ function showBlogsData(data){
             '</li>';
     }
     else {
-        var nextLi =
+        nextLi =
             '<li class="uk-disabled">' +
             '<span><i class="uk-icon-angle-double-right"></i></span>' +
             '</li>';
@@ -216,7 +216,7 @@ function getBlogsRequest(pageIndex){
     var opt = {
         type: 'GET',
         url: '/api/blogs?page=' + pageIndex,
-        dataType: 'json',
+        dataType: 'json'
     };
     // 发送请求
     var jqxhr = $.ajax(opt);
@@ -229,8 +229,7 @@ function getBlogsRequest(pageIndex){
  * 初始化页面
  */
 function initPage(){
-
     getBlogsRequest('1');
 }
 
-$(document).ready(initPage)
+$(document).ready(initPage);

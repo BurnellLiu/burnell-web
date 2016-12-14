@@ -147,50 +147,50 @@ function showImagesData(data){
     }
 
     if ((currentIndex - 4) == 0){
-        var li = '<li><a page="1" onclick="jumpPageClicked(this)"><span>1</span></a></li>';
+        li = '<li><a page="1" onclick="jumpPageClicked(this)"><span>1</span></a></li>';
         $ul.append(li);
     }
 
     if ((currentIndex - 2) > 0){
-        var pageIndex = currentIndex-2;
-        var li = '<li><a page="' + pageIndex +'" onclick="jumpPageClicked(this)"><span>' + pageIndex +'</span></a></li>';
+        pageIndex = currentIndex-2;
+        li = '<li><a page="' + pageIndex +'" onclick="jumpPageClicked(this)"><span>' + pageIndex +'</span></a></li>';
         $ul.append(li);
     }
 
     if ((currentIndex - 1) > 0){
-        var pageIndex = currentIndex-1;
-        var li = '<li><a page="' + pageIndex +'" onclick="jumpPageClicked(this)"><span>' + pageIndex +'</span></a></li>';
+        pageIndex = currentIndex-1;
+        li = '<li><a page="' + pageIndex +'" onclick="jumpPageClicked(this)"><span>' + pageIndex +'</span></a></li>';
         $ul.append(li);
     }
 
     $ul.append('<li class="uk-active"><span>' + currentIndex + '</span></li>');
 
     if ((currentIndex + 1) <= pageCount){
-        var pageIndex = currentIndex+1;
-        var li = '<li><a page="' + pageIndex +'" onclick="jumpPageClicked(this)"><span>' + pageIndex +'</span></a></li>';
+        pageIndex = currentIndex+1;
+        li = '<li><a page="' + pageIndex +'" onclick="jumpPageClicked(this)"><span>' + pageIndex +'</span></a></li>';
         $ul.append(li);
     }
 
     if ((currentIndex + 2) <= pageCount){
-        var pageIndex = currentIndex+2;
-        var li = '<li><a page="' + pageIndex +'" onclick="jumpPageClicked(this)"><span>' + pageIndex +'</span></a></li>';
+        pageIndex = currentIndex+2;
+        li = '<li><a page="' + pageIndex +'" onclick="jumpPageClicked(this)"><span>' + pageIndex +'</span></a></li>';
         $ul.append(li);
     }
 
     if ((currentIndex + 3) == pageCount){
-        var pageIndex = currentIndex+3;
-        var li = '<li><a page="' + pageIndex +'" onclick="jumpPageClicked(this)"><span>' + pageIndex +'</span></a></li>';
+        pageIndex = currentIndex+3;
+        li = '<li><a page="' + pageIndex +'" onclick="jumpPageClicked(this)"><span>' + pageIndex +'</span></a></li>';
         $ul.append(li);
     }
 
     if ((currentIndex + 3) < pageCount){
-        var li = '<li><span>...</span></li><li><a page="' + pageCount +'" onclick="jumpPageClicked(this)"><span>' + pageCount +'</span></a></li>';
+        li = '<li><span>...</span></li><li><a page="' + pageCount +'" onclick="jumpPageClicked(this)"><span>' + pageCount +'</span></a></li>';
         $ul.append(li);
     }
 
     var nextLi = null;
     if (data.page.has_next){
-        var pageIndex = currentIndex + 1;
+        pageIndex = currentIndex + 1;
         nextLi = '<li><a page="' + pageIndex +'" onclick="jumpPageClicked(this)">' +
             '<i class="uk-icon-angle-double-right"></i></a></li>';
     }
@@ -263,8 +263,8 @@ function postImageRequestDone(data){
         return;
     }
 
-    previewImgTrash()
-    getImagesRequest(window.currentPageIndex.toString())
+    previewImgTrash();
+    getImagesRequest(window.currentPageIndex.toString());
 
 }
 

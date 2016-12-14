@@ -60,7 +60,9 @@
                         <h4 class="uk-comment-title">{{ comment.user_name }} {% if comment.user_id==blog.user_id %}(作者){% endif %}</h4>
                         <p class="uk-comment-meta">发表于:&nbsp;{{ comment.created_at|datetime }}&nbsp;&nbsp;
                             {% if __user__ %}
-                            <a class="uk-comment-meta" onclick="commentReply(this)" author="{{ comment.user_name }}">回复<i class="uk-icon-reply"></i></a>
+                            <a class="uk-comment-meta" onclick="commentReply(this)" author="{{ comment.user_name }}">
+                                回复<i class="uk-icon-reply"></i>
+                            </a>
                             {% endif %}
                         </p>
                     </header>

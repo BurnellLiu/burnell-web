@@ -170,7 +170,7 @@ function getVerifyImageRequest(){
     var opt = {
         type: 'GET',
         url: '/api/verifyimage',
-        dataType: 'json',
+        dataType: 'json'
     };
     // 发送请求
     var jqxhr = $.ajax(opt);

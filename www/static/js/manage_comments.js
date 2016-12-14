@@ -115,7 +115,7 @@ function nextPageClicked(){
  */
 function showCommentsData(data){
 
-    var $table = $('#comments-table tbody');
+    var $table = $('#comments-table').find('tbody');
     // 先清空子节点
     $table.children('tr').remove();
 
@@ -139,7 +139,7 @@ function showCommentsData(data){
             '</tr>');
     }
     // 少于10行的填充空白
-    for (var i = 0; i < 10-comments.length; i++){
+    for (i = 0; i < 10-comments.length; i++){
         $table.append('<tr><td>&nbsp</td><td></td><td></td><td></td></tr>');
     }
 
@@ -156,7 +156,7 @@ function showCommentsData(data){
             '</li>'
     }
     else {
-        var previousLi =
+        previousLi =
             '<li class="uk-disabled">' +
             '<span><i class="uk-icon-angle-double-left"></i></span>' +
             '</li>';
@@ -174,7 +174,7 @@ function showCommentsData(data){
             '</li>';
     }
     else {
-        var nextLi =
+        nextLi =
             '<li class="uk-disabled">' +
             '<span><i class="uk-icon-angle-double-right"></i></span>' +
             '</li>';
@@ -228,7 +228,7 @@ function postGetCommentsRequest(pageIndex){
     var opt = {
         type: 'GET',
         url: '/api/comments?page=' + pageIndex,
-        dataType: 'json',
+        dataType: 'json'
     };
 
     // 发送请求
@@ -245,4 +245,4 @@ function initPage(){
     postGetCommentsRequest('1');
 }
 
-$(document).ready(initPage)
+$(document).ready(initPage);

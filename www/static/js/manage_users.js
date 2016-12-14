@@ -103,7 +103,7 @@ function getUsersRequest(){
     var opt = {
         type: 'GET',
         url: '/api/users',
-        dataType: 'json',
+        dataType: 'json'
     };
     // 发送请求
     var jqxhr = $.ajax(opt);
@@ -122,4 +122,4 @@ function initPage(){
     getUsersRequest();
 }
 
-$(document).ready(initPage)
+$(document).ready(initPage);
