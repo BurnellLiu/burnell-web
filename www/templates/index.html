@@ -44,19 +44,19 @@
                 </div>
             </div>
     </div>
-    <div class="uk-width-large-1-4 uk-visible-large">
+    <div class="uk-width-large-1-4">
         <div class="uk-panel">
-            <div class="uk-text-left">
-                <img class="uk-border-rounded" width="120" height="120" src="/static/img/burnell_liu.jpg">
-                <p class="uk-text-bold uk-text-large">作者:&nbsp;Burnell&nbsp;Liu</p>
-                <p class="uk-comment-meta">刘杰,&nbsp;27岁,&nbsp;现居苏州</p>
-                <p class="uk-text-bold">邮箱:</p>
-                <p class="uk-text-primary">burnell_liu@outlook.com</p>
-                <p class="uk-text-bold">Github:</p>
-                <a class="uk-text-primary" target="_blank" href="https://github.com/BurnellLiu">https://github.com/BurnellLiu</a>
-                <p class="uk-text-bold">简介:</p>
-                <p class="uk-comment-meta uk-text-large">努力做一个快乐的程序员, good good study, day day up!</p>
-            </div>
+            <h3 class="uk-panel-title uk-text-primary">热门博客</h3>
+            <ul class="uk-list uk-list-line">
+             {% for blog in hot_blogs %}
+                 <li>
+                     <p class="uk-text-truncate">
+                         <span class="uk-text-large uk-text-primary uk-text-bold">{{ loop.index }}&nbsp;&nbsp;</span>
+                        <a class="uk-link-reset" target="_blank" href="/blog/{{ blog.id }}">{{ blog.name }}</a>
+                     </p>
+                 </li>
+             {% endfor %}
+            </ul>
         </div>
     </div>
 

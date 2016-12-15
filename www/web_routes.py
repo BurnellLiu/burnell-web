@@ -124,13 +124,15 @@ async def index(request):
 
     # 以创建时间降序的方式查找指定的博客
     blogs = await Blog.find_all(order_by='created_at desc', limit=(0, 4))
+    hot_blogs = await Blog.find_all(order_by='read_times desc', limit=(0, 10))
     new_blog = None
     if len(blogs) > 0:
         new_blog = blogs[0]
     return {
         '__template__': 'index.html',
         'new_blog': new_blog,
-        'blogs': blogs[1:]
+        'blogs': blogs[1:],
+        'hot_blogs': hot_blogs
     }
 
 
