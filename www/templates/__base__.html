@@ -2,6 +2,7 @@
 <html xmlns:wb="http://open.weibo.com/wb">
 <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     {% block meta %}<!-- block meta  -->{% endblock %}
     <title>{% block title %} ? {% endblock %} - 刘杰的个人网站</title>
     <link rel="stylesheet" href="/static/css/uikit.min.css">
@@ -26,15 +27,31 @@
 </head>
 <body>
     <nav class="uk-navbar uk-navbar-attached uk-margin-large-bottom">
-        <div class="uk-container uk-container-center">
-            <a href="/" class="uk-navbar-brand uk-visible-large">刘杰的个人网站</a>
-            <ul class="uk-navbar-nav">
+        <div class="uk-container">
+            <a href="/" class="uk-navbar-brand uk-hidden-small">刘杰的个人网站</a>
+            <a href="/" class="uk-navbar-brand uk-visible-small"><i class="uk-icon-home uk-icon-small"></i></a>
+            <ul class="uk-navbar-nav uk-hidden-small">
                 <li><a href="/essay">随笔</a></li>
                 <li><a href="/windows">Windows开发</a></li>
                 <li><a href="/ml">机器学习</a></li>
                 <li>
                     <a target="_blank" href="https://github.com/BurnellLiu/burnell-web">源码</a>
                 </li>
+            </ul>
+            <ul class="uk-navbar-nav uk-visible-small">
+                <li class="uk-parent" data-uk-dropdown>
+                        <a><i class="uk-icon-bars uk-icon-small"></i></a>
+                        <div class="uk-dropdown uk-dropdown-navbar">
+                            <ul class="uk-nav uk-nav-navbar">
+                                <li><a href="/essay">随笔</a></li>
+                                <li><a href="/windows">Windows开发</a></li>
+                                <li><a href="/ml">机器学习</a></li>
+                                <li>
+                                    <a target="_blank" href="https://github.com/BurnellLiu/burnell-web">源码</a>
+                                 </li>
+                            </ul>
+                        </div>
+                    </li>
             </ul>
             <div class="uk-navbar-flip">
                 <ul class="uk-navbar-nav">

@@ -8,11 +8,10 @@
     <div class="uk-width-1-1">
         <p class="uk-text-success uk-text-large uk-text-bold">最新博客</p>
     </div>
-    <div class="uk-width-3-4">
-
+    <div class="uk-width-large-3-4">
         <hr class="uk-article-divider">
             <div class="uk-grid">
-                <div class="uk-width-1-2">
+                <div class="uk-width-large-1-2 uk-margin-small-bottom">
                     {% if new_blog %}
                     <a target="_blank" href="/blog/{{ new_blog.id }}"><img width="100%" src="{{ new_blog.cover_image }}"></a>
                     <article class="uk-article">
@@ -25,7 +24,7 @@
                     </article>
                     {% endif %}
                 </div>
-                <div class="uk-width-1-2">
+                <div class="uk-width-large-1-2 uk-margin-small-bottom">
                     {% for blog in blogs%}
                     <div class="uk-grid">
                         <div class="uk-width-1-3">
@@ -42,12 +41,11 @@
                         </div>
                     </div>
                     {% endfor %}
-
                 </div>
             </div>
     </div>
-    <div class="uk-width-1-4">
-    <div class="uk-panel">
+    <div class="uk-width-large-1-4 uk-visible-large">
+        <div class="uk-panel">
             <div class="uk-text-left">
                 <img class="uk-border-rounded" width="120" height="120" src="/static/img/burnell_liu.jpg">
                 <p class="uk-text-bold uk-text-large">作者:&nbsp;Burnell&nbsp;Liu</p>
@@ -58,7 +56,6 @@
                 <a class="uk-text-primary" target="_blank" href="https://github.com/BurnellLiu">https://github.com/BurnellLiu</a>
                 <p class="uk-text-bold">简介:</p>
                 <p class="uk-comment-meta uk-text-large">努力做一个快乐的程序员, good good study, day day up!</p>
-
             </div>
         </div>
     </div>
