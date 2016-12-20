@@ -75,8 +75,15 @@ function weiboLogin() {
  * 微博登出处理函数
  */
 function weiboLogout() {
-    WB2.logout(function(){
+    var status = WB2.checkLogin();
+    if (status){
+        WB2.logout(function(){
         location.assign('/signout');
     });
+    }
+    else {
+        location.assign('/signout');
+    }
+
 }
 
