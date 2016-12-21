@@ -95,17 +95,17 @@ class Blog(Model):
 class Comment(Model):
     """
     评论表
-    create table comments (
-    `id` varchar(50) not null,
-    `blog_id` varchar(50) not null,
-    `user_id` varchar(50) not null,
-    `user_name` varchar(50) not null,
-    `user_image` varchar(500) not null,
-    `content` mediumtext not null,
-    `created_at` real not null,
-    key `idx_created_at` (`created_at`),
-    primary key (`id`)
-    ) engine=innodb default charset=utf8;
+    CREATE TABLE `comments` (
+    `id` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `blog_id` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `user_id` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `user_name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `user_image` varchar(500) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `content` mediumtext COLLATE utf8mb4_unicode_ci,
+    `created_at` double NOT NULL,
+    PRIMARY KEY (`id`),
+    KEY `idx_created_at` (`created_at`) USING BTREE
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
     """
     __table__ = 'comments'
 

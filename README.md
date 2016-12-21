@@ -59,7 +59,7 @@ sudo apt-get install nginx <br>
 sudo apt-get install supervisor <br>
 启动 Supervisor: sudo supervisord <br>
 
-10. 设置mysql可以远程链接 <br>
+10. 设置MySql可以远程链接 <br>
 vim /etc/MySQL/my.cnf找到bind-address = 127.0.0.1 <br>
 注释掉这行，如：#bind-address = 127.0.0.1 <br>
 重启 MySQL：sudo /etc/init.d/mysql restart <br>
@@ -67,7 +67,28 @@ root登录mysql: mysql -u root -p <br>
 授权远程链接: grant all privileges on *.* to root@"%" identified by "password" with grant option; <br>
 刷新权限信息: flush privileges; <br>
 
-11. 配置Supervisor <br>
+11. 设置MySQL支持Emoji表情存储 <br>
+找到/etc/mysql路径下的my.cnf文件，添加如下配置： <br>
+[client] <br>
+default-character-set=utf8mb4 <br>
+[mysqld] <br>
+character-set-client-handshake = FALSE <br>
+character-set-server = utf8mb4 <br>
+collation-server = utf8mb4\_unicode\_ci <br>
+init_connect=’SET NAMES utf8mb4' <br>
+[mysql] <br>
+default-character-set=utf8mb4 <br>
+<br>
+root登录mysql: mysql -u root -p <br>
+已经使用uft8创建的database可以做如下的字符集修改： <br>
+ALTER DATABASE 数据库名 CHARACTER SET = utf8mb4 COLLATE = utf8mb4\_unicode\_ci; <br>
+已经使用uft8创建的table可以做如下的字符集修改： <br>
+ALTER TABLE 表名 CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4\_unicode\_ci; <br>
+已经使用utf8创建的字段可以做如下的字符集修改： <br>
+ALTER TABLE 表名 CHANGE 字段名 字段名 该字段原来的数据类型 CHARACTER SET utf8mb4 COLLATE utf8mb4\_unicode\_ci; <br>
+重启 MySQL：sudo /etc/init.d/mysql restart <br>
+
+12. 配置Supervisor <br>
 编写一个Supervisor的配置文件burnellweb.conf，存放到/etc/supervisor/conf.d/目录下<br>
 然后重启Supervisor后，就可以随时启动和停止Supervisor管理的服务了<br>
 重启：sudo supervisorctl reload <br>
@@ -86,7 +107,7 @@ root登录mysql: mysql -u root -p <br>
     ```
 
 
-12. 配置Nginx <br>
+13. 配置Nginx <br>
 Supervisor只负责运行app.py，我们还需要配置Nginx，把配置文件burnellweb放到/etc/nginx/sites-available/目录下<br>
 让Nginx重新加载配置文件：sudo /etc/init.d/nginx reload <br>
     ```
