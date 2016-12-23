@@ -15,11 +15,11 @@
                     {% if new_blog %}
                     <a target="_blank" href="/blog/{{ new_blog.id }}"><img width="100%" src="{{ new_blog.cover_image }}"></a>
                     <article class="uk-article">
-                        <h2 class="uk-text-bold uk-text-truncate">
+                        <h2 class="uk-text-bold uk-text-break">
                             <a target="_blank" class="uk-link-reset" href="/blog/{{ new_blog.id }}">{{ new_blog.name }}</a>
                         </h2>
                         <p class="uk-article-meta">发表于:&nbsp;{{ new_blog.created_at|datetime }}&nbsp;&nbsp;阅读:&nbsp;{{ new_blog.read_times }}</p>
-                        <p class="uk-text-truncate">{{ new_blog.summary}}</p>
+                        <p class="uk-text-break">{{ new_blog.summary}}</p>
                         <p><a target="_blank" class="uk-button uk-button-primary" href="/blog/{{ new_blog.id }}">继续阅读&nbsp;<i class="uk-icon-angle-double-right"></i></a></p>
                     </article>
                     {% endif %}
@@ -32,7 +32,7 @@
                         </div>
                         <div class="uk-width-2-3">
                             <article class="uk-article">
-                                <h3 class="uk-text-bold uk-text-truncate">
+                                <h3 class="uk-text-bold uk-text-break">
                                     <a target="_blank" class="uk-link-reset" href="/blog/{{ blog.id }}">{{ blog.name }}</a>
                                 </h3>
                                 <p class="uk-article-meta">发表于:&nbsp;{{ blog.created_at|datetime }}&nbsp;&nbsp;阅读:&nbsp;{{ blog.read_times }}</p>
