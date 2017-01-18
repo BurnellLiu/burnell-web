@@ -882,7 +882,7 @@ async def api_image_upload(request):
     image_url += str(int(image.created_at * 1000))
     image_url += image_name
 
-    image.url = image_url
+    image.url = ('http://www.burnelltek.com' + image_url)
     await image.update()
 
     image_str = image_str.replace('data:image/png;base64,', '')
