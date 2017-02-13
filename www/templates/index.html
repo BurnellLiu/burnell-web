@@ -51,7 +51,7 @@
              {% for blog in hot_blogs %}
                  <li>
                      <p class="uk-text-truncate">
-                         <span class="uk-text-large uk-text-primary uk-text-bold">{{ loop.index }}&nbsp;&nbsp;</span>
+                         <span class="uk-text-large uk-text-primary uk-text-bold">{{ loop.index-1 }}&nbsp;&nbsp;</span>
                         <a class="uk-link-reset" target="_blank" href="/blog/{{ blog.id }}">{{ blog.name }}</a>
                      </p>
                  </li>
