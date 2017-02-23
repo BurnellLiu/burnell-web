@@ -2,14 +2,18 @@
 
 {% block title %}主页{% endblock %}
 
-{% block beforehead %}{% endblock %}
+{% block beforehead %}
+    <link rel="stylesheet" href="/static/css/slideshow.css">
+    <script src="/static/js/lib/slideshow.js"></script>
+{% endblock %}
 
 {% block content %}
     <div class="uk-width-1-1">
-        <p class="uk-text-success uk-text-large uk-text-bold">最新博客</p>
-    </div>
-    <div class="uk-width-large-3-4">
-        <hr class="uk-article-divider">
+
+    <div class="uk-grid">
+        <div class="uk-width-large-3-4">
+            <p class="uk-text-success uk-text-large uk-text-bold">最新博客</p>
+            <hr class="uk-article-divider">
             <div class="uk-grid">
                 <div class="uk-width-large-1-2 uk-margin-small-bottom">
                     {% if new_blog %}
@@ -43,21 +47,52 @@
                     {% endfor %}
                 </div>
             </div>
-    </div>
-    <div class="uk-width-large-1-4">
-        <div class="uk-panel">
-            <h3 class="uk-panel-title uk-text-primary">热门博客</h3>
-            <ul class="uk-list uk-list-line">
-             {% for blog in hot_blogs %}
-                 <li>
-                     <p class="uk-text-truncate">
-                         <span class="uk-text-large uk-text-primary uk-text-bold">{{ loop.index-1 }}&nbsp;&nbsp;</span>
-                        <a class="uk-link-reset" target="_blank" href="/blog/{{ blog.id }}">{{ blog.name }}</a>
-                     </p>
-                 </li>
-             {% endfor %}
-            </ul>
+
+            <p class="uk-text-large uk-text-bold">热门博客</p>
+            <hr class="uk-article-divider">
+
+            <div class="uk-grid">
+                <div class="uk-width-large-3-5 ">
+                    <div class="uk-slideshow">
+                        <ul class="uk-slideshow  uk-overlay-active" data-uk-slideshow="{kenburns:true, autoplay:true}" >
+                        {% for blog in hot_blogs %}
+                            <li>
+                                <img width="100%" src="{{ blog.cover_image }}">
+                                <div class="uk-overlay-panel">
+                                    <p class="uk-text-large uk-text-bold">
+                                        <a target="_blank" href="/blog/{{ blog.id }}">{{ blog.name }}</a>
+                                    </p>
+                                </div>
+                            </li>
+                        {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                <div class="uk-width-large-2-5">
+                    <div class="uk-panel">
+                        <ul class="uk-list uk-list-line">
+                        {% for blog in hot_blogs %}
+                            <li>
+                                <p class="uk-text-truncate">
+                                    <span class="uk-text-large uk-text-primary uk-text-bold">{{ loop.index-1 }}&nbsp;&nbsp;</span>
+                                    <a class="uk-link-reset" target="_blank" href="/blog/{{ blog.id }}">{{ blog.name }}</a>
+                                </p>
+                            </li>
+                        {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
+
+        <div class="uk-width-large-1-4">
+            <div align="center">
+                <img width="150" src="/static/img/logo.png">
+            </div>
+            <hr class="uk-article-divider">
+            <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=5&isTitle=0&noborder=0&isWeibo=0&isFans=1&uid=1794132970&verifier=89503826&dpc=1"></iframe>
+        </div>
+    </div>
     </div>
 
 {% endblock %}
