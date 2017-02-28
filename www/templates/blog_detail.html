@@ -19,6 +19,10 @@
             <h1 class="uk-article-title">{{ blog.name }}</h1>
             <p class="uk-article-meta">发表于:&nbsp;{{ blog.created_at|datetime }}&nbsp;&nbsp;阅读:&nbsp;{{ blog.read_times }}</p>
             <p><img width="100%" src="{{ blog.cover_image }}"></p>
+            <p class="uk-article-meta">除特别注明外，本站所有文章均为<a href="http://www.burnelltek.com">刘杰的个人网站</a>原创</p>
+            <p class="uk-article-meta">转载请注明出处：
+                <a href="http://www.burnelltek.com/blog/{{ blog.id }}">http://www.burnelltek.com/blog/{{ blog.id }}</a>
+            </p>
             <p>{{ blog.html_content|safe}}</p>
         </article>
 
