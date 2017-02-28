@@ -2,6 +2,9 @@ burnell-web <br>
 ===========
 burnell-web [www.burnelltek.com](http://www.burnelltek.com) 是一个个人博客网站系统，后端使用Python编写 <br>
 
+# License <br>
+**MIT** <br>
+
 # 开发环境 <br>
 Python3.5.2 <br>
 Python依赖库：<br>
@@ -137,7 +140,6 @@ Supervisor只负责运行app.py，我们还需要配置Nginx，把配置文件bu
         }
     }
     ```
-
 
 # Release Note: <br>
 
