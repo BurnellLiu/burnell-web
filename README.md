@@ -14,9 +14,7 @@ Python依赖库：<br>
 4. piplow，图片库用于生成验证码 <br>
 
 # 项目结构 <br>
->backup                备份目录 <br>
 >conf                  配置文件目录 <br>
->dist                  打包目录 <br>
 >www                   web目录, 存放.py文件 <br>
 >>static               存放静态文件 <br>
 >>templates            存放模板文件 <br>
