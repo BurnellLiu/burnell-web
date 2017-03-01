@@ -252,7 +252,6 @@ async def blog_ml(request):
         blogs = await Blog.find_all('type=?', [u'机器学习'], order_by='created_at desc', limit=(page.offset, page.limit))
         hot_blogs = await Blog.find_all('type=?', [u'机器学习'], order_by='read_times desc', limit=(0, 10))
 
-
     return {
         '__template__': 'blog_list.html',
         'page': page,
@@ -874,6 +873,13 @@ async def api_image_upload(request):
     if not image_str or not image_str.strip():
         return data_error(u'图片内容不能为空')
 
+    # 取消图片的原始名，只保留后缀名
+    loc = image_name.find('.')
+    if loc == -1:
+        return data_error(u'图片名有误')
+    image_name = image_name[loc:]
+
+    # 先在数据库中生成一条图片的记录
     image = Image(url='xx')
     await image.save()
 
@@ -882,7 +888,7 @@ async def api_image_upload(request):
     image_url += str(int(image.created_at * 1000))
     image_url += image_name
 
-    image.url = ('http://www.burnelltek.com' + image_url)
+    image.url = (configs.domain_name + image_url)
     await image.update()
 
     image_str = image_str.replace('data:image/png;base64,', '')

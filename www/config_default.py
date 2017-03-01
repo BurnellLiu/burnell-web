@@ -23,5 +23,6 @@ configs = {
         'secret': 'happy',
         'name': 'VERIFY_IMAGE_SESSION'
     },
-    'font_path': 'C:/Windows/Fonts/Arial.ttf'
+    'font_path': 'C:/Windows/Fonts/Arial.ttf',
+    'domain_name': 'http://127.0.0.1:9000'
 }

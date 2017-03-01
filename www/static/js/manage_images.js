@@ -1,5 +1,5 @@
 /**
- * 管理博客页面逻辑处理
+ * 管理图片页面逻辑处理
  * 作者: burnell liu
  * 邮箱: burnell_liu@outlook.com
  */
