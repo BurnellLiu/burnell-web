@@ -448,8 +448,8 @@ async def api_weibo_login(request):
     if not user_name:
         return data_error()
     user_image = None
-    if 'profile_image_url' in user_data:
-        user_image = user_data['profile_image_url']
+    if 'avatar_hd' in user_data:
+        user_image = user_data['avatar_hd']
     if not user_image:
         return data_error()
 
@@ -599,7 +599,8 @@ async def api_user_register(request):
     await user.save()
 
     # 生成头像图片URL
-    head_img_url = '/static/img/head_%s.jpg' % random.randint(1, 15)
+    head_img_url = configs.domain_name
+    head_img_url += '/static/img/head_%s.jpg' % random.randint(1, 15)
     user_info = UserInfo(id=uid, name=name.strip(), image=head_img_url)
     await user_info.save()
 
