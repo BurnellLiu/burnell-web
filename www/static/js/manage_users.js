@@ -54,14 +54,14 @@ function showUsersData(data){
             nameSpan += '<span style="color:#d05"><i class="uk-icon-key"></i> 管理员</span>';
         }
         $table.append(
-            '<tr >' +
-            '<td>' +
+            '<tr>' +
+            '<td class = "uk-text-middle">' +
             nameSpan +
             '</td>' +
             '<td>' +
-            '<span>' + users[i].email + '</span>' +
+            '<img class="uk-border-rounded" height="40" width="40" src="' + users[i].image + '">' +
             '</td>' +
-            '<td>' +
+            '<td class = "uk-text-middle">' +
             '<span>' + users[i].created_at.toDateTime() + '</span>' +
             '</td>' +
             '</tr>');
