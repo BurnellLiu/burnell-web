@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     {% block meta %}<!-- block meta  -->{% endblock %}
-    <title>{% block title %} ? {% endblock %} - 刘杰的个人网站</title>
+    <title>{% block title %} ? {% endblock %} - {{ website_name }}</title>
     <link rel="stylesheet" href="/static/css/uikit.min.css">
     <link rel="stylesheet" href="/static/css/uikit.gradient.min.css">
     <script src="/static/js/lib/jquery.min.js"></script>
@@ -12,9 +12,8 @@
     <script src="/static/js/lib/uikit.min.js"></script>
     <script src="/static/js/lib/sticky.min.js"></script>
     <script src="/static/js/common.js"></script>
-    <script src="http://tjs.sjs.sinajs.cn/open/api/js/wb.js?appkey=4212499711" type="text/javascript" charset="utf-8"></script>
+    <script src="http://tjs.sjs.sinajs.cn/open/api/js/wb.js?appkey={{ weibo.appkey }}" type="text/javascript" charset="utf-8"></script>
     <script src="/static/js/weibo_component.js"></script>
-
     <script>
     var _hmt = _hmt || [];
     (function() {
@@ -30,7 +29,7 @@
 <body>
     <nav class="uk-navbar uk-navbar-attached uk-margin-large-bottom">
         <div class="uk-container uk-container-center">
-            <a href="/" class="uk-navbar-brand uk-hidden-small">刘杰的个人网站</a>
+            <a href="/" class="uk-navbar-brand uk-hidden-small">{{ website_name }}</a>
             <a href="/" class="uk-navbar-brand uk-visible-small"><i class="uk-icon-home uk-icon-small"></i></a>
             <ul class="uk-navbar-nav uk-hidden-small">
                 <li><a href="/essay">随笔</a></li>
@@ -99,8 +98,8 @@
     <div class="uk-margin-large-top" style="background-color:#eee; border-top:1px solid #ccc;">
         <div class="uk-container uk-container-center uk-text-center">
             <div class="uk-panel uk-margin-top uk-margin-bottom">
-                <p><a target="_blank" href="http://www.miitbeian.gov.cn/">苏ICP备16059872号</a></p>
-                <p>Copyright &copy; 2016. <a href="http://www.burnelltek.com/" target="_blank">www.burnelltek.com</a>. All rights reserved.</p>
+                <p><a target="_blank" href="http://www.miitbeian.gov.cn/">{{ ICP_NO }}</a></p>
+                <p>Copyright &copy; 2016. <a href="{{ domain_name }}" target="_blank">{{ domain_name }}</a>. All rights reserved.</p>
             </div>
 
         </div>

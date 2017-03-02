@@ -87,6 +87,12 @@ async def response_factory(app, handler):
             else:
                 # 从请求中取出用户信息
                 r['__user__'] = request.__user__
+                # 设置配置信息
+                r['domain_name'] = configs.domain_name
+                r['website_name'] = configs.website_name
+                r['ICP_NO'] = configs.ICP_NO
+                r['weibo'] = configs.weibo
+
                 templating_env = app['__templating__']
                 template = templating_env.get_template(template_file_name)
                 resp = web.Response(body=template.render(**r).encode('utf-8'))

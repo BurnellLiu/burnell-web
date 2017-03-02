@@ -3,11 +3,13 @@
 
 """
 开发环境默认配置
+在config_override.py文件中重写配置项即可覆盖配置信息
 """
 
 __author__ = 'Burnell Liu'
 
 configs = {
+    # 数据库配置信息
     'db': {
         'host': '1.1.1.1',
         'port': 3306,
@@ -15,14 +17,41 @@ configs = {
         'password': 'pwd',
         'database': 'db'
     },
+
+    # 用户COOKIE配置信息
     'user_cookie': {
+        # 加密字段
         'secret': 'TEST',
+        # COOKIE名
         'name': 'USER_SESSION'
     },
+
+    # 验证码图片COOKIE配置信息
     'verify_image_cookie': {
+        # 加密字段
         'secret': 'happy',
+        # COOKIE名
         'name': 'VERIFY_IMAGE_SESSION'
     },
+
+    # 微博配置信息
+    'weibo': {
+        # 微博开放平台申请到的APP_KEY
+        'appkey': 'xxxxxx',
+        # 你的微博ID
+        'uid': 'xxxxxx'
+    },
+
+    # 字体路径，linux下需要填写为'/usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf'
+    # 生成验证码需要用到字体
     'font_path': 'C:/Windows/Fonts/Arial.ttf',
-    'domain_name': 'http://127.0.0.1:9000'
+
+    # 域名信息
+    'domain_name': 'http://127.0.0.1:9000',
+
+    # 网站名称
+    'website_name': 'XXX的个人网站',
+
+    # ICP备案号
+    'ICP_NO': 'XICP备XXXXXXXX号'
 }

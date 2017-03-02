@@ -19,9 +19,9 @@
             <h1 class="uk-article-title">{{ blog.name }}</h1>
             <p class="uk-article-meta">发表于:&nbsp;{{ blog.created_at|datetime }}&nbsp;&nbsp;阅读:&nbsp;{{ blog.read_times }}</p>
             <p><img width="100%" src="{{ blog.cover_image }}"></p>
-            <p class="uk-article-meta">除特别注明外，本站所有文章均为<a href="http://www.burnelltek.com">刘杰的个人网站</a>原创</p>
+            <p class="uk-article-meta">除特别注明外，本站所有文章均为<a href="{{ domain_name }}">{{ website_name }}</a>原创</p>
             <p class="uk-article-meta">转载请注明出处：
-                <a href="http://www.burnelltek.com/blog/{{ blog.id }}">http://www.burnelltek.com/blog/{{ blog.id }}</a>
+                <a href="{{ domain_name }}/blog/{{ blog.id }}">{{ domain_name }}/blog/{{ blog.id }}</a>
             </p>
             <p>{{ blog.html_content|safe}}</p>
         </article>
@@ -30,10 +30,10 @@
 
         <p class="uk-h3 uk-text-bold">分享给朋友阅读吧</p>
         <wb:share-button
-                appkey="4212499711"
+                appkey="{{ weibo.appkey }}"
                 addition="full"
                 type="button"
-                ralateUid="1794132970"
+                ralateUid="{{ weibo.uid }}"
                 pic="{{ blog.cover_image }}">
         </wb:share-button>
 
@@ -105,7 +105,7 @@
                 <p class="uk-text-bold uk-text-large">刘杰</p>
                 <p class="uk-comment-meta">28岁,&nbsp;现居苏州</p>
                 <p class="uk-text-bold">微博:</p>
-                <wb:follow-button uid="1794132970" type="red_3" width="100%" height="32" ></wb:follow-button>
+                <wb:follow-button uid="{{ weibo.uid }}" type="red_3" width="100%" height="32" ></wb:follow-button>
                 <p class="uk-text-bold">微信:</p>
                 <p class="uk-text-primary">BurnellLIU</p>
                 <p class="uk-text-bold">邮箱:</p>
