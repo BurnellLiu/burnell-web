@@ -284,7 +284,7 @@ async def blog_detail(request):
     comments = await Comment.find_all('blog_id=?', [blog_id], order_by='created_at asc')
     for c in comments:
         c.html_content = text2html(c.content)
-    blog.html_content = markdown2.markdown(blog.content)
+    blog.html_content = markdown2.markdown(blog.content, extras=["fenced-code-blocks"])
     return {
         '__template__': 'blog_detail.html',
         'blog': blog,
