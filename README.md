@@ -11,7 +11,8 @@ Python依赖库：<br>
 1. aiohttp，异步web框架库 <br>
 2. jinja2， 前端模板引擎库 <br>
 3. aiomysql，mysql异步驱动库 <br>
-4. piplow，图片库用于生成验证码 <br>
+4. pillow，图片库用于生成验证码 <br>
+5. pygments，代码高亮库 <br>
 
 # 项目结构 <br>
 >conf                  配置文件目录 <br>
@@ -45,6 +46,8 @@ sudo pip3 install jinja2 aiomysql aiohttp <br>
 sudo apt-get install python3.5-dev <br>
 sudo apt-get install libjpeg8-dev zlib1g-dev libfreetype6-dev <br>
 sudo pip3 install pillow <br>
+安装pygments: <br>
+sudo pip3 install pygments <br>
 
 6. 切换回来链接文件：<br>
 sudo rm /usr/bin/python3 <br>
@@ -140,6 +143,9 @@ Supervisor只负责运行app.py，我们还需要配置Nginx，把配置文件bu
     ```
 
 # Release Note: <br>
+
+## 2017/03/15 V1.1.4 Release <br>
+>1. 增加代码高亮功能 <br>
 
 ## 2017/02/13 V1.1.3 Release <br>
 1. 增加微博登录功能 <br>
