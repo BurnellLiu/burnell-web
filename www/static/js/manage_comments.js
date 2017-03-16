@@ -130,7 +130,10 @@ function showCommentsData(data){
             '<span>' + comments[i].content + '</span>' +
             '</td>' +
             '<td>' +
-            '<span>'+ comments[i].created_at.toDateTime() + '</span>'+
+            '<span>' + comments[i].created_at.toDateTime() + '</span>'+
+            '</td>' +
+            '<td>' +
+                '<span><a href="/blog/' + comments[i].blog_id +'">链接</a></span>' +
             '</td>' +
             '<td>' +
             '<a onclick="trashIConClicked(\'' + comments[i].id + '\')">' +
@@ -140,7 +143,7 @@ function showCommentsData(data){
     }
     // 少于10行的填充空白
     for (i = 0; i < 10-comments.length; i++){
-        $table.append('<tr><td>&nbsp</td><td></td><td></td><td></td></tr>');
+        $table.append('<tr><td>&nbsp</td><td></td><td></td><td></td><td></td></tr>');
     }
 
     // 创建分页列
