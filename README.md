@@ -144,8 +144,9 @@ Supervisor只负责运行app.py，我们还需要配置Nginx，把配置文件bu
 
 # Release Note: <br>
 
-## 2017/03/15 V1.1.4 Release <br>
->1. 增加代码高亮功能 <br>
+## 2017/03/16 V1.1.4 Release <br>
+1. 增加代码高亮功能 <br>
+2. 评论功能改善 <br>
 
 ## 2017/02/13 V1.1.3 Release <br>
 1. 增加微博登录功能 <br>

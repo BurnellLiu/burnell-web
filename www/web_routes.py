@@ -993,10 +993,26 @@ async def api_comment_create(request):
     if blog is None:
         return data_error(u'评论的博客不存在')
 
+    # 检查评论目标人名称，如果为NULL，表示对博客直接评论
+    target_user_name = None
+    if 'targetName' in params:
+        target_user_name = params['targetName']
+    if not target_user_name or not target_user_name.strip():
+        target_user_name = blog.user_name
+
+    # 检查评论目标人id，如果为NULL，表示对博客直接评论
+    target_user_id = None
+    if 'targetId' in params:
+        target_user_id = params['targetId']
+    if not target_user_id or not target_user_id.strip():
+        target_user_id = blog.user_id
+
     comment = Comment(blog_id=blog.id,
                       user_id=user.id,
                       user_name=user.name,
                       user_image=user.image,
+                      target_user_id=target_user_id,
+                      target_user_name=target_user_name,
                       content=content.strip())
     await comment.save()
     return comment

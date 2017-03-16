@@ -46,10 +46,13 @@
             <header class="uk-comment-header">
                 <img class="uk-comment-avatar uk-border-rounded" width="50" height="50" src="{{ __user__.image }}">
                 <h4 class="uk-comment-title">{{ __user__.name }}</h4>
+                <p id="reply-target" class="uk-comment-meta"></p>
             </header>
             <div class="uk-comment-body">
                 <form id="form-comment" class="uk-form">
                     <div class="uk-alert uk-alert-danger uk-hidden"></div>
+                    <div id="reply-target-id" class="uk-hidden"></div>
+                    <div id="reply-target-name" class="uk-hidden"></div>
                     <div class="uk-form-row">
                         <textarea id="new-comment-text" rows="6" placeholder="说点什么吧" style="width:100%;resize:none;"></textarea>
                     </div>
@@ -78,12 +81,18 @@
                         <h4 class="uk-comment-title">{{ comment.user_name }} {% if comment.user_id==blog.user_id %}(作者){% endif %}</h4>
                         <p class="uk-comment-meta">发表于:&nbsp;{{ comment.created_at|datetime }}&nbsp;&nbsp;
                             {% if __user__ %}
-                            <a class="uk-comment-meta" onclick="commentReply(this)" author="{{ comment.user_name }}">
+                            <a class="uk-comment-meta"
+                               onclick="commentReply(this)"
+                               username="{{ comment.user_name }}"
+                               userid="{{ comment.user_id }}">
                                 回复<i class="uk-icon-reply"></i>
                             </a>
                             {% endif %}
                         </p>
                     </header>
+                    <div class="uk-text-muted">
+                        回复@{{ comment.target_user_name}}
+                    </div>
                     <div class="uk-comment-body">
                         {{ comment.html_content|safe }}
                     </div>

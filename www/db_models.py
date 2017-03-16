@@ -101,6 +101,8 @@ class Comment(Model):
     `user_id` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
     `user_name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
     `user_image` varchar(500) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `target_user_id` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `target_user_name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
     `content` mediumtext COLLATE utf8mb4_unicode_ci,
     `created_at` double NOT NULL,
     PRIMARY KEY (`id`),
@@ -114,6 +116,8 @@ class Comment(Model):
     user_id = StringField(ddl='varchar(50)')
     user_name = StringField(ddl='varchar(50)')
     user_image = StringField(ddl='varchar(500)')
+    target_user_id = StringField(ddl='varchar(50)')
+    target_user_name = StringField(ddl='varchar(50)')
     content = TextField()
     created_at = FloatField(default=time.time)
 

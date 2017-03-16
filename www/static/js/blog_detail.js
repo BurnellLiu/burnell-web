@@ -116,10 +116,15 @@ function commentSubmit(event){
             return;
         }
 
+    var targetName = $('#reply-target-name').text();
+    var targetId = $('#reply-target-id').text();
+
     showFormLoading(true);
 
     var comment = {
-        content: content
+        content: content,
+        targetName: targetName,
+        targetId: targetId
     };
 
     // 将评论信息POST出去
@@ -134,11 +139,14 @@ function commentSubmit(event){
 function commentReply(e){
     // 滚动页面到发表评论区域, 滚动时间200ms
     $('html, body').animate({scrollTop: $("#new-comment").offset().top}, 200);
-    var author = $(e).attr('author');
+    var name = $(e).attr('username');
+    var id = $(e).attr('userid');
 
     // 设置@, 设置焦点
+    $('#reply-target').text('回复@' + name);
+    $('#reply-target-name').text(name);
+    $('#reply-target-id').text(id);
     var $commentText = $('#new-comment-text');
-    $commentText.val('回复@' + author + ':\n');
     $commentText.focus();
 }
 
