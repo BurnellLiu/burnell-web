@@ -922,6 +922,8 @@ async def api_image_delete(request):
     url = image.url
     await image.remove()
 
+    url = url.replace(configs.domain_name, '')
+
     filename = '.'
     filename += url
     if os.path.exists(filename):
