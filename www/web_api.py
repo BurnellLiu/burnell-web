@@ -152,8 +152,17 @@ async def api_user_get(request):
     if not is_admin(request):
         return permission_error()
 
-    users = await UserInfo.find_all(order_by='created_at desc')
-    return dict(users=users)
+    page_index = 1
+    str_dict = parse_query_string(request.query_string)
+    if 'page' in str_dict:
+        page_index = int(str_dict['page'])
+
+    num = await UserInfo.find_number('count(id)')
+    p = Pagination(num, page_index)
+    if num == 0:
+        return dict(page=p, users=())
+    users = await UserInfo.find_all(order_by='created_at desc', limit=(p.offset, p.limit))
+    return dict(page=p, users=users)
 
 
 @post('/api/users')

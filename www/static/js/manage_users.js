@@ -37,7 +37,14 @@ function showDataLoading(isLoading){
     else {
         $('#loading').hide();
     }
+}
 
+/**
+ * 跳页处理函数
+ */
+function jumpPageClicked(e){
+    var num = $(e).attr('page');
+    getUsersRequest(num);
 }
 
 /**
@@ -47,6 +54,9 @@ function showDataLoading(isLoading){
 function showUsersData(data){
     // 创建博客表
     var $table = $('#users-table tbody');
+        // 先清空子节点
+    $table.children('tr').remove();
+
     var users = data.users;
     for (var i in users){
         var nameSpan = '<span>' + users[i].name + '</span>';
@@ -66,6 +76,83 @@ function showUsersData(data){
             '</td>' +
             '</tr>');
     }
+
+    // 创建分页列
+    var $ul = $('ul.uk-pagination');
+    // 先清空子节点
+    $ul.children('li').remove();
+
+    var currentIndex = data.page.page_index;
+    var pageCount = data.page.page_count;
+
+    var previousLi = null;
+    if (data.page.has_previous){
+        var pageIndex = currentIndex-1;
+        previousLi = '<li><a page="' + pageIndex +'" onclick="jumpPageClicked(this)">' +
+            '<i class="uk-icon-angle-double-left"></i></a></li>'
+    }
+    else {
+        previousLi = '<li class="uk-disabled"><span><i class="uk-icon-angle-double-left"></i></span></li>';
+    }
+    $ul.append(previousLi);
+
+    if ((currentIndex - 4) > 0){
+        var li = '<li><a page="1" onclick="jumpPageClicked(this)"><span>1</span></a></li><li><span>...</span></li>';
+        $ul.append(li);
+    }
+
+    if ((currentIndex - 4) == 0){
+        li = '<li><a page="1" onclick="jumpPageClicked(this)"><span>1</span></a></li>';
+        $ul.append(li);
+    }
+
+    if ((currentIndex - 2) > 0){
+        pageIndex = currentIndex-2;
+        li = '<li><a page="' + pageIndex +'" onclick="jumpPageClicked(this)"><span>' + pageIndex +'</span></a></li>';
+        $ul.append(li);
+    }
+
+    if ((currentIndex - 1) > 0){
+        pageIndex = currentIndex-1;
+        li = '<li><a page="' + pageIndex +'" onclick="jumpPageClicked(this)"><span>' + pageIndex +'</span></a></li>';
+        $ul.append(li);
+    }
+
+    $ul.append('<li class="uk-active"><span>' + currentIndex + '</span></li>');
+
+    if ((currentIndex + 1) <= pageCount){
+        pageIndex = currentIndex+1;
+        li = '<li><a page="' + pageIndex +'" onclick="jumpPageClicked(this)"><span>' + pageIndex +'</span></a></li>';
+        $ul.append(li);
+    }
+
+    if ((currentIndex + 2) <= pageCount){
+        pageIndex = currentIndex+2;
+        li = '<li><a page="' + pageIndex +'" onclick="jumpPageClicked(this)"><span>' + pageIndex +'</span></a></li>';
+        $ul.append(li);
+    }
+
+    if ((currentIndex + 3) == pageCount){
+        pageIndex = currentIndex+3;
+        li = '<li><a page="' + pageIndex +'" onclick="jumpPageClicked(this)"><span>' + pageIndex +'</span></a></li>';
+        $ul.append(li);
+    }
+
+    if ((currentIndex + 3) < pageCount){
+        li = '<li><span>...</span></li><li><a page="' + pageCount +'" onclick="jumpPageClicked(this)"><span>' + pageCount +'</span></a></li>';
+        $ul.append(li);
+    }
+
+    var nextLi = null;
+    if (data.page.has_next){
+        pageIndex = currentIndex + 1;
+        nextLi = '<li><a page="' + pageIndex +'" onclick="jumpPageClicked(this)">' +
+            '<i class="uk-icon-angle-double-right"></i></a></li>';
+    }
+    else {
+        nextLi = '<li class="uk-disabled"><span><i class="uk-icon-angle-double-right"></i></span></li>';
+    }
+    $ul.append(nextLi);
 }
 
 /**
@@ -81,7 +168,6 @@ function getUsersRequestDone(data){
         return;
     }
 
-    console.log(data);
     showUsersData(data);
 }
 
@@ -98,11 +184,15 @@ function requestFail(xhr, status){
 
 /**
  * 发送获取用户信息请求
+ * @param {String} pageIndex 页面索引
  */
-function getUsersRequest(){
+function getUsersRequest(pageIndex){
+    showErrorMessage(null);
+    showDataLoading(true);
+
     var opt = {
         type: 'GET',
-        url: '/api/users',
+        url: '/api/users?page=' + pageIndex,
         dataType: 'json'
     };
     // 发送请求
@@ -117,9 +207,7 @@ function getUsersRequest(){
  * 初始化页面
  */
 function initPage(){
-    showErrorMessage(null);
-    showDataLoading(true);
-    getUsersRequest();
+    getUsersRequest('1');
 }
 
 $(document).ready(initPage);
