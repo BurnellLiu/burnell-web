@@ -88,9 +88,9 @@ function trashIConClicked(e){
     var imageId = $image.attr('image-id');
     var imageName = $image.find('span').text();
 
-    if (confirm('确认要删除"' + imageName + '"?删除后不可恢复!')){
+    UIkit.modal.confirm('确认要删除"' + imageName + '"?删除后不可恢复!', function(){
         postDeleteImageRequest(imageId);
-    }
+    });
 }
 
 

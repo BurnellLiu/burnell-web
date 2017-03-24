@@ -304,8 +304,3 @@ def manage_comments(request):
     return {
         '__template__': 'manage_comments.html'
     }
-
-
-
-
-

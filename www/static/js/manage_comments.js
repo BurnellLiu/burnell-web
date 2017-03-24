@@ -88,9 +88,10 @@ function trashIConClicked(id){
             break;
         }
     }
-    if (confirm('确认要删除"' + content + '"?删除后不可恢复!')){
+
+    UIkit.modal.confirm('确认要删除"' + content + '"?删除后不可恢复!', function(){
         postDeleteCommentRequest(id);
-    }
+    });
 }
 
 /**

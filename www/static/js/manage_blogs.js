@@ -81,9 +81,10 @@ function postDeleteBlogRequest(blogId){
 function trashIConClicked(e){
     var id = $(e).attr('blog-id');
     var name = $(e).attr('blog-name');
-    if (confirm('确认要删除"' + name + '"?删除后不可恢复!')){
+
+    UIkit.modal.confirm('确认要删除"' + name + '"?删除后不可恢复!', function() {
         postDeleteBlogRequest(id);
-    }
+    });
 }
 
 /**
