@@ -83,7 +83,6 @@ collation-server = utf8mb4\_unicode\_ci <br>
 init_connect=’SET NAMES utf8mb4' <br>
 [mysql] <br>
 default-character-set=utf8mb4 <br>
-<br>
 root登录mysql: mysql -u root -p <br>
 已经使用uft8创建的database可以做如下的字符集修改： <br>
 ALTER DATABASE 数据库名 CHARACTER SET = utf8mb4 COLLATE = utf8mb4\_unicode\_ci; <br>
