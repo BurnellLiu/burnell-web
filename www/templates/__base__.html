@@ -67,14 +67,15 @@
                         </a>
                         <div class="uk-dropdown uk-dropdown-navbar">
                             <ul class="uk-nav uk-nav-navbar">
-                                <li><a onclick="weiboLogout()"><i class="uk-icon-sign-out"></i>登出</a></li>
+                                {% if __user__['admin'] %}
+                                <li><a href="/manage/blogs"><i class="uk-icon-cog"></i>&nbsp;后台管理</a></li>
+                                {% endif %}
+                                <li><a onclick="weiboLogout()"><i class="uk-icon-sign-out"></i>&nbsp;登出</a></li>
                             </ul>
                         </div>
                     </li>
 
-                {% if __user__['admin'] %}
-                    <li><a href="/manage/blogs"><i class="uk-icon-cog"></i>后台</a></li>
-                {% endif %}
+
 
                 {% else %}
                     <li><a onclick="weiboLogin()"><i class="uk-icon-weibo uk-icon-small"></i>&nbsp;微博登录</a></li>

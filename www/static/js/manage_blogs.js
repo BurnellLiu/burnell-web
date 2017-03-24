@@ -119,7 +119,7 @@ function showBlogsData(data){
             '<a target="_blank" href="/blog/' + blogs[i].id + '">' + blogs[i].name + '</a>' +
             '</td>' +
             '<td>' +
-            '<a target="_blank">' + blogs[i].user_name + '</a>'+
+            '<span>' + blogs[i].read_times + '</span>'+
             '</td>' +
             '<td>' +
             '<span>'+ blogs[i].created_at.toDateTime() + '</span>'+
