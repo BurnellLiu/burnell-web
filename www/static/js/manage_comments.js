@@ -53,7 +53,7 @@ function deleteCommentRequestDone(data){
     // 如果成功删除, 则刷新
     // 有待优化, 每删除一条评论都要刷新整个页面
     var pageIndex = window.commentsData.page.page_index;
-    postGetCommentsRequest(pageIndex);
+    getCommentsRequest(pageIndex);
 }
 
 /**
@@ -94,19 +94,11 @@ function trashIConClicked(id){
 }
 
 /**
- * 前一页评论处理函数
+ * 跳页处理函数
  */
-function previousPageClicked(){
-    var prePageIndex = parseInt(window.commentsData.page.page_index) - 1;
-    postGetCommentsRequest(prePageIndex.toString());
-}
-
-/**
- * 后一页评论处理函数
- */
-function nextPageClicked(){
-    var nextPageIndex = parseInt(window.commentsData.page.page_index) + 1;
-    postGetCommentsRequest(nextPageIndex.toString());
+function jumpPageClicked(e){
+    var num = $(e).attr('page');
+    getCommentsRequest(num);
 }
 
 /**
@@ -148,44 +140,80 @@ function showCommentsData(data){
 
     // 创建分页列
     var $ul = $('ul.uk-pagination');
-    // 先清空子节点
+        // 先清空子节点
     $ul.children('li').remove();
+
+    var currentIndex = data.page.page_index;
+    var pageCount = data.page.page_count;
+
+    var previousLi = null;
     if (data.page.has_previous){
-        var previousLi =
-            '<li>' +
-            '<a onclick="previousPageClicked()">' +
-            '<i class="uk-icon-angle-double-left"></i>' +
-            '</a>' +
-            '</li>'
+        var pageIndex = currentIndex-1;
+        previousLi = '<li><a page="' + pageIndex +'" onclick="jumpPageClicked(this)">' +
+            '<i class="uk-icon-angle-double-left"></i></a></li>'
     }
     else {
-        previousLi =
-            '<li class="uk-disabled">' +
-            '<span><i class="uk-icon-angle-double-left"></i></span>' +
-            '</li>';
+        previousLi = '<li class="uk-disabled"><span><i class="uk-icon-angle-double-left"></i></span></li>';
     }
     $ul.append(previousLi);
 
-    $ul.append('<li class="uk-active"><span>' + data.page.page_index + '</span></li>');
+    if ((currentIndex - 4) > 0){
+        var li = '<li><a page="1" onclick="jumpPageClicked(this)"><span>1</span></a></li><li><span>...</span></li>';
+        $ul.append(li);
+    }
 
+    if ((currentIndex - 4) == 0){
+        li = '<li><a page="1" onclick="jumpPageClicked(this)"><span>1</span></a></li>';
+        $ul.append(li);
+    }
+
+    if ((currentIndex - 2) > 0){
+        pageIndex = currentIndex-2;
+        li = '<li><a page="' + pageIndex +'" onclick="jumpPageClicked(this)"><span>' + pageIndex +'</span></a></li>';
+        $ul.append(li);
+    }
+
+    if ((currentIndex - 1) > 0){
+        pageIndex = currentIndex-1;
+        li = '<li><a page="' + pageIndex +'" onclick="jumpPageClicked(this)"><span>' + pageIndex +'</span></a></li>';
+        $ul.append(li);
+    }
+
+    $ul.append('<li class="uk-active"><span>' + currentIndex + '</span></li>');
+
+    if ((currentIndex + 1) <= pageCount){
+        pageIndex = currentIndex+1;
+        li = '<li><a page="' + pageIndex +'" onclick="jumpPageClicked(this)"><span>' + pageIndex +'</span></a></li>';
+        $ul.append(li);
+    }
+
+    if ((currentIndex + 2) <= pageCount){
+        pageIndex = currentIndex+2;
+        li = '<li><a page="' + pageIndex +'" onclick="jumpPageClicked(this)"><span>' + pageIndex +'</span></a></li>';
+        $ul.append(li);
+    }
+
+    if ((currentIndex + 3) == pageCount){
+        pageIndex = currentIndex+3;
+        li = '<li><a page="' + pageIndex +'" onclick="jumpPageClicked(this)"><span>' + pageIndex +'</span></a></li>';
+        $ul.append(li);
+    }
+
+    if ((currentIndex + 3) < pageCount){
+        li = '<li><span>...</span></li><li><a page="' + pageCount +'" onclick="jumpPageClicked(this)"><span>' + pageCount +'</span></a></li>';
+        $ul.append(li);
+    }
+
+    var nextLi = null;
     if (data.page.has_next){
-        var nextLi =
-            '<li>' +
-            '<a onclick="nextPageClicked()">' +
-            '<i class="uk-icon-angle-double-right"></i>' +
-            '</a>' +
-            '</li>';
+        pageIndex = currentIndex + 1;
+        nextLi = '<li><a page="' + pageIndex +'" onclick="jumpPageClicked(this)">' +
+            '<i class="uk-icon-angle-double-right"></i></a></li>';
     }
     else {
-        nextLi =
-            '<li class="uk-disabled">' +
-            '<span><i class="uk-icon-angle-double-right"></i></span>' +
-            '</li>';
+        nextLi = '<li class="uk-disabled"><span><i class="uk-icon-angle-double-right"></i></span></li>';
     }
     $ul.append(nextLi);
-
-
-
 }
 
 
@@ -223,7 +251,7 @@ function requestFail(xhr, status){
  * 发送获取评论信息请求
  * @param {String} pageIndex 页面索引
  */
-function postGetCommentsRequest(pageIndex){
+function getCommentsRequest(pageIndex){
 
     showErrorMessage(null);
     showDataLoading(true);
@@ -245,7 +273,7 @@ function postGetCommentsRequest(pageIndex){
  * 初始化页面
  */
 function initPage(){
-    postGetCommentsRequest('1');
+    getCommentsRequest('1');
 }
 
 $(document).ready(initPage);
