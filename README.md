@@ -15,8 +15,9 @@ Python依赖库：<br>
 5. pygments，代码高亮库 <br>
 
 # 项目结构 <br>
->conf                  配置文件目录 <br>
+>conf                  nginx和supervisor配置文件目录 <br>
 >www                   web目录, 存放.py文件 <br>
+>>config               web配置模块 <br>
 >>static               存放静态文件 <br>
 >>templates            存放模板文件 <br>
 
@@ -100,7 +101,7 @@ ALTER TABLE 表名 CHANGE 字段名 字段名 该字段原来的数据类型 CHA
 查看状态：sudo supervisorctl status<br>
     ```
     [program:burnellweb]
-    command     = python3.5 /srv/burnell_web/www/app.py
+    command     = python3.5 /srv/burnell_web/www/web_app.py
     directory   = /srv/burnell_web/www
     user        = www-data
     startsecs   = 3

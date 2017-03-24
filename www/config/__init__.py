@@ -1,12 +1,12 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 """
 配置文件
 """
 
-import config_default
-import config_override
+import config.config_default
+import config.config_override
 
 __author__ = 'Burnell Liu'
 

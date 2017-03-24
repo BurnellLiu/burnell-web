@@ -80,6 +80,7 @@ async def init_app(event_loop):
 
     # 添加路由函数
     web_core.add_routes(web_app, 'web_routes.py')
+    web_core.add_routes(web_app, 'web_api.py')
 
     # 添加静态文件
     web_core.add_static(web_app)
