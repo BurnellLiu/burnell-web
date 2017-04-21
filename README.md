@@ -144,7 +144,7 @@ Supervisor只负责运行app.py，我们还需要配置Nginx，把配置文件bu
 
 # Release Note: <br>
 
-## 2017/03/24 V1.1.5 Release <br>
+## 2017/04/21 V1.1.5 Release <br>
 1. 增加代码高亮功能 <br>
 2. 评论功能改善 <br>
 3. 评论管理页面增加被评博客链接 <br>
@@ -155,6 +155,7 @@ Supervisor只负责运行app.py，我们还需要配置Nginx，把配置文件bu
 8. 管理评论页面分页改善 <br>
 9. 管理用户页面分页改善 <br>
 10. 使用UiKit的确认对话框取代原生确认对话框 <br>
+11. 修改Mathjax使用$$作为行内公式标记 <br>
 
 ## 2017/02/13 V1.1.3 Release <br>
 1. 增加微博登录功能 <br>
