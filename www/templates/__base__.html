@@ -69,6 +69,7 @@
                             <ul class="uk-nav uk-nav-navbar">
                                 {% if __user__['admin'] %}
                                 <li><a href="/manage/blogs"><i class="uk-icon-cog"></i>&nbsp;后台管理</a></li>
+                                <li class="uk-nav-divider"></li>
                                 {% endif %}
                                 <li><a onclick="weiboLogout()"><i class="uk-icon-sign-out"></i>&nbsp;登出</a></li>
                             </ul>
