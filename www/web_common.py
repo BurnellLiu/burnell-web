@@ -7,6 +7,7 @@ from urllib import parse
 
 __author__ = 'Burnell Liu'
 
+
 class Pagination(object):
     """
     分页类
@@ -48,6 +49,79 @@ class Pagination(object):
         return 'item_count: %s, page_count: %s, page_index: %s, page_size: %s, offset: %s, limit: %s' % (self.item_count, self.page_count, self.page_index, self.page_size, self.offset, self.limit)
 
     __repr__ = __str__
+
+
+class QueryStringParser(object):
+    """
+    查询字符串解析类
+    """
+    def __init__(self, qs):
+        """
+        构造函数
+        :param qs: 查询字符串
+        """
+        self.__kw = dict()
+        for k, v in parse.parse_qs(qs, True).items():
+            self.__kw[k] = v[0]
+
+    def has_attr(self, key):
+        """
+        判断是否有某个属性
+        :param key: 属性名称
+        :return: 属性值
+        """
+        return key in self.__kw
+
+    def __getattr__(self, key):
+        """
+        属性获取
+        :param key: 属性名称
+        :return: 属性值(字符串)，如果不存在该属性则返回None
+        """
+        if key in self.__kw:
+            return self.__kw[key]
+        else:
+            return None
+
+
+class RequestData(object):
+    """
+    请求数据解析类
+    """
+    def __init__(self, request):
+        """
+        构造函数
+        :param request: 请求对象
+        """
+        self.__request = request
+        self.__kw = {}
+
+    async def json_load(self):
+        """
+        加载JSON数据
+        :return: 成功返回True, 失败返回False
+        """
+        ct = self.__request.content_type.lower()
+        if not ct.startswith('application/json'):
+            return False
+
+        params = await self.__request.json()
+        if not isinstance(params, dict):
+            return False
+
+        self.__kw = params
+        return True
+
+    def __getattr__(self, key):
+        """
+        属性获取
+        :param key: 属性名称
+        :return: 属性值(字符串)，如果不存在该属性则返回None
+        """
+        if key in self.__kw:
+            return self.__kw[key]
+        else:
+            return None
 
 
 def text2html(text):
