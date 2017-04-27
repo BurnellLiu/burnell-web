@@ -123,8 +123,8 @@ function commentSubmit(event){
 
     var comment = {
         content: content,
-        targetName: targetName,
-        targetId: targetId
+        target_name: targetName,
+        target_id: targetId
     };
 
     // 将评论信息POST出去

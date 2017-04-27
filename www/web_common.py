@@ -142,22 +142,6 @@ def is_admin(request):
         return True
 
 
-def parse_query_string(qs):
-    """
-    解析查询字符串
-    :param qs: 需要解析的查询字符串
-    :return: 查询字段字典
-    """
-    kw = dict()
-    if not qs:
-        return kw
-
-    for k, v in parse.parse_qs(qs, True).items():
-        kw[k] = v[0]
-
-    return kw
-
-
 def generate_sha1_password(user_id, original_password):
     """
     根据用户id和原始密码, 生成一个经过sha1加密的密码

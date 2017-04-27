@@ -47,9 +47,9 @@ async def blog_all(request):
     :return: 博客列表页面
     """
     page_index = 1
-    str_dict = parse_query_string(request.query_string)
-    if 'page' in str_dict:
-        page_index = int(str_dict['page'])
+    qs_parser = QueryStringParser(request.query_string)
+    if qs_parser.has_attr('page'):
+        page_index = int(qs_parser.page)
 
     num = await Blog.find_number('count(id)')
     page = Pagination(num, page_index)
@@ -76,9 +76,9 @@ async def blog_essay(request):
     :return: 博客列表页面
     """
     page_index = 1
-    str_dict = parse_query_string(request.query_string)
-    if 'page' in str_dict:
-        page_index = int(str_dict['page'])
+    qs_parser = QueryStringParser(request.query_string)
+    if qs_parser.has_attr('page'):
+        page_index = int(qs_parser.page)
 
     num = await Blog.find_number('count(id)', 'type=?', [u'随笔'])
     page = Pagination(num, page_index, 5)
@@ -108,9 +108,9 @@ async def blog_windows(request):
     :return: 博客列表页面
     """
     page_index = 1
-    str_dict = parse_query_string(request.query_string)
-    if 'page' in str_dict:
-        page_index = int(str_dict['page'])
+    qs_parser = QueryStringParser(request.query_string)
+    if qs_parser.has_attr('page'):
+        page_index = int(qs_parser.page)
 
     num = await Blog.find_number('count(id)', 'type=?', [u'Windows开发'])
     page = Pagination(num, page_index, 5)
@@ -140,9 +140,9 @@ async def blog_ml(request):
     :return: 博客列表页面
     """
     page_index = 1
-    str_dict = parse_query_string(request.query_string)
-    if 'page' in str_dict:
-        page_index = int(str_dict['page'])
+    qs_parser = QueryStringParser(request.query_string)
+    if qs_parser.has_attr('page'):
+        page_index = int(qs_parser.page)
 
     num = await Blog.find_number('count(id)', 'type=?', [u'机器学习'])
     page = Pagination(num, page_index, 5)

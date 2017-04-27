@@ -70,7 +70,7 @@ function postBlogRequestDone(data){
         return;
     }
 
-    confirm('上传博客成功');
+    UIkit.modal.alert('上传博客成功!');
 
     var path = location.pathname;
     if (path === '/manage/blogs/create'){

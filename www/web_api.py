@@ -30,23 +30,16 @@ async def api_weibo_login(request):
     :param request:
     :return:
     """
-    ct = request.content_type.lower()
-    if ct.startswith('application/json'):
-        params = await request.json()
-        if not isinstance(params, dict):
-            return data_error()
-    else:
-        return data_error()
+
+    request_data = RequestData(request)
+    if not await request_data.json_load():
+        return data_error(u'非法数据格式, 请使用JSON格式')
 
     # 取出用户id和访问令牌
-    uid = None
-    if 'uid' in params:
-        uid = params['uid']
+    uid = request_data.uid
     if not uid:
         return data_error()
-    access_token = None
-    if 'access_token' in params:
-        access_token = params['access_token']
+    access_token = request_data.access_token
     if not access_token or not access_token.strip():
         return data_error()
 
@@ -102,21 +95,12 @@ async def api_user_authenticate(request):
     :param request: 请求对象
     :return: 回响消息, 并且设置COOKIE
     """
-    ct = request.content_type.lower()
-    if ct.startswith('application/json'):
-        params = await request.json()
-        if not isinstance(params, dict):
-            return data_error()
-    else:
-        return data_error()
+    request_data = RequestData(request)
+    if not await request_data.json_load():
+        return data_error(u'非法数据格式, 请使用JSON格式')
 
-    email = None
-    if 'email' in params:
-        email = params['email']
-    password = None
-    if 'password' in params:
-        password = params['password']
-
+    email = request_data.email
+    password = request_data.password
     if not email:
         return data_error(u'非法邮箱账号')
     if not password:
@@ -153,9 +137,9 @@ async def api_user_get(request):
         return permission_error()
 
     page_index = 1
-    str_dict = parse_query_string(request.query_string)
-    if 'page' in str_dict:
-        page_index = int(str_dict['page'])
+    qs_parser = QueryStringParser(request.query_string)
+    if qs_parser.has_attr('page'):
+        page_index = int(qs_parser.page)
 
     num = await UserInfo.find_number('count(id)')
     p = Pagination(num, page_index)
@@ -175,26 +159,14 @@ async def api_user_register(request):
     _RE_EMAIL = re.compile(r'^[a-z0-9\.\-\_]+\@[a-z0-9\-\_]+(\.[a-z0-9\-\_]+){1,4}$')
     _RE_SHA1 = re.compile(r'^[0-9a-f]{40}$')
 
-    ct = request.content_type.lower()
-    if ct.startswith('application/json'):
-        params = await request.json()
-        if not isinstance(params, dict):
-            return data_error()
-    else:
-        return data_error()
+    request_data = RequestData(request)
+    if not await request_data.json_load():
+        return data_error(u'非法数据格式, 请使用JSON格式')
 
-    name = None
-    if 'name' in params:
-        name = params['name']
-    email = None
-    if 'email' in params:
-        email = params['email']
-    password = None
-    if 'password' in params:
-        password = params['password']
-    verify = None
-    if 'verify' in params:
-        verify = params['verify']
+    name = request_data.name
+    email = request_data.email
+    password = request_data.password
+    verify = request_data.verify
 
     # 检查验证码是否输入正确
     if not verify or not verify.strip():
@@ -282,9 +254,9 @@ async def api_blog_get(request):
         return permission_error()
 
     page_index = 1
-    str_dict = parse_query_string(request.query_string)
-    if 'page' in str_dict:
-        page_index = int(str_dict['page'])
+    qs_parser = QueryStringParser(request.query_string)
+    if qs_parser.has_attr('page'):
+        page_index = int(qs_parser.page)
 
     num = await Blog.find_number('count(id)')
     p = Pagination(num, page_index)
@@ -322,29 +294,15 @@ async def api_blog_create(request):
     if not is_admin(request):
         return permission_error()
 
-    ct = request.content_type.lower()
-    if ct.startswith('application/json'):
-        params = await request.json()
-        if not isinstance(params, dict):
-            return data_error()
-    else:
-        return data_error()
+    request_data = RequestData(request)
+    if not await request_data.json_load():
+        return data_error(u'非法数据格式, 请使用JSON格式')
 
-    name = None
-    if 'name' in params:
-        name = params['name']
-    summary = None
-    if 'summary' in params:
-        summary = params['summary']
-    content = None
-    if 'content' in params:
-        content = params['content']
-    cover_image = None
-    if 'cover_image' in params:
-        cover_image = params['cover_image']
-    blog_type = None
-    if 'type' in params:
-        blog_type = params['type']
+    name = request_data.name
+    summary = request_data.summary
+    content = request_data.content
+    cover_image = request_data.cover_image
+    blog_type = request_data.type
     if not name or not name.strip():
         return data_error(u'博客名称不能为空')
     if not summary or not summary.strip():
@@ -379,31 +337,17 @@ async def api_blog_update(request):
     if not is_admin(request):
         return permission_error()
 
-    ct = request.content_type.lower()
-    if ct.startswith('application/json'):
-        params = await request.json()
-        if not isinstance(params, dict):
-            return data_error()
-    else:
-        return data_error()
+    request_data = RequestData(request)
+    if not await request_data.json_load():
+        return data_error(u'非法数据格式, 请使用JSON格式')
 
     blog_id = request.match_info['blog_id']
 
-    name = None
-    if 'name' in params:
-        name = params['name']
-    summary = None
-    if 'summary' in params:
-        summary = params['summary']
-    content = None
-    if 'content' in params:
-        content = params['content']
-    cover_image = None
-    if 'cover_image' in params:
-        cover_image = params['cover_image']
-    blog_type = None
-    if 'type' in params:
-        blog_type = params['type']
+    name = request_data.name
+    summary = request_data.summary
+    content = request_data.content
+    cover_image = request_data.cover_image
+    blog_type = request_data.type
 
     if not name or not name.strip():
         return data_error(u'博客名称不能为空')
@@ -462,9 +406,9 @@ async def api_image_get(request):
         return permission_error()
 
     page_index = 1
-    str_dict = parse_query_string(request.query_string)
-    if 'page' in str_dict:
-        page_index = int(str_dict['page'])
+    qs_parser = QueryStringParser(request.query_string)
+    if qs_parser.has_attr('page'):
+        page_index = int(qs_parser.page)
 
     num = await Image.find_number('count(id)')
     p = Pagination(num, page_index, page_size=6)
@@ -484,20 +428,12 @@ async def api_image_upload(request):
     if not is_admin(request):
         return permission_error()
 
-    ct = request.content_type.lower()
-    if ct.startswith('application/json'):
-        params = await request.json()
-        if not isinstance(params, dict):
-            return data_error()
-    else:
-        return data_error()
+    request_data = RequestData(request)
+    if not await request_data.json_load():
+        return data_error(u'非法数据格式, 请使用JSON格式')
 
-    image_name = None
-    if 'name' in params:
-        image_name = params['name']
-    image_str = None
-    if 'image' in params:
-        image_str = params['image']
+    image_name = request_data.name
+    image_str = request_data.image
     if not image_name or not image_name.strip():
         return data_error(u'图片名不能为空')
     if not image_str or not image_str.strip():
@@ -572,9 +508,9 @@ async def api_comment_get(request):
         return permission_error()
 
     page_index = 1
-    str_dict = parse_query_string(request.query_string)
-    if 'page' in str_dict:
-        page_index = int(str_dict['page'])
+    qs_parser = QueryStringParser(request.query_string)
+    if qs_parser.has_attr('page'):
+        page_index = int(qs_parser.page)
 
     num = await Comment.find_number('count(id)')
     p = Pagination(num, page_index)
@@ -604,18 +540,12 @@ async def api_comment_create(request):
         return data_error(u'评论过于频繁（10秒后再试）')
 
     # 获取评论内容
-    ct = request.content_type.lower()
-    if ct.startswith('application/json'):
-        params = await request.json()
-        if not isinstance(params, dict):
-            return data_error()
-    else:
-        return data_error()
+    request_data = RequestData(request)
+    if not await request_data.json_load():
+        return data_error(u'非法数据格式, 请使用JSON格式')
 
     # 检查评论内容
-    content = None
-    if 'content' in params:
-        content = params['content']
+    content = request_data.content
     if not content or not content.strip():
         return data_error(u'评论内容不能为空')
 
@@ -625,16 +555,12 @@ async def api_comment_create(request):
         return data_error(u'评论的博客不存在')
 
     # 检查评论目标人名称，如果为NULL，表示对博客直接评论
-    target_user_name = None
-    if 'targetName' in params:
-        target_user_name = params['targetName']
+    target_user_name = request_data.target_name
     if not target_user_name or not target_user_name.strip():
         target_user_name = blog.user_name
 
     # 检查评论目标人id，如果为NULL，表示对博客直接评论
-    target_user_id = None
-    if 'targetId' in params:
-        target_user_id = params['targetId']
+    target_user_id = request_data.target_id
     if not target_user_id or not target_user_id.strip():
         target_user_id = blog.user_id
 
