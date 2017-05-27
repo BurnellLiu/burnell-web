@@ -9,6 +9,7 @@ import os
 import time
 import logging
 
+from datetime import datetime
 from aiohttp import web, ClientSession
 
 from config import configs
@@ -432,18 +433,18 @@ async def api_image_upload(request):
     if not await request_data.json_load():
         return data_error(u'非法数据格式, 请使用JSON格式')
 
-    image_name = request_data.name
+    image_name_ext = request_data.name
     image_str = request_data.image
-    if not image_name or not image_name.strip():
+    if not image_name_ext or not image_name_ext.strip():
         return data_error(u'图片名不能为空')
     if not image_str or not image_str.strip():
         return data_error(u'图片内容不能为空')
 
     # 取消图片的原始名，只保留后缀名
-    loc = image_name.find('.')
+    loc = image_name_ext.find('.')
     if loc == -1:
         return data_error(u'图片名有误')
-    image_name = image_name[loc:]
+    image_name_ext = image_name_ext[loc:]
 
     # 先在数据库中生成一条图片的记录
     image = Image(url='xx')
@@ -451,8 +452,15 @@ async def api_image_upload(request):
 
     # 使用图片数据的创建时间做为URL
     image_url = '/static/img/'
-    image_url += str(int(image.created_at * 1000))
-    image_url += image_name
+
+    # 使用年月创建文件夹
+    dt = datetime.fromtimestamp(image.created_at)
+    new_path = './static/img/%s/%s' % (dt.year, dt.month)
+    os.makedirs(new_path, exist_ok=True)
+
+    image_url += '%s/%s/%s%s%s%s' % \
+                 (dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second)
+    image_url += image_name_ext
 
     image.url = (configs.domain_name + image_url)
     await image.update()
