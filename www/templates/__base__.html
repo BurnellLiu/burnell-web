@@ -42,18 +42,18 @@
             </ul>
             <ul class="uk-navbar-nav uk-visible-small">
                 <li class="uk-parent" data-uk-dropdown>
-                        <a><i class="uk-icon-bars uk-icon-small"></i></a>
-                        <div class="uk-dropdown uk-dropdown-navbar">
-                            <ul class="uk-nav uk-nav-navbar">
-                                <li><a href="/essay">随笔</a></li>
-                                <li><a href="/windows">Windows开发</a></li>
-                                <li><a href="/ml">机器学习</a></li>
-                                <li>
-                                    <a target="_blank" href="https://github.com/BurnellLiu/burnell-web">源码</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
+                    <a><i class="uk-icon-bars uk-icon-small"></i></a>
+                    <div class="uk-dropdown uk-dropdown-navbar">
+                        <ul class="uk-nav uk-nav-navbar">
+                            {% for blog_type in blog_types %}
+                            <li><a href="/blogs?type={{ blog_type.name }}">{{ blog_type.name }}</a></li>
+                            {% endfor %}
+                            <li>
+                                <a target="_blank" href="https://github.com/BurnellLiu/burnell-web">源码</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
             </ul>
             <div class="uk-navbar-flip">
                 <ul class="uk-navbar-nav">
