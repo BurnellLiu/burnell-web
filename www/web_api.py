@@ -421,8 +421,8 @@ async def api_blog_type_get(request):
     # 找到每个类别对应的博客数量
     new_types = []
     for blog_type in types:
-        type_id = blog_type.id
-        blog_count = await Blog.find_number('count(id)', 'type=?', [type_id])
+        type_name = blog_type.name
+        blog_count = await Blog.find_number('count(id)', 'type=?', [type_name])
         blog_type['blog_count'] = blog_count
         new_types.append(blog_type)
     return dict(page=p, types=new_types)
