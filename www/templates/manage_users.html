@@ -1,6 +1,6 @@
 {% extends '__base__.html' %}
 
-{% block title %}用户{% endblock %}
+{% block title %}用户管理{% endblock %}
 
 {% block beforehead %}
 
@@ -10,22 +10,19 @@
 
 {% block content %}
 
-    <div class="uk-width-1-1 uk-margin-bottom">
-        <div class="uk-panel uk-panel-box">
-            <ul class="uk-breadcrumb">
-                <li><a href="/manage/blogs">日志</a></li>
-                <li><a href="/manage/comments">评论</a></li>
-                <li><a href="/manage/images">图片</a></li>
-                <li class="uk-active"><span>用户</span></li>
-            </ul>
+    <div class="uk-width-1-1">
+        <ul class="uk-tab uk-text-large uk-margin-bottom">
+            <li><a href="/manage/blogs">博客</a></li>
+            <li><a href="/manage/blogtype">类别</a></li>
+            <li><a href="/manage/comments">评论</a></li>
+            <li><a href="/manage/images">图片</a></li>
+            <li class="uk-active"><a>用户</a></li>
+        </ul>
+        <div id="error" class="uk-width-1-1 uk-text-center uk-alert-danger">
         </div>
-    </div>
-
-    <div id="error" class="uk-width-1-1 uk-text-center uk-alert uk-alert-danger">
-    </div>
-
-    <div id="loading" class="uk-width-1-1 uk-text-center">
-        <span><i class="uk-icon-spinner uk-icon-medium uk-icon-spin"></i> 正在加载...</span>
+        <div id="loading" class="uk-width-1-1 uk-text-center uk-margin-bottom">
+            <span><i class="uk-icon-spinner uk-icon-medium uk-icon-spin"></i> 正在加载...</span>
+        </div>
     </div>
 
     <div class="uk-width-1-1">
@@ -33,8 +30,8 @@
             <thead>
                 <tr>
                     <th class="uk-width-4-10">名字</th>
-                    <th class="uk-width-4-10">头像</th>
-                    <th class="uk-width-2-10">注册时间</th>
+                    <th class="uk-width-3-10 uk-text-center">头像</th>
+                    <th class="uk-width-3-10 uk-text-center">注册时间</th>
                 </tr>
             </thead>
             <tbody>

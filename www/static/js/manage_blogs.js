@@ -14,17 +14,15 @@ function showErrorMessage(msg){
 
     // 找到显示错误消息的标签
     var $error = $('#error');
-    if ($error.length === 0){
-        return;
-    }
 
     if (!msg){
-        $error.hide();
+        $error.text("cake");
+        $error.css("visibility", "hidden");
         return;
     }
 
     $error.text(msg);
-    $error.show();
+    $error.css("visibility", "visible");
 }
 
 /**
@@ -111,17 +109,17 @@ function showBlogsData(data){
             '<td>' +
             '<a target="_blank" href="/blog/' + blogs[i].id + '">' + blogs[i].name + '</a>' +
             '</td>' +
-            '<td>' +
+            '<td class="uk-text-center">' +
             '<span>' + blogs[i].read_times + '</span>'+
             '</td>' +
-            '<td>' +
+            '<td class="uk-text-center">' +
             '<span>'+ blogs[i].created_at.toDateTime() + '</span>'+
             '</td>' +
-            '<td>' +
+            '<td class="uk-text-center">' +
             '<a target="_blank" href="/manage/blogs/edit?id=' + blogs[i].id + '">' +
             '<i class="uk-icon-edit">&nbsp;&nbsp;</i></a>' +
             '<a onclick="trashIConClicked(this)" blog-id="' + blogs[i].id + '" blog-name="' + blogs[i].name + '">' +
-            '<i class="uk-icon-trash-o">&nbsp;&nbsp;</i></a>' +
+            '<i class="uk-icon-trash-o"></i></a>' +
             '</td>' +
             '</tr>');
     }

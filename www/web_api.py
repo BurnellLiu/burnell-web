@@ -15,7 +15,7 @@ from aiohttp import web, ClientSession
 from config import configs
 from web_core import get, post
 from web_common import *
-from db_models import UserAuth, UserInfo, Comment, Blog, Image, generate_id
+from db_models import UserAuth, UserInfo, Comment, Blog, BlogType, Image, generate_id
 from web_error import permission_error, data_error
 from session_cookie import user_cookie_generate, verify_image_cookie_generate
 from verify_image import generate_verify_image
@@ -394,6 +394,86 @@ async def api_blog_delete(request):
     await blog.remove()
 
     return dict(id=blog_id)
+
+
+@get('/api/blogtype')
+async def api_blog_type_get(request):
+    """
+    获取指定页面的博客类别数据函数
+    :param request: 请求对象
+    :return: 博客类别数据
+    """
+
+    if not is_admin(request):
+        return permission_error()
+
+    page_index = 1
+    qs_parser = QueryStringParser(request.query_string)
+    if qs_parser.has_attr('page'):
+        page_index = int(qs_parser.page)
+
+    num = await BlogType.find_number('count(id)')
+    p = Pagination(num, page_index)
+    if num == 0:
+        return dict(page=p, blogs=())
+    types = await BlogType.find_all(order_by='level asc', limit=(p.offset, p.limit))
+
+    # 找到每个类别对应的博客数量
+    new_types = []
+    for blog_type in types:
+        type_id = blog_type.id
+        blog_count = await Blog.find_number('count(id)', 'type=?', [type_id])
+        blog_type['blog_count'] = blog_count
+        new_types.append(blog_type)
+    return dict(page=p, types=new_types)
+
+
+@post('/api/blogtype')
+async def api_blog_type_create(request):
+    """
+    创建博客类别API函数
+    :param request: 请求对象
+    :return: 博客类别数据
+    """
+    if not is_admin(request):
+        return permission_error()
+
+    request_data = RequestData(request)
+    if not await request_data.json_load():
+        return data_error(u'非法数据格式, 请使用JSON格式')
+
+    name = request_data.name
+    level = request_data.level
+    if not name or not name.strip():
+        return data_error(u'类别名称不能为空')
+    if not level or not level.strip():
+        return data_error(u'类别优先级不能为空')
+
+    blog_type = BlogType(name=name.strip(), level=int(level.strip()))
+    await blog_type.save()
+    return blog_type
+
+
+@post('/api/blogtype/{type_id}/delete')
+async def api_blog_type_delete(request):
+    """
+    删除博客类别API函数
+    :param request: 请求对象
+    :return:
+    """
+    if not is_admin(request):
+        return permission_error()
+
+    type_id = request.match_info['type_id']
+
+    # 根据博客类别ID找到类别
+    blog_type = await BlogType.find(type_id)
+    if not blog_type:
+        return data_error(u'非法type id')
+
+    await blog_type.remove()
+
+    return dict(id=type_id)
 
 
 @get('/api/images')

@@ -1,6 +1,6 @@
 {% extends '__base__.html' %}
 
-{% block title %}图片{% endblock %}
+{% block title %}图片管理{% endblock %}
 
 {% block beforehead %}
 
@@ -10,30 +10,29 @@
 
 {% block content %}
 
-    <div class="uk-width-1-1 uk-margin-bottom">
-        <div class="uk-panel uk-panel-box">
-            <ul class="uk-breadcrumb">
-                <li><a href="/manage/blogs">日志</a></li>
-                <li><a href="/manage/comments">评论</a></li>
-                <li class="uk-active"><span>图片</span></li>
-                <li><a href="/manage/users">用户</a></li>
-            </ul>
+    <div class="uk-width-1-1">
+
+        <ul class="uk-tab uk-text-large uk-margin-bottom">
+            <li><a href="/manage/blogs">博客</a></li>
+            <li><a href="/manage/blogtype">类别</a></li>
+            <li><a href="/manage/comments">评论</a></li>
+            <li class="uk-active"><a>图片</a></li>
+            <li><a href="/manage/users">用户</a></li>
+        </ul>
+
+        <div id="error" class="uk-width-1-1 uk-text-center uk-text-danger"></div>
+        <div id="loading" class="uk-width-1-1 uk-text-center uk-margin-bottom">
+            <span><i class="uk-icon-spinner uk-icon-medium uk-icon-spin"></i>&nbsp;正在加载...</span>
         </div>
-    </div>
 
-    <div id="loading" class="uk-width-1-1 uk-text-center">
-        <span><i class="uk-icon-spinner uk-icon-medium uk-icon-spin"></i>&nbsp;正在加载...</span>
     </div>
-
 
     <div class="uk-width-1-1">
-        <div id="error" class="uk-width-1-1 uk-text-center uk-alert uk-alert-danger"></div>
-
-        <label id="new-image" class="uk-button uk-button-primary"><i class="uk-icon-file-o"></i>&nbsp;新图片..</label>
+        <label id="new-image" class="uk-button uk-button-primary uk-margin-bottom"><i class="uk-icon-file-o"></i>&nbsp;新图片..</label>
         <div id="image-input-div"><input id="image-input" type="file" accept="image/jpeg, image/png" onchange="selectedImage(this)" style="display:none;" /></div>
 
 
-        <div class="uk-width-1-1">
+        <div class="uk-width-1-1 uk-margin-bottom">
             <div id="image-preview" class="uk-thumbnail">
                 <div class="uk-text-small uk-text-success">
                     <span></span>

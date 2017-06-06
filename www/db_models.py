@@ -92,6 +92,22 @@ class Blog(Model):
     created_at = FloatField(default=time.time)
 
 
+class BlogType(Model):
+    """
+    博客类型表
+    CREATE TABLE `blog_type` (
+    `id` varchar(50) NOT NULL,
+    `name` varchar(50) NOT NULL,
+    `level` bigint(20) unsigned NOT NULL,
+    PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+    """
+    __table__ = 'blog_type'
+    id = StringField(primary_key=True, default=generate_id, ddl='varchar(50)')
+    name = StringField(ddl='varchar(50)')
+    level = IntegerField()
+
+
 class Comment(Model):
     """
     评论表

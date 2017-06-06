@@ -51,36 +51,15 @@ async def blog_all(request):
     if qs_parser.has_attr('page'):
         page_index = int(qs_parser.page)
 
-    num = await Blog.find_number('count(id)')
-    page = Pagination(num, page_index)
+    blog_type = qs_parser.type
+    if not blog_type:
+        blog_type = 'None'
 
-    if num == 0:
-        blogs = []
+    if blog_type != 'None':
+        num = await Blog.find_number('count(id)', 'type=?', [blog_type])
     else:
-        # 以创建时间降序的方式查找指定的博客
-        blogs = await Blog.find_all(order_by='created_at desc', limit=(page.offset, page.limit))
+        num = await Blog.find_number('count(id)')
 
-    return {
-        '__template__': 'blog_list.html',
-        'page': page,
-        'blogs': blogs,
-        'type': 'blogs'
-    }
-
-
-@get('/essay')
-async def blog_essay(request):
-    """
-    随笔博客列表路由函数
-    :param request: 请求对象
-    :return: 博客列表页面
-    """
-    page_index = 1
-    qs_parser = QueryStringParser(request.query_string)
-    if qs_parser.has_attr('page'):
-        page_index = int(qs_parser.page)
-
-    num = await Blog.find_number('count(id)', 'type=?', [u'随笔'])
     page = Pagination(num, page_index, 5)
 
     if num == 0:
@@ -88,79 +67,31 @@ async def blog_essay(request):
         hot_blogs = []
     else:
         # 以创建时间降序的方式查找指定的博客
-        blogs = await Blog.find_all('type=?', [u'随笔'], order_by='created_at desc', limit=(page.offset, page.limit))
-        hot_blogs = await Blog.find_all('type=?', [u'随笔'], order_by='read_times desc', limit=(0, 10))
+        if blog_type != 'None':
+            blogs = await Blog.find_all(
+                'type=?',
+                [blog_type],
+                order_by='created_at desc',
+                limit=(page.offset, page.limit))
+            hot_blogs = await Blog.find_all(
+                'type=?',
+                [blog_type],
+                order_by='read_times desc',
+                limit=(0, 10))
+        else:
+            blogs = await Blog.find_all(
+                order_by='created_at desc',
+                limit=(page.offset, page.limit))
+            hot_blogs = await Blog.find_all(
+                order_by='read_times desc',
+                limit=(0, 10))
 
     return {
         '__template__': 'blog_list.html',
         'page': page,
         'blogs': blogs,
         'hot_blogs': hot_blogs,
-        'type': 'essay'
-    }
-
-
-@get('/windows')
-async def blog_windows(request):
-    """
-    Windows博客列表路由函数
-    :param request: 请求对象
-    :return: 博客列表页面
-    """
-    page_index = 1
-    qs_parser = QueryStringParser(request.query_string)
-    if qs_parser.has_attr('page'):
-        page_index = int(qs_parser.page)
-
-    num = await Blog.find_number('count(id)', 'type=?', [u'Windows开发'])
-    page = Pagination(num, page_index, 5)
-
-    if num == 0:
-        blogs = []
-        hot_blogs= []
-    else:
-        # 以创建时间降序的方式查找指定的博客
-        blogs = await Blog.find_all('type=?', [u'Windows开发'], order_by='created_at desc', limit=(page.offset, page.limit))
-        hot_blogs = await Blog.find_all('type=?', [u'Windows开发'], order_by='read_times desc', limit=(0, 10))
-
-    return {
-        '__template__': 'blog_list.html',
-        'page': page,
-        'blogs': blogs,
-        'hot_blogs': hot_blogs,
-        'type': 'windows'
-    }
-
-
-@get('/ml')
-async def blog_ml(request):
-    """
-    机器学习博客列表路由函数
-    :param request: 请求对象
-    :return: 博客列表页面
-    """
-    page_index = 1
-    qs_parser = QueryStringParser(request.query_string)
-    if qs_parser.has_attr('page'):
-        page_index = int(qs_parser.page)
-
-    num = await Blog.find_number('count(id)', 'type=?', [u'机器学习'])
-    page = Pagination(num, page_index, 5)
-
-    if num == 0:
-        blogs = []
-        hot_blogs = []
-    else:
-        # 以创建时间降序的方式查找指定的博客
-        blogs = await Blog.find_all('type=?', [u'机器学习'], order_by='created_at desc', limit=(page.offset, page.limit))
-        hot_blogs = await Blog.find_all('type=?', [u'机器学习'], order_by='read_times desc', limit=(0, 10))
-
-    return {
-        '__template__': 'blog_list.html',
-        'page': page,
-        'blogs': blogs,
-        'hot_blogs': hot_blogs,
-        'type': 'ml'
+        'list_type': blog_type
     }
 
 
@@ -249,7 +180,7 @@ def manage_users(request):
 @get('/manage/blogs')
 def manage_blogs(request):
     """
-    管理博客页面路由函数
+    博客管理页面路由函数
     :param request: 请求对象
     :return: 管理博客页面
     """
@@ -258,10 +189,22 @@ def manage_blogs(request):
     }
 
 
+@get('/manage/blogtype')
+def manage_blog_type(request):
+    """
+    类别管理页面路由函数
+    :param request: 请求对象
+    :return: 管理博客页面
+    """
+    return {
+        '__template__': 'manage_blog_type.html',
+    }
+
+
 @get('/manage/images')
 def manage_images(request):
     """
-    管理图片页面路由函数
+    图片管理页面路由函数
     :param request: 请求对象
     :return: 管理图片页面
     """
@@ -297,7 +240,7 @@ def manage_edit_blog(request):
 @get('/manage/comments')
 def manage_comments(request):
     """
-    管理评论页面路由函数
+    评论管理页面路由函数
     :param request: 请求对象
     :return: 评论管理页面
     """

@@ -1,6 +1,6 @@
 {% extends '__base__.html' %}
 
-{% block title %}评论{% endblock %}
+{% block title %}评论管理{% endblock %}
 
 {% block beforehead %}
 
@@ -10,21 +10,19 @@
 
 {% block content %}
 
-    <div class="uk-width-1-1 uk-margin-bottom">
-        <div class="uk-panel uk-panel-box">
-            <ul class="uk-breadcrumb">
-                <li><a href="/manage/blogs">日志</a></li>
-                <li class="uk-active"><span>评论</span></li>
-                <li><a href="/manage/images">图片</a></li>
-                <li><a href="/manage/users">用户</a></li>
-            </ul>
+    <div class="uk-width-1-1">
+        <ul class="uk-tab uk-text-large uk-margin-bottom">
+            <li><a href="/manage/blogs">博客</a></li>
+            <li><a href="/manage/blogtype">类别</a></li>
+            <li class="uk-active"><a>评论</a></li>
+            <li><a href="/manage/images">图片</a></li>
+            <li><a href="/manage/users">用户</a></li>
+        </ul>
+
+        <div id="error" class="uk-width-1-1 uk-text-center uk-alert-danger"></div>
+        <div id="loading" class="uk-width-1-1 uk-text-center uk-margin-bottom">
+            <span><i class="uk-icon-spinner uk-icon-medium uk-icon-spin"></i>&nbsp;正在加载...</span>
         </div>
-    </div>
-
-    <div id="error" class="uk-width-1-1 uk-text-center uk-alert uk-alert-danger"></div>
-
-    <div id="loading" class="uk-width-1-1 uk-text-center">
-        <span><i class="uk-icon-spinner uk-icon-medium uk-icon-spin"></i>&nbsp;正在加载...</span>
     </div>
 
     <div class="uk-width-1-1">
@@ -33,9 +31,9 @@
                 <tr>
                     <th class="uk-width-1-10">作者</th>
                     <th class="uk-width-5-10">内容</th>
-                    <th class="uk-width-2-10">创建时间</th>
-                    <th class="uk-width-1-10">被评博客</th>
-                    <th class="uk-width-1-10">操作</th>
+                    <th class="uk-width-2-10 uk-text-center">创建时间</th>
+                    <th class="uk-width-1-10 uk-text-center">被评博客</th>
+                    <th class="uk-width-1-10 uk-text-center">操作</th>
                 </tr>
             </thead>
             <tbody>

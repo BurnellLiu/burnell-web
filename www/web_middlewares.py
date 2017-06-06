@@ -6,6 +6,7 @@ import json
 from aiohttp import web
 from config import configs
 from session_cookie import user_cookie_parse
+from db_models import BlogType
 
 __author__ = 'Burnell Liu'
 
@@ -75,6 +76,9 @@ async def response_factory(app, handler):
                 resp.content_type = 'application/json;charset=utf-8'
                 return resp
             else:
+                types = await BlogType.find_all(order_by='level asc')
+                r['blog_types'] = types
+
                 # 从请求中取出用户信息
                 r['__user__'] = request.__user__
                 # 设置配置信息

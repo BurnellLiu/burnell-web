@@ -13,17 +13,15 @@ function showErrorMessage(msg){
 
     // 找到显示错误消息的标签
     var $error = $('#error');
-    if ($error.length === 0){
-        return;
-    }
 
     if (!msg){
-        $error.hide();
+        $error.text("cake");
+        $error.css("visibility", "hidden");
         return;
     }
 
     $error.text(msg);
-    $error.show();
+    $error.css("visibility", "visible");
 }
 
 /**
@@ -65,13 +63,13 @@ function showUsersData(data){
         }
         $table.append(
             '<tr>' +
-            '<td class = "uk-text-middle">' +
+            '<td>' +
             nameSpan +
             '</td>' +
-            '<td>' +
+            '<td class="uk-text-center">' +
             '<img class="uk-border-rounded" height="40" width="40" src="' + users[i].image + '">' +
             '</td>' +
-            '<td class = "uk-text-middle">' +
+            '<td class = "uk-text-center">' +
             '<span>' + users[i].created_at.toDateTime() + '</span>' +
             '</td>' +
             '</tr>');

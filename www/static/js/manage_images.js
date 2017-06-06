@@ -13,17 +13,15 @@ function showErrorMessage(msg){
 
     // 找到显示错误消息的标签
     var $error = $('#error');
-    if ($error.length === 0){
-        return;
-    }
 
     if (!msg){
-        $error.hide();
+        $error.text("cake");
+        $error.css("visibility", "hidden");
         return;
     }
 
     $error.text(msg);
-    $error.show();
+    $error.css("visibility", "visible");
 }
 
 /**

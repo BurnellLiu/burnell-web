@@ -72,7 +72,7 @@ async def init_app(event_loop):
     # aiohttp内部循环里以倒序分别将url处理函数用拦截器装饰一遍
     # 最后再返回经过全部拦截器装饰过的函数
     # 这样最终调用url处理函数之前或之后就可以进行一些额外的处理
-    middlewares=[logger_factory, auth_factory, response_factory]
+    middlewares = [logger_factory, auth_factory, response_factory]
     web_app = web.Application(loop=event_loop, middlewares=middlewares)
 
     # 初始化前端模板, 指定的过滤器函数可以在模板文件中使用

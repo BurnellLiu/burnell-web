@@ -1,6 +1,6 @@
 {% extends '__base__.html' %}
 
-{% block title %}日志{% endblock %}
+{% block title %}博客管理{% endblock %}
 
 {% block beforehead %}
 
@@ -10,34 +10,31 @@
 
 {% block content %}
 
-    <div class="uk-width-1-1 uk-margin-bottom">
-        <div class="uk-panel uk-panel-box">
-            <ul class="uk-breadcrumb">
-                <li class="uk-active"><span>日志</span></li>
-                <li><a href="/manage/comments">评论</a></li>
-                <li><a href="/manage/images">图片</a></li>
-                <li><a href="/manage/users">用户</a></li>
-            </ul>
+    <div class="uk-width-1-1">
+        <ul class="uk-tab uk-text-large uk-margin-bottom">
+            <li class="uk-active"><a>博客</a></li>
+            <li><a href="/manage/blogtype">类别</a></li>
+            <li><a href="/manage/comments">评论</a></li>
+            <li><a href="/manage/images">图片</a></li>
+            <li><a href="/manage/users">用户</a></li>
+        </ul>
+
+        <div id="error" class="uk-width-1-1 uk-text-center uk-alert-danger"></div>
+        <div id="loading" class="uk-width-1-1 uk-text-center uk-margin-bottom">
+            <span><i class="uk-icon-spinner uk-icon-medium uk-icon-spin"></i>正在加载...</span>
         </div>
     </div>
 
-    <div id="error" class="uk-width-1-1 uk-text-center uk-alert uk-alert-danger"></div>
-
-    <div id="loading" class="uk-width-1-1 uk-text-center">
-        <span><i class="uk-icon-spinner uk-icon-medium uk-icon-spin"></i>正在加载...</span>
-
-    </div>
-
     <div class="uk-width-1-1">
-        <a target="_blank" href="/manage/blogs/create" class="uk-button uk-button-primary"><i class="uk-icon-plus"></i>&nbsp;新日志</a>
+        <a target="_blank" href="/manage/blogs/create" class="uk-button uk-button-primary"><i class="uk-icon-plus"></i>&nbsp;新博客</a>
 
         <table id="blogs-table" class="uk-table uk-table-hover">
             <thead>
                 <tr>
-                    <th class="uk-width-5-10">标题</th>
-                    <th class="uk-width-2-10">浏览量</th>
-                    <th class="uk-width-2-10">创建时间</th>
-                    <th class="uk-width-1-10">操作</th>
+                    <th class="uk-width-4-10">标题</th>
+                    <th class="uk-width-2-10 uk-text-center">浏览量</th>
+                    <th class="uk-width-2-10 uk-text-center">创建时间</th>
+                    <th class="uk-width-2-10 uk-text-center">操作</th>
                 </tr>
             </thead>
             <tbody>

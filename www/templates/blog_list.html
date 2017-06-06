@@ -29,39 +29,39 @@
     {% endfor %}
         <ul class="uk-pagination">
         {% if page.has_previous %}
-            <li><a href="/{{ type }}?page={{ page.page_index - 1 }}"><i class="uk-icon-angle-double-left"></i></a></li>
+            <li><a href="/blogs?page={{ page.page_index - 1 }}&type={{ list_type }}"><i class="uk-icon-angle-double-left"></i></a></li>
         {% else %}
             <li class="uk-disabled"><span><i class="uk-icon-angle-double-left"></i></span></li>
         {% endif %}
         {% if (page.page_index) - 4 > 0 %}
-            <li><a href="/{{ type }}?page=1"><span>{{ 1 }}</span></a></li>
+            <li><a href="/blogs?page=1&type={{ list_type }}"><span>{{ 1 }}</span></a></li>
             <li><span>...</span></li>
         {% endif %}
         {% if (page.page_index) - 4 == 0 %}
-            <li><a href="/{{ type }}?page=1"><span>{{ 1 }}</span></a></li>
+            <li><a href="/blogs?page=1&type={{ list_type }}"><span>{{ 1 }}</span></a></li>
         {% endif %}
         {% if (page.page_index) - 2 > 0 %}
-            <li><a href="/{{ type }}?page={{ page.page_index - 2 }}"><span>{{ page.page_index - 2 }}</span></a></li>
+            <li><a href="/blogs?page={{ page.page_index - 2 }}&type={{ list_type }}"><span>{{ page.page_index - 2 }}</span></a></li>
         {% endif %}
         {% if (page.page_index) - 1 > 0 %}
-            <li><a href="/{{ type }}?page={{ page.page_index - 1 }}"><span>{{ page.page_index - 1 }}</span></a></li>
+            <li><a href="/blogs?page={{ page.page_index - 1 }}&type={{ list_type }}"><span>{{ page.page_index - 1 }}</span></a></li>
         {% endif %}
             <li class="uk-active"><span>{{ page.page_index }}</span></li>
         {% if (page.page_index) + 1 <= page.page_count %}
-            <li><a href="/{{ type }}?page={{ page.page_index + 1 }}"><span>{{ page.page_index + 1 }}</span></a></li>
+            <li><a href="/blogs?page={{ page.page_index + 1 }}&type={{ list_type }}"><span>{{ page.page_index + 1 }}</span></a></li>
         {% endif %}
         {% if (page.page_index) + 2 <= page.page_count %}
-            <li><a href="/{{ type }}?page={{ page.page_index + 2 }}"><span>{{ page.page_index + 2 }}</span></a></li>
+            <li><a href="/blogs?page={{ page.page_index + 2 }}&type={{ list_type }}"><span>{{ page.page_index + 2 }}</span></a></li>
         {% endif %}
         {% if (page.page_index) + 3 == page.page_count %}
-            <li><a href="/{{ type }}?page={{ page.page_count }}"><span>{{ page.page_count }}</span></a></li>
+            <li><a href="/blogs?page={{ page.page_count }}&type={{ list_type }}"><span>{{ page.page_count }}</span></a></li>
         {% endif %}
         {% if (page.page_index) + 3 < page.page_count %}
             <li><span>...</span></li>
-            <li><a href="/{{ type }}?page={{ page.page_count }}"><span>{{ page.page_count }}</span></a></li>
+            <li><a href="/blogs?page={{ page.page_count }}&type={{ list_type }}"><span>{{ page.page_count }}</span></a></li>
         {% endif %}
         {% if page.has_next %}
-            <li><a href="/{{ type }}?page={{ page.page_index + 1 }}"><i class="uk-icon-angle-double-right"></i></a></li>
+            <li><a href="/blogs?page={{ page.page_index + 1 }}&type={{ list_type }}"><i class="uk-icon-angle-double-right"></i></a></li>
         {% else %}
             <li class="uk-disabled"><span><i class="uk-icon-angle-double-right"></i></span></li>
         {% endif %}

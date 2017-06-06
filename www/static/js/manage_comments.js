@@ -14,17 +14,15 @@ function showErrorMessage(msg){
 
     // 找到显示错误消息的标签
     var $error = $('#error');
-    if ($error.length === 0){
-        return;
-    }
 
     if (!msg){
-        $error.hide();
+        $error.text("cake");
+        $error.css("visibility", "hidden");
         return;
     }
 
     $error.text(msg);
-    $error.show();
+    $error.css("visibility", "visible");
 }
 
 /**
@@ -122,13 +120,13 @@ function showCommentsData(data){
             '<td>' +
             '<span>' + comments[i].content + '</span>' +
             '</td>' +
-            '<td>' +
+            '<td class="uk-text-center">' +
             '<span>' + comments[i].created_at.toDateTime() + '</span>'+
             '</td>' +
-            '<td>' +
+            '<td class="uk-text-center">' +
                 '<span><a href="/blog/' + comments[i].blog_id +'">链接</a></span>' +
             '</td>' +
-            '<td>' +
+            '<td class="uk-text-center">' +
             '<a onclick="trashIConClicked(\'' + comments[i].id + '\')">' +
             '<i class="uk-icon-trash-o"></i></a>' +
             '</td>' +

@@ -13,7 +13,7 @@
         <span><i class="uk-icon-spinner uk-icon-medium uk-icon-spin"></i>&nbsp;正在加载...</span>
     </div>
     <div class="uk-width-2-3 uk-text-center">
-        <div id="error" class=" uk-alert uk-alert-danger">&nbsp;</div>
+        <div id="error" class="uk-alert uk-alert-danger">&nbsp;</div>
     </div>
     <div class="uk-width-2-3">
         <form id="blog-form" class="uk-form uk-form-stacked">
@@ -27,9 +27,9 @@
                 <label class="uk-form-label">类型:</label>
                 <div class="uk-form-controls">
                     <select id="type" class="uk-width-1-1">
-                        <option>随笔</option>
-                        <option>Windows开发</option>
-                        <option>机器学习</option>
+                    {% for blog_type in blog_types %}
+                        <option>{{ blog_type.name }}</option>
+                    {% endfor %}
                     </select>
                 </div>
             </div>
