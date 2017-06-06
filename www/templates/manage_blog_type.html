@@ -1,0 +1,94 @@
+{% extends '__base__.html' %}
+
+{% block title %}类别管理{% endblock %}
+
+{% block beforehead %}
+
+<script src="/static/js/manage_blog_type.js"></script>
+
+{% endblock %}
+
+{% block content %}
+
+    <div class="uk-width-1-1">
+
+        <ul class="uk-tab uk-text-large uk-margin-bottom">
+            <li><a href="/manage/blogs">博客</a></li>
+            <li class="uk-active"><a>类别</a></li>
+            <li><a href="/manage/comments">评论</a></li>
+            <li><a href="/manage/images">图片</a></li>
+            <li><a href="/manage/users">用户</a></li>
+        </ul>
+
+        <div id="error" class="uk-width-1-1 uk-text-center uk-text-danger"></div>
+        <div id="loading" class="uk-width-1-1 uk-text-center uk-margin-bottom">
+            <span><i class="uk-icon-spinner uk-icon-medium uk-icon-spin"></i>正在加载...</span>
+        </div>
+    </div>
+
+
+
+    <div class="uk-width-1-1">
+        <form class="uk-form" id="new-type-form">
+            <fieldset data-uk-margin>
+            <input class="uk-margin-right" id="type-name" type="text" maxlength="10" placeholder="名称">
+            <label >优先级:</label>
+            <select id="type-level" class="uk-margin-right">
+                <option>0</option>
+                <option>1</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+                <option>5</option>
+                <option>6</option>
+                <option>7</option>
+                <option>8</option>
+                <option>9</option>
+            </select>
+            <button type="submit" class="uk-button uk-button-primary">
+                <i class="uk-icon-plus"></i>&nbsp;添加类别
+            </button>
+            </fieldset>
+        </form>
+
+        <table id="blog-type-table" class="uk-table uk-table-hover">
+            <thead>
+                <tr>
+                    <th class="uk-width-3-10">名称</th>
+                    <th class="uk-width-2-10 uk-text-center">博客数</th>
+                    <th class="uk-width-2-10 uk-text-center">优先级</th>
+                    <th class="uk-width-3-10 uk-text-center">操作</th>
+                </tr>
+            </thead>
+            <tbody>
+            <!--
+                <tr >
+                    <td>
+
+                    </td>
+                    <td>
+
+                    </td>
+                    <td>
+                        <span></span>
+                    </td>
+                    <td>
+                        <a href="#0"><i class="uk-icon-edit"></i></a>
+                        <a href="#0"><i class="uk-icon-trash-o"></i></a>
+                    </td>
+                </tr>
+            -->
+            </tbody>
+        </table>
+
+        <ul class="uk-pagination">
+            <!--
+            <li class="uk-disabled"><span><i class="uk-icon-angle-double-right"></i></span></li>
+            <li class="uk-active"><span>1</span></li>
+            <li class="uk-disabled"><span><i class="uk-icon-angle-double-right"></i></span></li>
+            -->
+        </ul>
+
+    </div>
+
+{% endblock %}
