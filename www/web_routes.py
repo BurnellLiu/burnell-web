@@ -40,7 +40,7 @@ async def index(request):
 
 
 @get('/blogs')
-async def blogs(request):
+async def blogs_list(request):
     """
     博客列表路由函数
     :param request: 请求对象
