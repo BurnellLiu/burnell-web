@@ -2,6 +2,9 @@ burnell-web <br>
 ===========
 burnell-web [www.burnelltek.com](http://www.burnelltek.com) 是一个个人博客网站系统，后端使用Python编写 <br>
 
+# 网站首页 <br>
+![](https://github.com/BurnellLiu/burnell-web/blob/master/ReadMeImg/homepage.png) <br>
+
 # License <br>
 **MIT** <br>
 
@@ -190,6 +193,7 @@ Supervisor只负责运行app.py，我们还需要配置Nginx，把配置文件bu
 ## 2016/11/27 V1.1.1 Release <br>
 1. 限制每10秒只能发送一条评论 <br>
 2. 注册账号页面需要输入验证码 <br>
+
 
 
 
