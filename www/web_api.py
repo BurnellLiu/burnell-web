@@ -547,6 +547,7 @@ async def api_image_upload(request):
 
     image_str = image_str.replace('data:image/png;base64,', '')
     image_str = image_str.replace('data:image/jpeg;base64,', '')
+    image_str = image_str.replace('data:image/gif;base64,', '')
     image_data = base64.b64decode(image_str)
 
     image_path = '.'

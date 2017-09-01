@@ -147,6 +147,9 @@ Supervisor只负责运行app.py，我们还需要配置Nginx，把配置文件bu
 
 # Release Note: <br>
 
+## 2017/09/01 V1.1.6 Release <br>
+1. 后台图片管理支持上传GIF文件 <br>
+
 ## 2017/06/05 V1.1.5 Release <br>
 1. 增加代码高亮功能 <br>
 2. 评论功能改善 <br>

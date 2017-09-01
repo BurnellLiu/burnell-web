@@ -305,7 +305,7 @@ function previewImgTrash(){
     $imageInputDiv.find('input').remove();
     $imageInputDiv.append(
         '<input id="image-input" type="file"' +
-        'accept="image/jpeg, image/png" onchange="selectedImage(this)"' +
+        'accept="image/jpeg, image/png, image/gif" onchange="selectedImage(this)"' +
         'style="display:none;"/>');
 }
 
