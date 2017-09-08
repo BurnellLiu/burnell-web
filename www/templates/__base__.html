@@ -34,7 +34,11 @@
             <a href="/" class="uk-navbar-brand uk-visible-small"><i class="uk-icon-home uk-icon-small"></i></a>
             <ul class="uk-navbar-nav uk-hidden-small">
             {% for blog_type in blog_types %}
+                {% if blog_type.name is equalto list_type %}
+                <li class="uk-active"><a href="/blogs?type={{ blog_type.name }}">{{ blog_type.name }}</a></li>
+                {% else %}
                 <li><a href="/blogs?type={{ blog_type.name }}">{{ blog_type.name }}</a></li>
+                {% endif %}
             {% endfor %}
                 <li>
                     <a target="_blank" href="https://github.com/BurnellLiu/burnell-web">源码</a>
