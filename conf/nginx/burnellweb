@@ -5,9 +5,9 @@ server {
     access_log /srv/burnell_web/log/access_log;
     error_log  /srv/burnell_web/log/error_log;
 
-    # server_name burnelltek.com;
+    server_name www.coderjie.com;
 
-    client_max_body_size 10m;
+    client_max_body_size 2m;
 
     gzip            on;
     gzip_min_length 1024;
@@ -29,4 +29,19 @@ server {
         proxy_set_header Host $host;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     }
+}
+
+server{ 
+    server_name coderjie.com;                       
+    rewrite ^(.*)$ http://www.coderjie.com$1 permanent;
+}
+
+server{ 
+    server_name www.burnelltek.com;                       
+    rewrite ^(.*)$ http://www.coderjie.com$1 permanent;
+}
+
+server{ 
+    server_name burnelltek.com;                       
+    rewrite ^(.*)$ http://www.coderjie.com$1 permanent;
 }
