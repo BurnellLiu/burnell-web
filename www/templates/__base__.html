@@ -82,11 +82,42 @@
 
 
                 {% else %}
+                    <li><a href="#sign-in" data-uk-modal="{bgclose:false, center:true}">
+                        <i class="uk-icon-sign-in"></i> 登陆</a>
+                    </li>
                     <li><a onclick="weiboLogin()"><i class="uk-icon-weibo uk-icon-small"></i>&nbsp;微博登录</a></li>
                     <!--
                     <li><a href="/signin"><i class="uk-icon-sign-in"></i> 登陆</a></li>
                     <li><a href="/register"><i class="uk-icon-edit"></i> 注册</a></li>
                     -->
+                    <div id="sign-in" class="uk-modal">
+                        <div class="uk-modal-dialog">
+                        <a class="uk-modal-close uk-close"></a>
+                        <div class="uk-width-1-2 uk-container uk-container-center">
+                        <form id="account-form" class="uk-form">
+                            <p class="uk-text-large uk-text-bold">账号登录</p>
+
+                            <div class="uk-form-row">
+                                <div class="uk-form-icon">
+                                    <i class="uk-icon-envelope-o"></i>
+                                    <input id="email" name="email" type="text" placeholder="邮箱" maxlength="50" class="uk-form-large uk-width-1-1">
+                                </div>
+                            </div>
+                            <div class="uk-form-row">
+                                <div class="uk-form-icon">
+                                    <i class="uk-icon-lock"></i>
+                                    <input id="password" name="password" type="password" placeholder="密码" maxlength="50" class="uk-form-large uk-width-1-1">
+                                </div>
+                            </div>
+
+                            <div class="uk-form-row">
+                                <button type="submit" class="uk-button uk-button-primary uk-width-1-1 uk-form-large"><i class="uk-icon-sign-in"></i>登录</button>
+                            </div>
+                            <div class="uk-alert uk-alert-danger uk-hidden"></div>
+                        </form>
+                        </div>
+                        </div>
+                    </div>
                 {% endif %}
                 </ul>
             </div>
