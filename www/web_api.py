@@ -24,54 +24,65 @@ from verify_image import generate_verify_image
 __author__ = 'Burnell Liu'
 
 
-@post('/api/weibo/login')
-async def api_weibo_login(request):
+@get('/api/github/login')
+async def api_github_login(request):
     """
-    微博登录API函数
+    GitHub登录API函数
     :param request:
     :return:
     """
+    qs_parser = QueryStringParser(request.query_string)
+    github_code = qs_parser.code
+    last_url = qs_parser.state
+    if not github_code:
+        return data_error('GitHub Code Lost')
 
-    request_data = RequestData(request)
-    if not await request_data.json_load():
-        return data_error(u'非法数据格式, 请使用JSON格式')
-
-    # 取出用户id和访问令牌
-    uid = request_data.uid
-    if not uid:
-        return data_error()
-    access_token = request_data.access_token
-    if not access_token or not access_token.strip():
-        return data_error()
-
-    # 获取用户数据
-    url = 'https://api.weibo.com/2/users/show.json?access_token='
-    url += access_token
-    url += '&uid='
-    url += str(uid)
+    # 获取用户令牌
+    access_token_url = 'https://github.com/login/oauth/access_token?client_id='
+    access_token_url += configs.github.client_id
+    access_token_url += '&client_secret='
+    access_token_url += configs.github.client_secret
+    access_token_url += '&redirect_uri='
+    access_token_url += configs.github.redirect_uri
+    access_token_url += '&code='
+    access_token_url += github_code
     async with ClientSession() as session:
-        async with session.get(url) as response:
+        async with session.post(access_token_url) as response:
+            response_data = await response.text()
+
+    data_parser = QueryStringParser(response_data)
+    access_token = data_parser.access_token
+    if not access_token:
+        return data_error()
+
+    user_url = 'https://api.github.com/user?access_token='
+    user_url += access_token
+    async with ClientSession() as session:
+        async with session.get(user_url) as response:
             user_data = await response.json()
-            logging.info(user_data)
-            if not isinstance(user_data, dict):
-                return data_error()
+
+    user_id = None
+    if 'id' in user_data:
+        user_id = user_data['id']
+    if not user_id:
+        return data_error()
 
     user_name = None
-    if 'screen_name' in user_data:
-        user_name = user_data['screen_name']
+    if 'login' in user_data:
+        user_name = user_data['login']
     if not user_name:
         return data_error()
     user_image = None
-    if 'avatar_hd' in user_data:
-        user_image = user_data['avatar_hd']
+    if 'avatar_url' in user_data:
+        user_image = user_data['avatar_url']
     if not user_image:
         return data_error()
 
     # 更新或者保存用户信息
-    user = await UserInfo.find(str(uid))
+    user = await UserInfo.find(str(user_id))
     logging.info(user)
     if not user:
-        user = UserInfo(id=uid, name=user_name, image=user_image)
+        user = UserInfo(id=user_id, name=user_name, image=user_image)
         await user.save()
     else:
         user.name = user_name
@@ -81,11 +92,10 @@ async def api_weibo_login(request):
     # 生成用户COOKIE
     cookie_name = configs.user_cookie.name
     cookie_secret = configs.user_cookie.secret
-    cookie_str = user_cookie_generate(str(uid), 86400, cookie_secret)
-    r = web.Response()
+    cookie_str = user_cookie_generate(str(user_id), 86400, cookie_secret)
+
+    r = web.HTTPFound(last_url)
     r.set_cookie(cookie_name, cookie_str, max_age=86400, httponly=True)
-    r.content_type = 'application/json'
-    r.body = json.dumps(user, ensure_ascii=False).encode('utf-8')
     return r
 
 
@@ -119,12 +129,14 @@ async def api_user_authenticate(request):
     cookie_name = configs.user_cookie.name
     cookie_secret = configs.user_cookie.secret
     cookie_str = user_cookie_generate(user['id'], 86400, cookie_secret)
+
     r = web.Response()
     r.set_cookie(cookie_name, cookie_str, max_age=86400, httponly=True)
     user['password'] = '******'
     r.content_type = 'application/json'
     r.body = json.dumps(user, ensure_ascii=False).encode('utf-8')
     return r
+
 
 
 @get('/api/users')

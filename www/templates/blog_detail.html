@@ -68,17 +68,6 @@ MathJax.Hub.Config({
 
         <hr class="uk-article-divider">
 
-        <p class="uk-h3 uk-text-bold">分享给朋友阅读吧</p>
-        <wb:share-button
-                appkey="{{ weibo.appkey }}"
-                addition="full"
-                type="button"
-                ralateUid="{{ weibo.uid }}"
-                pic="{{ blog.cover_image }}">
-        </wb:share-button>
-
-        <hr class="uk-article-divider">
-
     {% if __user__ %}
         <h3>发表评论</h3>
 
@@ -105,8 +94,13 @@ MathJax.Hub.Config({
 
         <hr class="uk-article-divider">
     {% else %}
-        <p class="uk-h4 uk-text-bold">您还未登录，登录微博账号发表精彩评论</p>
-        <p><a class="uk-button uk-button-primary" onclick="weiboLogin()"><i class="uk-icon-weibo uk-icon-small"></i>&nbsp;微博登录</a></p>
+        <p class="uk-h4 uk-text-bold">您还未登录，登录GitHub账号发表精彩评论</p>
+        <p><a class="uk-button uk-button-primary"
+              onclick="githubLogin(this)"
+              clientid="{{ github.client_id }}"
+              redirecturi="{{ github.redirect_uri }}">
+            <i class="uk-icon-github uk-icon-small"></i>&nbsp;GitHub登录</a>
+        </p>
         <hr class="uk-article-divider">
     {% endif %}
 
@@ -153,8 +147,6 @@ MathJax.Hub.Config({
                 <img class="uk-border-rounded" width="120" height="120" src="{{ blog.user_image }}">
                 <p class="uk-text-bold uk-text-large">刘杰</p>
                 <p class="uk-comment-meta">28岁,&nbsp;现居苏州</p>
-                <p class="uk-text-bold">微博:</p>
-                <wb:follow-button uid="{{ weibo.uid }}" type="red_3" width="100%" height="32" ></wb:follow-button>
                 <p class="uk-text-bold">微信:</p>
                 <p class="uk-text-primary">BurnellLIU</p>
                 <p class="uk-text-bold">邮箱:</p>

@@ -44,7 +44,7 @@ async def auth_factory(app, handler):
 
         # 针对管理页面, 需要验证是否是管理员
         if request.path.startswith('/manage/') and (request.__user__ is None or not request.__user__['admin']):
-            return web.HTTPFound('/signin')
+            return web.HTTPFound('/')
         return await handler(request)
     return auth
 
@@ -85,7 +85,7 @@ async def response_factory(app, handler):
                 r['domain_name'] = configs.domain_name
                 r['website_name'] = configs.website_name
                 r['ICP_NO'] = configs.ICP_NO
-                r['weibo'] = configs.weibo
+                r['github'] = configs.github
 
                 templating_env = app['__templating__']
                 template = templating_env.get_template(template_file_name)

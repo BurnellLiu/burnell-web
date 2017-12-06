@@ -34,12 +34,14 @@ configs = {
         'name': 'VERIFY_IMAGE_SESSION'
     },
 
-    # 微博配置信息
-    'weibo': {
-        # 微博开放平台申请到的APP_KEY
-        'appkey': 'xxxxxx',
-        # 你的微博ID
-        'uid': 'xxxxxx'
+    # GitHub配置信息
+    'github': {
+        # GitHub申请的客户端ID
+        'client_id': 'xxxxxx',
+        # GitHub申请的客户端密钥
+        'client_secret': 'xxxxxx',
+        # 重定向URI
+        'redirect_uri': 'xxxxxx'
     },
 
     # 字体路径，linux下需要填写为'/usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf'

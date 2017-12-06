@@ -147,11 +147,12 @@ Supervisor只负责运行app.py，我们还需要配置Nginx，把配置文件bu
 
 # Release Note: <br>
 
-## 2017/10/16 V1.1.6 Release <br>
+## 2017/12/06 V1.1.6 Release <br>
 1. 后台图片管理支持上传GIF文件 <br>
 2. 相应博客列表导航栏显示激活状态 <br>
 3. 博客详细内容页面增加打赏功能 <br>
 4. 首页上将微博秀替换为GitHub挂件 <br>
+5. 将微博登录功能改为GitHub登录 <br>
 
 ## 2017/06/05 V1.1.5 Release <br>
 1. 增加代码高亮功能 <br>

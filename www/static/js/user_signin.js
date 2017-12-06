@@ -8,10 +8,10 @@
  * 显示错误消息
  * @param {String} msg 错误消息, 如果为null则清除错误消息
  */
-function showErrorMessage(msg){
+function signinShowErrorMessage(msg){
 
     // 找到显示错误消息的标签
-    var $alert = $accountForm.find(".uk-alert-danger");
+    var $alert = $signinAccountForm.find(".uk-alert-danger");
     if ($alert.length === 0){
         return;
     }
@@ -30,9 +30,9 @@ function showErrorMessage(msg){
  * 设置表单是否处于加载状态
  * @param {Boolean} isLoading true(加载状态), false(非加载状态)
  */
-function showFormLoading(isLoading){
-    var $button = $accountForm.find('button');
-    var $i = $accountForm.find('button[type=submit]').find('i');
+function signinShowFormLoading(isLoading){
+    var $button = $signinAccountForm.find('button');
+    var $i = $signinAccountForm.find('button[type=submit]').find('i');
 
     if (isLoading) {
         $button.attr('disabled', 'disabled');
@@ -48,18 +48,24 @@ function showFormLoading(isLoading){
  * 请求结束处理函数
  * @param {Object} data 返回的数据
  */
-function requestDone(data){
+function signinRequestDone(data){
 
     // 如果有错则显示错误消息
     if (data.error){
-        showFormLoading(false);
-        showErrorMessage(data.message);
+        signinShowFormLoading(false);
+        signinShowErrorMessage(data.message);
         return;
     }
 
+    var path = window.location.pathname;
+    if (path === '/register'){
+        location.assign('/');
+    }
+    else {
+        // 如果成功登录, 则刷新当前页面
+        location.reload();
+    }
 
-    // 如果成功登录, 则定位登录之前的页面
-    location.assign(document.referrer || '/');
 }
 
 /**
@@ -67,9 +73,9 @@ function requestDone(data){
  * @param xhr
  * @param status
  */
-function requestFail(xhr, status){
-    showFormLoading(false);
-    showErrorMessage('网络出了问题 (HTTP ' + xhr.status + ')' + '(' + status + ')');
+function signinRequestFail(xhr, status){
+    signinShowFormLoading(false);
+    signinShowErrorMessage('网络出了问题 (HTTP ' + xhr.status + ')' + '(' + status + ')');
 }
 
 
@@ -77,7 +83,7 @@ function requestFail(xhr, status){
  * 提交账号信息
  * @param {Object} data 账号数据
  */
-function postAccount(data){
+function signinPostAccount(data){
     var opt = {
         type: 'POST',
         url: '/api/authenticate',
@@ -89,9 +95,9 @@ function postAccount(data){
     var jqxhr = $.ajax(opt);
     // 设置请求完成和请求失败的处理函数
     //noinspection JSUnresolvedFunction
-    jqxhr.done(requestDone);
+    jqxhr.done(signinRequestDone);
     //noinspection JSUnresolvedFunction
-    jqxhr.fail(requestFail);
+    jqxhr.fail(signinRequestFail);
 }
 
 
@@ -99,16 +105,16 @@ function postAccount(data){
  * 账号提交处理函数
  * @param event
  */
-function accountSubmit(event){
+function signinAccountSubmit(event){
     // 通知浏览器提交已被处理， 阻止默认行为的发生
     event.preventDefault();
 
-    showFormLoading(true);
+    signinShowFormLoading(true);
 
-    var email = $accountForm.find("#email").val();
+    var email = $signinAccountForm.find("#email").val();
     email = email.trim().toLowerCase();
 
-    var password = $accountForm.find("#password").val();
+    var password = $signinAccountForm.find("#password").val();
 
     var account = {
         email: email,
@@ -116,16 +122,16 @@ function accountSubmit(event){
     };
 
     // 将账号信息POST出去
-    postAccount(account);
+    signinPostAccount(account);
 }
 
 /**
  * 初始化页面
  */
-function initPage(){
-    window.$accountForm = $("#account-form");
-    window.$accountForm.submit(accountSubmit);
+function signinInitPage(){
+    window.$signinAccountForm = $("#sign-in-account-form");
+    window.$signinAccountForm.submit(signinAccountSubmit);
 }
 
 
-$(document).ready(initPage);
+$(document).ready(signinInitPage);
